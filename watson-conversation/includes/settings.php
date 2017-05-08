@@ -24,6 +24,23 @@ class Settings {
         unregister_setting('watsonconv', 'watsonconv_password');
     }
 
+    public static function render_notice($plugin_file, $plugin_data, $status) {
+        if (empty(get_option('watsonconv_id')) ||
+            empty(get_option('watsonconv_username')) ||
+            empty(get_option('watsonconv_password'))) {
+        ?>
+            <tr><td colspan=3>
+                <div class="notice inline notice-warning notice-alt"
+                     style="padding:0.5em; padding-left:1em; margin:0">
+                    <a href="options-general.php?page=watsonconv">
+                        Please fill in your Watson Conversation Workspace Credentials.
+                    </a>
+                </div>
+            </td></tr>
+        <?php
+        }
+    }
+
     public static function page_render() {
     ?>
       <div class="wrap">
@@ -42,7 +59,7 @@ class Settings {
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
             <?php esc_html_e('Here, you can specify the Workspace ID for your Watson
                 Conversation Workspace in addition to the required credentials.', 'watsonconv') ?> <br />
-            <?php esc_html_e('Note: these are not the same as your Bluemix Login Credentials.', 'watsonconv' ); ?>
+            <?php esc_html_e('Note: these are not the same as your Bluemix Login Credentials.', 'watsonconv') ?>
             <a href='https://www.ibm.com/watson/developercloud/doc/common/getting-started-credentials.html' target="_blank">
                 Click here for details.
             </a>

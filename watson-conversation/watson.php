@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Watson Conversation
-Description: This plugin allows the admin to easily add chatbots to their website powered by IBM Watson Conversation technology.
+Description: This plugin allows you to easily add chatbots powered by IBM Watson Conversation to your website.
 Author: IBM DBG
 Version: 0.1.0
 */
@@ -13,4 +13,8 @@ require_once(WATSON_CONV_PATH.'includes/settings.php');
 
 add_action('admin_menu', 'WatsonConv\Settings::init_page');
 add_action('admin_init', 'WatsonConv\Settings::init_settings');
-register_deactivation_hook(__FILE__, 'WatsonConv\Settings::unregister');
+register_deactivation_hook(WATSON_CONV_FILE, 'WatsonConv\Settings::unregister');
+
+$path = plugin_basename( __FILE__ );
+
+add_action("after_plugin_row_{$path}", 'WatsonConv\Settings::render_notice', 10, 3);
