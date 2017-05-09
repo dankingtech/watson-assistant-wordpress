@@ -3,15 +3,20 @@ namespace WatsonConv;
 
 class Settings {
     public static function init_page() {
-        add_options_page('Watson Conversation', 'Watson', 'manage_options', 'watsonconv', array(__CLASS__, 'page_render'));
+        add_options_page('Watson Conversation', 'Watson', 'manage_options',
+            'watsonconv', array(__CLASS__, 'page_render'));
     }
 
     public static function init_settings() {
-        add_settings_section('watsonconv_setting_section', 'Watson Conversation Workspace', array(__CLASS__, 'section_render'), 'watsonconv');
+        add_settings_section('watsonconv_setting_section', 'Watson Conversation Workspace',
+            array(__CLASS__, 'section_render'), 'watsonconv');
 
-        add_settings_field('watsonconv_id', 'Workspace ID', array(__CLASS__, 'id_render'), 'watsonconv', 'watsonconv_setting_section');
-        add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'username_render'), 'watsonconv', 'watsonconv_setting_section');
-        add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'password_render'), 'watsonconv', 'watsonconv_setting_section');
+        add_settings_field('watsonconv_id', 'Workspace ID', array(__CLASS__, 'id_render'),
+            'watsonconv', 'watsonconv_setting_section');
+        add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'username_render'),
+            'watsonconv', 'watsonconv_setting_section');
+        add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'password_render'),
+            'watsonconv', 'watsonconv_setting_section');
 
         register_setting('watsonconv', 'watsonconv_id');
         register_setting('watsonconv', 'watsonconv_username');
@@ -29,9 +34,11 @@ class Settings {
             empty(get_option('watsonconv_username')) ||
             empty(get_option('watsonconv_password'))) {
         ?>
-            <tr><td colspan=3>
-                <div class="notice inline notice-warning notice-alt"
+            <tr class="active icon-settings"><td colspan=3>
+                <div class="update-message notice inline notice-warning notice-alt"
                      style="padding:0.5em; padding-left:1em; margin:0">
+                    <span style='color:orange; margin-right:0.3em'
+                          class='dashicons dashicons-admin-settings'></span>
                     <a href="options-general.php?page=watsonconv">
                         Please fill in your Watson Conversation Workspace Credentials.
                     </a>
