@@ -6,3 +6,6 @@
 /readme.html
 /sitemap.xml
 /sitemap.xml.gz
+
+js/node_modules/
+watson-conversation/app.js

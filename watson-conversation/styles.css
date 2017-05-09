@@ -1,0 +1,42 @@
+.popup-box
+{
+  position: fixed;
+  bottom: 50px;
+  right: 20%;
+  height: 285px;
+  width: 300px;
+  background-color: rgb(240, 240, 240);
+  border: 1px solid rgba(60, 60, 91, .3);
+}
+
+.popup-box .popup-head
+{
+  padding: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  height: 12%;
+  color: white;
+  background-color: #949494;
+}
+
+.popup-box .popup-head .popup-head-left
+{
+  float: left;
+}
+
+.popup-box .popup-head .popup-head-right
+{
+  float: right;
+}
+
+.popup-box .popup-messages
+{
+  padding: 5px;
+  height: 70%;
+  overflow-y: scroll;
+}
+
+.popup-box .popup-message-input
+{
+  height: 18%;
+}
