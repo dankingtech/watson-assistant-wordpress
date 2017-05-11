@@ -1,22 +1,22 @@
 .popup-box
 {
   position: fixed;
-  bottom: 50px;
+  bottom: 10%;
   right: 20%;
-  height: 285px;
+  height: 350px;
   width: 300px;
-  background-color: rgb(240, 240, 240);
-  border: 1px solid rgba(60, 60, 91, .3);
+  font-size: 14px;
+  background-color: rgb(240, 240, 240, 0.3);
+  border: 1px solid rgb(35, 40, 45);
 }
 
 .popup-box .popup-head
 {
   padding: 5px;
   font-weight: bold;
-  font-size: 14px;
-  height: 12%;
+  height: 10%;
   color: white;
-  background-color: #949494;
+  background-color: rgb(35, 40, 45);
 }
 
 .popup-box .popup-head .popup-head-left
@@ -31,12 +31,43 @@
 
 .popup-box .popup-messages
 {
-  padding: 5px;
-  height: 70%;
+  padding: 10px;
+  height: 78%;
+  bottom: 0;
   overflow-y: scroll;
+  background-color: rgb(233, 235, 237);
+}
+
+.popup-box .popup-message-form
+{
+  height: 12%;
 }
 
 .popup-box .popup-message-input
 {
-  height: 18%;
+  height: 100%;
+  border: 0;
+  background-color: white;
+}
+
+.popup-box .popup-messages .watson-message
+{
+  float: left;
+  clear: right;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  padding: 5px 10px 5px 10px;
+  background-color: rgb(35, 40, 45);
+  color: white;
+}
+
+.popup-box .popup-messages .user-message
+{
+  float: right;
+  clear: left;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  padding: 5px 10px 5px 10px;
+  background-color: white;
+  color: rgb(35, 40, 45);
 }
