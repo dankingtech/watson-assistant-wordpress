@@ -16,14 +16,24 @@ export default class ChatBox extends Component {
     this.sendMessage();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.messages.length !== this.state.messages.length) {
+      jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
+    }
+  }
+
   submitMessage(e) {
+    e.preventDefault();
+
+    if (this.state.newMessage === '') {
+      return false;
+    }
+
     this.sendMessage();
     this.setState({
       newMessage: '',
       messages: this.state.messages.concat({from: 'user', text: this.state.newMessage})
     });
-
-    e.preventDefault();
   }
 
   sendMessage() {
@@ -54,7 +64,9 @@ export default class ChatBox extends Component {
 
   renderMessage(message, index) {
     return (
-      <div key={`message${index}`} className={`${message.from}-message`}>
+      <div key={`message${index}`}
+        className={`popup-message ${message.from}-message`}
+      >
         {message.text}
       </div>
     );
@@ -64,8 +76,8 @@ export default class ChatBox extends Component {
     return (
       <div className='popup-box'>
         <div className='popup-head'>Watson</div>
-        <div className='popup-messages'>
-          {this.state.messages.map(this.renderMessage.bind(this))}
+        <div className='popup-messages' ref={div => {this.messageList = div}}>
+          {this.state.messages.map(this.renderMessage)}
         </div>
         <form onSubmit={this.submitMessage.bind(this)} className='popup-message-form'>
           <input
