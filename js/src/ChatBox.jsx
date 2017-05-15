@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Draggable from 'react-draggable';
 
 export default class ChatBox extends Component {
   constructor(props) {
@@ -7,7 +8,8 @@ export default class ChatBox extends Component {
     this.state = {
       messages: [],
       newMessage: '',
-      context: null
+      context: null,
+      minimized: false
     };
   }
 
@@ -20,6 +22,10 @@ export default class ChatBox extends Component {
     if (prevState.messages.length !== this.state.messages.length) {
       jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
     }
+  }
+
+  toggleMinimize() {
+    this.setState({minimized: !this.state.minimized});
   }
 
   submitMessage(e) {
@@ -74,21 +80,35 @@ export default class ChatBox extends Component {
 
   render() {
     return (
-      <div className='popup-box'>
-        <div className='popup-head'>Watson</div>
-        <div className='popup-messages' ref={div => {this.messageList = div}}>
-          {this.state.messages.map(this.renderMessage)}
+      <Draggable>
+      <span className='popup-box-wrapper'>
+        <div className='popup-box'>
+          <div className='popup-head react-draggable'>
+            Watson
+            <span className='dashicons dashicons-no-alt popup-control'
+              onClick={this.props.closeChat}></span>
+            <span className={`dashicons
+              dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
+              popup-control`}
+              onClick={this.toggleMinimize.bind(this)}></span>
+          </div>
+          {!this.state.minimized && <div>
+            <div className='popup-messages' ref={div => {this.messageList = div}}>
+              {this.state.messages.map(this.renderMessage)}
+            </div>
+            <form onSubmit={this.submitMessage.bind(this)} className='popup-message-form'>
+              <input
+                className='popup-message-input'
+                type='text'
+                placeholder='Type a message'
+                value={this.state.newMessage}
+                onChange={this.setMessage.bind(this)}
+              />
+            </form>
+          </div>}
         </div>
-        <form onSubmit={this.submitMessage.bind(this)} className='popup-message-form'>
-          <input
-            className='popup-message-input'
-            type='text'
-            placeholder='Type a message'
-            value={this.state.newMessage}
-            onChange={this.setMessage.bind(this)}
-          />
-        </form>
-      </div>
+      </span>
+      </Draggable>
     );
   }
 }

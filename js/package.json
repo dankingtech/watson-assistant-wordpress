@@ -4,7 +4,8 @@
   "private": true,
   "dependencies": {
     "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "react-draggable": "^2.2.6"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
