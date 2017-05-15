@@ -114,8 +114,6 @@ class Settings {
     public static function description_advanced() {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
-            <?php esc_html_e('These settings allow advanced users to
-                change more specific settings.', 'watsonconv') ?> <br />
         </p>
     <?php
     }
@@ -129,6 +127,12 @@ class Settings {
         <input name="watsonconv_auth_method" id="watsonconv_auth_method" type="radio" value="token"
             <?php checked('token', get_option('watsonconv_auth_method')) ?> >
             Authentication Token (Direct requests to Watson)
+        <br />
+        <p style='margin-top: 1em' >
+            <a href="https://www.ibm.com/watson/developercloud/doc/common/getting-started-develop.html" target="_blank">
+                Click here for details
+            </a>
+        </p>
     <?php
     }
 
