@@ -5,22 +5,41 @@ export default class ChatBox extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      messages: [],
-      newMessage: '',
-      context: null,
-      minimized: false
-    };
+    if (typeof(sessionStorage) !== 'undefined' &&
+        sessionStorage.getItem('chat_bot_state') !== null)
+    {
+      this.state = JSON.parse(sessionStorage.getItem('chat_bot_state'));
+    } else {
+      this.state = {
+        messages: [],
+        newMessage: '',
+        context: null,
+        minimized: false
+      };
+    }
   }
 
   componentDidMount(props) {
-    // Start conversation.
-    this.sendMessage();
+    // If conversation already exists, scroll to bottom, otherwise start conversation.
+    if (this.state.messages === []) {
+      this.sendMessage();
+    } else if (!this.state.minimized) {
+      this.messageList.scrollTop = this.messageList.scrollHeight;
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.messages.length !== this.state.messages.length) {
-      jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
+    if (typeof(sessionStorage) !== 'undefined') {
+      sessionStorage.setItem('chat_bot_state', JSON.stringify(this.state))
+    }
+
+    // Ensure that chat box stays scrolled to bottom
+    if (!this.state.minimized) {
+      if (prevState.messages.length !== this.state.messages.length) {
+        jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
+      } else if (prevState.minimized != this.state.minimized) {
+        this.messageList.scrollTop = this.messageList.scrollHeight;
+      }
     }
   }
 
