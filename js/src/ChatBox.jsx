@@ -21,7 +21,7 @@ export default class ChatBox extends Component {
 
   componentDidMount(props) {
     // If conversation already exists, scroll to bottom, otherwise start conversation.
-    if (this.state.messages === []) {
+    if (this.state.messages.length === 0) {
       this.sendMessage();
     } else if (!this.state.minimized) {
       this.messageList.scrollTop = this.messageList.scrollHeight;
