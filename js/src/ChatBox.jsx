@@ -99,10 +99,10 @@ export default class ChatBox extends Component {
 
   render() {
     return (
-      <Draggable>
+      <Draggable handle='.popup-head'>
       <span className='popup-box-wrapper'>
         <div className='popup-box'>
-          <div className='popup-head react-draggable'>
+          <div className='popup-head'>
             Watson
             <span className='dashicons dashicons-no-alt popup-control'
               onClick={this.props.closeChat}></span>
