@@ -7,6 +7,6 @@ function closeChat() {
 }
 
 ReactDOM.render(
-  <ChatBox closeChat={closeChat} />,
+  <ChatBox closeChat={closeChat} defaultPosition={{bottom: 10, right: 10}} />,
   document.getElementById('chat-box')
 );

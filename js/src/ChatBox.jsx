@@ -17,6 +17,14 @@ export default class ChatBox extends Component {
         minimized: false
       };
     }
+
+    if (typeof(sessionStorage) !== 'undefined' &&
+        sessionStorage.getItem('chat_bot_position') !== null)
+    {
+      this.defaultPosition = JSON.parse(sessionStorage.getItem('chat_bot_position'));
+    } else {
+      this.defaultPosition = this.props.defaultPosition;
+    }
   }
 
   componentDidMount(props) {
@@ -87,9 +95,18 @@ export default class ChatBox extends Component {
     this.setState({newMessage: e.target.value});
   }
 
+  savePosition(e, data) {
+    let {bottom, right} = data.node.getBoundingClientRect();
+    sessionStorage.setItem('chat_bot_position', JSON.stringify({
+      bottom: (1 - bottom / window.innerHeight) * 100,
+      right: (1 - right / window.innerWidth) * 100
+    }));
+  }
+
   renderMessage(message, index) {
     return (
-      <div key={`message${index}`}
+      <div
+        key={`message${index}`}
         className={`popup-message ${message.from}-message`}
       >
         {message.text}
@@ -98,9 +115,14 @@ export default class ChatBox extends Component {
   }
 
   render() {
+    let {bottom, right} = this.defaultPosition;
+
     return (
-      <Draggable handle='.popup-head'>
-      <span className='popup-box-wrapper'>
+      <Draggable handle='.popup-head' onStop={this.savePosition}>
+      <span
+        style={{bottom: `${bottom}%`, right: `${right}%`}}
+        className='popup-box-wrapper'
+      >
         <div className='popup-box'>
           <div className='popup-head'>
             Watson
