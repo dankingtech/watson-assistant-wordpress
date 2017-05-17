@@ -9,6 +9,7 @@ class Settings {
 
     public static function init_settings() {
         self::init_workspace_settings();
+        self::init_behaviour_settings();
         self::init_advanced_settings();
     }
 
@@ -51,6 +52,8 @@ class Settings {
     <?php
     }
 
+    // ------------ Workspace Credentials ---------------
+
     public static function init_workspace_settings() {
         add_settings_section('watsonconv_workspace', 'Workspace Credentials',
             array(__CLASS__, 'description_workspace'), 'watsonconv');
@@ -83,35 +86,69 @@ class Settings {
     public static function id_render() {
     ?>
         <input name="watsonconv_id" id="watsonconv_id" type="text"
-        value="<?php echo get_option('watsonconv_id') ?>" />
+            value="<?php echo get_option('watsonconv_id') ?>"
+            style="width: 22em" />
     <?php
     }
 
     public static function username_render() {
     ?>
         <input name="watsonconv_username" id="watsonconv_username" type="text"
-        value="<?php echo get_option('watsonconv_username') ?>" />
+            value="<?php echo get_option('watsonconv_username') ?>"
+            style="width: 22em"/>
     <?php
     }
 
     public static function password_render() {
     ?>
         <input name="watsonconv_password" id="watsonconv_password" type="password"
-        value="<?php echo get_option('watsonconv_password') ?>" />
+            size=11 value="<?php echo get_option('watsonconv_password') ?>"
+            style="width: 8em" />
     <?php
     }
+
+    // ------------- Behaviour Settings ----------------
+
+    public static function init_behaviour_settings() {
+        add_settings_section('watsonconv_behaviour', 'Behaviour',
+            array(__CLASS__, 'description_behaviour'), 'watsonconv');
+
+        add_settings_field('watsonconv_delay', 'Delay Before Pop-Up',
+            array(__CLASS__, 'delay_render'), 'watsonconv', 'watsonconv_behaviour');
+
+        register_setting('watsonconv', 'watsonconv_delay');
+    }
+
+    public static function description_behaviour($args) {
+    ?>
+        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+            Here you can customize how you want the chat box to behave.
+        </p>
+    <?php
+    }
+
+    public static function delay_render() {
+    ?>
+        <input name="watsonconv_delay" id="watsonconv_delay" type="number"
+            value="<?php echo get_option('watsonconv_delay') ?>"
+            style="width: 4em" />
+        seconds
+    <?php
+    }
+
+    // -------------- Advanced Settings -----------------
 
     public static function init_advanced_settings() {
         add_settings_section('watsonconv_advanced', 'Advanced Settings',
             array(__CLASS__, 'description_advanced'), 'watsonconv');
 
-        add_settings_field('watsonconv_auth', 'Authentication Method',
+        add_settings_field('watsonconv_auth_method', 'Authentication Method',
             array(__CLASS__, 'auth_method_render'), 'watsonconv', 'watsonconv_advanced');
 
         register_setting('watsonconv', 'watsonconv_auth_method');
     }
 
-    public static function description_advanced() {
+    public static function description_advanced($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
         </p>

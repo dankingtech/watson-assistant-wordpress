@@ -38,6 +38,7 @@ add_action('wp_footer', function () {
         <div id="chat-box"></div>
     <?php
         wp_enqueue_script('chat-app', plugin_dir_url( __FILE__ ).'app.js');
+        wp_localize_script('chat-app', 'delay', (int)get_option('watsonconv_delay', 0));
     }
 });
 

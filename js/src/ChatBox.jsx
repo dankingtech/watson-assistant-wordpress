@@ -23,7 +23,7 @@ export default class ChatBox extends Component {
     {
       this.defaultPosition = JSON.parse(sessionStorage.getItem('chat_bot_position'));
     } else {
-      this.defaultPosition = this.props.defaultPosition;
+      this.defaultPosition = this.props.defaultPosition || {bottom: 10, right: 10};
     }
   }
 
