@@ -42,6 +42,12 @@ class Settings {
         }
     }
 
+    public static function add_settings_link($links) {
+            $settings_link = '<a href="options-general.php?page='.MENU_SLUG.'">'
+                . esc_html__('Settings', MENU_SLUG) . '</a>';
+            return [$settings_link] + $links;
+    }
+
     public static function page_render() {
     ?>
       <div class="wrap">

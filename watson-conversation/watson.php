@@ -24,6 +24,7 @@ register_deactivation_hook(WATSON_CONV_FILE, 'WatsonConv\Settings::unregister');
 $path = plugin_basename( __FILE__ );
 
 add_action("after_plugin_row_{$path}", 'WatsonConv\Settings::render_notice', 10, 3);
+add_filter("plugin_action_links_{$path}", 'WatsonConv\Settings::add_settings_link');
 
 // ----- Frontend --------
 
