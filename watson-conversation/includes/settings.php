@@ -2,11 +2,11 @@
 namespace WatsonConv;
 
 class Settings {
-    const MENU_SLUG = 'watsonconv';
+    const SLUG = 'watsonconv';
 
     public static function init_page() {
         add_options_page('Watson Conversation', 'Watson', 'manage_options',
-            MENU_SLUG, array(__CLASS__, 'page_render'));
+            self::SLUG, array(__CLASS__, 'page_render'));
     }
 
     public static function init_settings() {
@@ -16,11 +16,11 @@ class Settings {
     }
 
     public static function unregister() {
-        unregister_setting(MENU_SLUG, 'watsonconv_id');
-        unregister_setting(MENU_SLUG, 'watsonconv_username');
-        unregister_setting(MENU_SLUG, 'watsonconv_password');
-        unregister_setting(MENU_SLUG, 'watsonconv_auth_method');
-        unregister_setting(MENU_SLUG, 'watsonconv_delay');
+        unregister_setting(self::SLUG, 'watsonconv_id');
+        unregister_setting(self::SLUG, 'watsonconv_username');
+        unregister_setting(self::SLUG, 'watsonconv_password');
+        unregister_setting(self::SLUG, 'watsonconv_auth_method');
+        unregister_setting(self::SLUG, 'watsonconv_delay');
     }
 
     public static function render_notice($plugin_file, $plugin_data, $status) {
@@ -33,8 +33,8 @@ class Settings {
                      style="padding:0.5em; padding-left:1em; margin:0">
                     <span style='color:orange; margin-right:0.3em'
                           class='dashicons dashicons-admin-settings'></span>
-                    <a href="options-general.php?page=<?php echo MENU_SLUG ?>">
-                        <?php esc_html_e('Please fill in your Watson Conversation Workspace Credentials.', MENU_SLUG) ?>
+                    <a href="options-general.php?page=<?php echo self::SLUG ?>">
+                        <?php esc_html_e('Please fill in your Watson Conversation Workspace Credentials.', self::SLUG) ?>
                     </a>
                 </div>
             </td></tr>
@@ -43,18 +43,18 @@ class Settings {
     }
 
     public static function add_settings_link($links) {
-            $settings_link = '<a href="options-general.php?page='.MENU_SLUG.'">'
-                . esc_html__('Settings', MENU_SLUG) . '</a>';
+            $settings_link = '<a href="options-general.php?page='.self::SLUG.'">'
+                . esc_html__('Settings', self::SLUG) . '</a>';
             return [$settings_link] + $links;
     }
 
     public static function page_render() {
     ?>
       <div class="wrap">
-          <h2><?php esc_html_e('Watson Conversation Settings', MENU_SLUG); ?></h2>
+          <h2><?php esc_html_e('Watson Conversation Settings', self::SLUG); ?></h2>
           <form action="options.php" method="POST">
-            <?php settings_fields(MENU_SLUG); ?>
-            <?php do_settings_sections(MENU_SLUG); ?>
+            <?php settings_fields(self::SLUG); ?>
+            <?php do_settings_sections(self::SLUG); ?>
             <?php submit_button(); ?>
           </form>
       </div>
@@ -65,28 +65,28 @@ class Settings {
 
     public static function init_workspace_settings() {
         add_settings_section('watsonconv_workspace', 'Workspace Credentials',
-            array(__CLASS__, 'description_workspace'), MENU_SLUG);
+            array(__CLASS__, 'description_workspace'), self::SLUG);
 
         add_settings_field('watsonconv_id', 'Workspace ID', array(__CLASS__, 'id_render'),
-            MENU_SLUG, 'watsonconv_workspace');
+            self::SLUG, 'watsonconv_workspace');
         add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'username_render'),
-            MENU_SLUG, 'watsonconv_workspace');
+            self::SLUG, 'watsonconv_workspace');
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'password_render'),
-            MENU_SLUG, 'watsonconv_workspace');
+            self::SLUG, 'watsonconv_workspace');
 
-        register_setting(MENU_SLUG, 'watsonconv_id');
-        register_setting(MENU_SLUG, 'watsonconv_username');
-        register_setting(MENU_SLUG, 'watsonconv_password');
+        register_setting(self::SLUG, 'watsonconv_id');
+        register_setting(self::SLUG, 'watsonconv_username');
+        register_setting(self::SLUG, 'watsonconv_password');
     }
 
     public static function description_workspace($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
             <?php esc_html_e('Here, you can specify the Workspace ID for your Watson
-                Conversation Workspace in addition to the required credentials.', MENU_SLUG) ?> <br />
-            <?php esc_html_e('Note: These are not the same as your Bluemix Login Credentials.', MENU_SLUG) ?>
+                Conversation Workspace in addition to the required credentials.', self::SLUG) ?> <br />
+            <?php esc_html_e('Note: These are not the same as your Bluemix Login Credentials.', self::SLUG) ?>
             <a href='https://www.ibm.com/watson/developercloud/doc/common/getting-started-credentials.html' target="_blank">
-                <?php esc_html_e('Click here for details.', MENU_SLUG) ?>
+                <?php esc_html_e('Click here for details.', self::SLUG) ?>
             </a>
         </p>
     <?php
@@ -120,18 +120,18 @@ class Settings {
 
     public static function init_behaviour_settings() {
         add_settings_section('watsonconv_behaviour', 'Behaviour',
-            array(__CLASS__, 'description_behaviour'), MENU_SLUG);
+            array(__CLASS__, 'description_behaviour'), self::SLUG);
 
-        add_settings_field('watsonconv_delay', esc_html__('Delay Before Pop-Up', MENU_SLUG),
-            array(__CLASS__, 'delay_render'), MENU_SLUG, 'watsonconv_behaviour');
+        add_settings_field('watsonconv_delay', esc_html__('Delay Before Pop-Up', self::SLUG),
+            array(__CLASS__, 'delay_render'), self::SLUG, 'watsonconv_behaviour');
 
-        register_setting(MENU_SLUG, 'watsonconv_delay');
+        register_setting(self::SLUG, 'watsonconv_delay');
     }
 
     public static function description_behaviour($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
-            <?php esc_html_e('Here you can customize how you want the chat box to behave.', MENU_SLUG) ?>
+            <?php esc_html_e('Here you can customize how you want the chat box to behave.', self::SLUG) ?>
         </p>
     <?php
     }
@@ -149,12 +149,12 @@ class Settings {
 
     public static function init_advanced_settings() {
         add_settings_section('watsonconv_advanced', 'Advanced Settings',
-            array(__CLASS__, 'description_advanced'), MENU_SLUG);
+            array(__CLASS__, 'description_advanced'), self::SLUG);
 
         add_settings_field('watsonconv_auth_method', 'Authentication Method',
-            array(__CLASS__, 'auth_method_render'), MENU_SLUG, 'watsonconv_advanced');
+            array(__CLASS__, 'auth_method_render'), self::SLUG, 'watsonconv_advanced');
 
-        register_setting(MENU_SLUG, 'watsonconv_auth_method');
+        register_setting(self::SLUG, 'watsonconv_auth_method');
     }
 
     public static function description_advanced($args) {
@@ -168,15 +168,15 @@ class Settings {
     ?>
         <input name="watsonconv_auth_method" id="watsonconv_auth_method" type="radio" value="basic"
             <?php checked('basic', get_option('watsonconv_auth_method')) ?> >
-            <?php esc_html_e('HTTP Basic Authentication (Relaying requests through server)', MENU_SLUG) ?>
+            <?php esc_html_e('HTTP Basic Authentication (Relaying requests through server)', self::SLUG) ?>
         <br />
         <input name="watsonconv_auth_method" id="watsonconv_auth_method" type="radio" value="token"
             <?php checked('token', get_option('watsonconv_auth_method')) ?> >
-            <?php esc_html_e('Authentication Token (Direct requests to Watson)', MENU_SLUG) ?>
+            <?php esc_html_e('Authentication Token (Direct requests to Watson)', self::SLUG) ?>
         <br />
         <p style='margin-top: 1em' >
             <a href="https://www.ibm.com/watson/developercloud/doc/common/getting-started-develop.html" target="_blank">
-                <?php esc_html_e('Click here for details', MENU_SLUG) ?>
+                <?php esc_html_e('Click here for details', self::SLUG) ?>
             </a>
         </p>
     <?php
