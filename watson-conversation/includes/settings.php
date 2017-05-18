@@ -125,7 +125,21 @@ class Settings {
         add_settings_field('watsonconv_delay', esc_html__('Delay Before Pop-Up', self::SLUG),
             array(__CLASS__, 'delay_render'), self::SLUG, 'watsonconv_behaviour');
 
+        add_settings_field('watsonconv_show_on', esc_html__('Show Chat Box On', self::SLUG),
+            array(__CLASS__, 'show_on_render'), self::SLUG, 'watsonconv_behaviour');
+        add_settings_field('watsonconv_pages', esc_html__('Pages', self::SLUG),
+            array(__CLASS__, 'pages_render'), self::SLUG, 'watsonconv_behaviour');
+        add_settings_field('watsonconv_posts', esc_html__('Posts', self::SLUG),
+            array(__CLASS__, 'posts_render'), self::SLUG, 'watsonconv_behaviour');
+        add_settings_field('watsonconv_categories', esc_html__('Categories', self::SLUG),
+            array(__CLASS__, 'categories_render'), self::SLUG, 'watsonconv_behaviour');
+
         register_setting(self::SLUG, 'watsonconv_delay');
+
+        register_setting(self::SLUG, 'watsonconv_show_on', array(__CLASS__, 'show_on_sanitize'));
+        register_setting(self::SLUG, 'watsonconv_pages', array(__CLASS__, 'array_sanitize'));
+        register_setting(self::SLUG, 'watsonconv_posts', array(__CLASS__, 'array_sanitize'));
+        register_setting(self::SLUG, 'watsonconv_categories', array(__CLASS__, 'array_sanitize'));
     }
 
     public static function description_behaviour($args) {
@@ -136,12 +150,123 @@ class Settings {
     <?php
     }
 
+    public static function show_on_sanitize($val) {
+        return ($val == 'only') ? 'only' : 'all_except';
+    }
+
+    public static function array_sanitize($val) {
+        return empty($val) ? array() : $val;
+    }
+
     public static function delay_render() {
     ?>
         <input name="watsonconv_delay" id="watsonconv_delay" type="number"
             value="<?php echo get_option('watsonconv_delay') ?>"
             style="width: 4em" />
         seconds
+    <?php
+    }
+
+    public static function show_on_render() {
+    ?>
+        <input name="watsonconv_show_on" id="watsonconv_show_on" type="radio" value="all_except"
+            <?php checked('all_except', get_option('watsonconv_show_on')) ?> >
+            <?php esc_html_e('All Pages Except the Following', self::SLUG) ?>
+        <br />
+        <input name="watsonconv_show_on" id="watsonconv_show_on" type="radio" value="only"
+            <?php checked('only', get_option('watsonconv_show_on')) ?> >
+            <?php esc_html_e('Only the Following Pages', self::SLUG) ?>
+        <br />
+    <?php
+    }
+
+    public static function pages_render() {
+    ?>
+        <fieldset style="border: 1px solid black; padding: 1em">
+            <legend>Select Pages:</legend>
+            <?php
+                $pages = get_pages(array(
+                    'sort_column' => 'post_date',
+                    'sort_order' => 'desc'
+                ));
+                $checked_pages = get_option('watsonconv_pages');
+
+                foreach ($pages as $page) {
+                ?>
+                    <input
+                        type="checkbox" id="pages_<?php echo $page->ID ?>"
+                        name="watsonconv_pages[]" value="<?php echo $page->ID ?>"
+                        <?php if (in_array($page->ID, (array)$checked_pages)) {echo 'checked';} ?>
+                    />
+                    <label for="pages_<?php echo $page->ID; ?>">
+                        <?php echo $page->post_title ?>
+                    </label>
+                    <span style="float: right">
+                        <?php echo $page->post_date ?>
+                    </span>
+                    <br>
+                <?php
+                }
+            ?>
+        </fieldset
+    <?php
+    }
+
+    public static function posts_render() {
+    ?>
+        <fieldset style="border: 1px solid black; padding: 1em">
+            <legend>Select Posts:</legend>
+            <?php
+                $posts = get_posts(array('order_by' => 'date'));
+                $checked_posts = get_option('watsonconv_posts');
+
+                foreach ($posts as $post) {
+                ?>
+                    <input
+                        type="checkbox" id="posts_<?php echo $post->ID ?>"
+                        name="watsonconv_posts[]" value="<?php echo $post->ID ?>"
+                        <?php if (in_array($post->ID, (array)$checked_posts)) {echo 'checked';} ?>
+                    />
+                    <label for="posts_<?php echo $post->ID; ?>">
+                        <?php echo $post->post_title ?>
+                    </label>
+                    <span style="float: right">
+                        <?php echo $post->post_date ?>
+                    </span>
+                    <br>
+                <?php
+                }
+            ?>
+        </fieldset
+    <?php
+    }
+
+    public static function categories_render() {
+    ?>
+        <fieldset style="border: 1px solid black; padding: 1em">
+            <legend>Select Categories:</legend>
+            <?php
+                $cats = get_categories(array('hide_empty' => 0));
+                $checked_cats = get_option('watsonconv_categories');
+
+                foreach ($cats as $cat) {
+                ?>
+                    <input
+                        type="checkbox" id="cats_<?php echo $cat->cat_ID ?>"
+                        name="watsonconv_categories[]" value="<?php echo $cat->cat_ID ?>"
+                        <?php if (in_array($cat->cat_ID, (array)$checked_cats)) {echo 'checked';} ?>
+                    />
+                    <label for="cats_<?php echo $cat->cat_ID ?>">
+                        <?php echo $cat->cat_name ?>
+                    </label>
+                    <span style="float: right; margin-left: 4em">
+                        <?php echo $cat->category_description ?>
+                    </span>
+                    <br>
+                <?php
+                }
+            ?>
+        </fieldset
     <?php
     }
 

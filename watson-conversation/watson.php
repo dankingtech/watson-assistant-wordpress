@@ -33,14 +33,21 @@ add_action('wp_enqueue_scripts', function() {
 });
 
 add_action('wp_footer', function () {
-    if (!empty(get_option('watsonconv_id')) &&
-        !empty(get_option('watsonconv_username')) &&
-        !empty(get_option('watsonconv_password'))) {
-    ?>
-        <div id="chat-box"></div>
-    <?php
-        wp_enqueue_script('chat-app', plugin_dir_url( __FILE__ ).'app.js');
-        wp_localize_script('chat-app', 'delay', (int)get_option('watsonconv_delay', 0));
+    $page_selected =
+        is_page(get_option('watsonconv_pages', array())) ||
+        is_single(get_option('watsonconv_posts', array())) ||
+        in_category(get_option('watsonconv_categories', array()));
+
+    if ($page_selected == (get_option('watsonconv_show_on', 'only') == 'only')) {
+        if (!empty(get_option('watsonconv_id')) &&
+            !empty(get_option('watsonconv_username')) &&
+            !empty(get_option('watsonconv_password'))) {
+        ?>
+            <div id="chat-box"></div>
+        <?php
+            wp_enqueue_script('chat-app', plugin_dir_url( __FILE__ ).'app.js');
+            wp_localize_script('chat-app', 'delay', (int)get_option('watsonconv_delay', 0));
+        }
     }
 });
 
