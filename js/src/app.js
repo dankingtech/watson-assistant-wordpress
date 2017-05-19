@@ -18,5 +18,5 @@ if (typeof(sessionStorage) !== 'undefined' &&
 {
   renderApp();
 } else {
-  setTimeout(renderApp, delay*1000);
+  setTimeout(renderApp, settings['delay']*1000);
 }

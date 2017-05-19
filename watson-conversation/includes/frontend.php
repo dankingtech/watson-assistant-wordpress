@@ -19,8 +19,12 @@ class Frontend {
             ?>
                 <div id="chat-box"></div>
             <?php
+                $settings = array(
+                    'delay' => (int) get_option('watsonconv_delay', 0)
+                );
+
                 wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');
-                wp_localize_script('chat-app', 'delay', (int)get_option('watsonconv_delay', 0));
+                wp_localize_script('chat-app', 'settings', $settings);
             }
         }
     }

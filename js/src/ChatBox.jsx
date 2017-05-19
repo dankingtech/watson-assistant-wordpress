@@ -70,7 +70,7 @@ export default class ChatBox extends Component {
   }
 
   sendMessage() {
-    fetch('/wp-json/watsonconv/v1/message', {
+    fetch('?rest_route=/watsonconv/v1/message', {
       headers: {
         'Content-Type': 'application/json'
       },
