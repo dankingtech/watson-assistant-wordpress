@@ -155,7 +155,7 @@ class Settings {
     }
 
     public static function array_sanitize($val) {
-        return empty($val) ? array() : $val;
+        return empty($val) ? -1 : $val;
     }
 
     public static function delay_render() {

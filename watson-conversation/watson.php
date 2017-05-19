@@ -34,9 +34,9 @@ add_action('wp_enqueue_scripts', function() {
 
 add_action('wp_footer', function () {
     $page_selected =
-        is_page(get_option('watsonconv_pages', array())) ||
-        is_single(get_option('watsonconv_posts', array())) ||
-        in_category(get_option('watsonconv_categories', array()));
+        is_page(get_option('watsonconv_pages', -1)) ||
+        is_single(get_option('watsonconv_posts', -1)) ||
+        in_category(get_option('watsonconv_categories', -1));
 
     if ($page_selected == (get_option('watsonconv_show_on', 'only') == 'only')) {
         if (!empty(get_option('watsonconv_id')) &&
