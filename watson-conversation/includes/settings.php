@@ -161,7 +161,8 @@ class Settings {
     public static function delay_render() {
     ?>
         <input name="watsonconv_delay" id="watsonconv_delay" type="number"
-            value="<?php echo get_option('watsonconv_delay') ?>"
+            value="<?php echo empty(get_option('watsonconv_delay')) ?
+                        0 : get_option('watsonconv_delay')?>"
             style="width: 4em" />
         seconds
     <?php
@@ -170,7 +171,8 @@ class Settings {
     public static function show_on_render() {
     ?>
         <input name="watsonconv_show_on" id="watsonconv_show_on" type="radio" value="all_except"
-            <?php checked('all_except', get_option('watsonconv_show_on')) ?> >
+            <?php echo empty(get_option('watsonconv_show_on')) ?
+                'all_except' : checked('all_except', get_option('watsonconv_show_on'), false) ?> >
             <?php esc_html_e('All Pages Except the Following', self::SLUG) ?>
         <br />
         <input name="watsonconv_show_on" id="watsonconv_show_on" type="radio" value="only"
