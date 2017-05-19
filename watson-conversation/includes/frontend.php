@@ -1,0 +1,27 @@
+<?php
+namespace WatsonConv;
+
+class Frontend {
+    public static function load_styles() {
+        wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css');
+    }
+
+    public static function render_chat_box() {
+        $page_selected =
+            is_page(get_option('watsonconv_pages', -1)) ||
+            is_single(get_option('watsonconv_posts', -1)) ||
+            in_category(get_option('watsonconv_categories', -1));
+
+        if ($page_selected == (get_option('watsonconv_show_on', 'only') == 'only')) {
+            if (!empty(get_option('watsonconv_id')) &&
+                !empty(get_option('watsonconv_username')) &&
+                !empty(get_option('watsonconv_password'))) {
+            ?>
+                <div id="chat-box"></div>
+            <?php
+                wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');
+                wp_localize_script('chat-app', 'delay', (int)get_option('watsonconv_delay', 0));
+            }
+        }
+    }
+}
