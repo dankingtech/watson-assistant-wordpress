@@ -7,7 +7,7 @@
 .popup-box
 {
   width: 300px;
-  font-size: 14px;
+  font-size: 11pt;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
   background-color: rgb(240, 240, 240);
@@ -20,10 +20,9 @@
 
 .popup-box .popup-head
 {
-  padding: 6px 8px 6px 8px;
+  padding: 0.5em 0.6em 0.5em 0.6em;
   font-weight: bold;
   cursor: move;
-  height: 35px;
   color: white;
   background-color: rgb(35, 40, 45);
 }
@@ -37,9 +36,8 @@
 {
   float: right;
   cursor: pointer;
-  font-size: 18px;
-  line-height: 23px;
-  margin-left: 5px;
+  font-size: 1.35em;
+  margin-left: 0.3em;
   color: white;
   opacity: 0.7;
 }
@@ -51,9 +49,10 @@
 
 .popup-box .popup-messages
 {
-  padding: 10px;
+  padding: 0.6em;
   padding-bottom: 0;
   height: 265px;
+  width: 100%;
   bottom: 0;
   overflow-y: scroll;
   background-color: rgb(233, 235, 237);
@@ -61,24 +60,25 @@
 
 .popup-box .popup-message-form
 {
-  height: 40px;
+  height: 3em;
   border-top: 1px solid rgb(206, 210, 214);
 }
 
-.popup-box .popup-message-input
+.popup-box .popup-message-form .popup-message-input
 {
   height: 100%;
+  width: 100%;
   border: 0;
-  font-size: 14px;
+  font-size: 11pt;
   background-color: white;
 }
 
 .popup-box .popup-messages .popup-message
 {
   clear: both;
-  border-radius: 20px;
-  margin-bottom: 10px;
-  padding: 8px 12px 8px 12px;
+  border-radius: 1.4em;
+  margin-bottom: 0.7em;
+  padding: 0.5em 0.8em 0.5em 0.8em;
   max-width: 80%;
 }
 

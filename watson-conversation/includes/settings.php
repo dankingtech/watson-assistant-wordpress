@@ -12,14 +12,13 @@ class Settings {
     public static function init_settings() {
         self::init_workspace_settings();
         self::init_behaviour_settings();
-        self::init_advanced_settings();
+        self::init_appearance_settings();
     }
 
     public static function unregister() {
         unregister_setting(self::SLUG, 'watsonconv_id');
         unregister_setting(self::SLUG, 'watsonconv_username');
         unregister_setting(self::SLUG, 'watsonconv_password');
-        unregister_setting(self::SLUG, 'watsonconv_auth_method');
         unregister_setting(self::SLUG, 'watsonconv_delay');
     }
 
@@ -272,41 +271,33 @@ class Settings {
     <?php
     }
 
-    // -------------- Advanced Settings -----------------
+    // ------------- Appearance Settings ----------------
 
-    public static function init_advanced_settings() {
-        add_settings_section('watsonconv_advanced', 'Advanced Settings',
-            array(__CLASS__, 'description_advanced'), self::SLUG);
+    public static function init_appearance_settings() {
+        add_settings_section('watsonconv_appearance', 'Appearance',
+            array(__CLASS__, 'description_appearance'), self::SLUG);
 
-        add_settings_field('watsonconv_auth_method', 'Authentication Method',
-            array(__CLASS__, 'auth_method_render'), self::SLUG, 'watsonconv_advanced');
+        add_settings_field('watsonconv_font_size', 'Font Size', array(__CLASS__, 'font_size_render'),
+            self::SLUG, 'watsonconv_appearance');
 
-        register_setting(self::SLUG, 'watsonconv_auth_method');
+        register_setting(self::SLUG, 'watsonconv_font_size');
     }
 
-    public static function description_advanced($args) {
+    public static function description_appearance($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
+            <?php esc_html_e('This section allows you to specify how you want
+                the chat box to appear to your site visitor.', self::SLUG) ?>
         </p>
     <?php
     }
 
-    public static function auth_method_render() {
+    public static function font_size_render() {
     ?>
-        <input name="watsonconv_auth_method" id="watsonconv_auth_method" type="radio" value="basic"
-            <?php checked('basic', get_option('watsonconv_auth_method')) ?> >
-            <?php esc_html_e('HTTP Basic Authentication (Relaying requests through server)', self::SLUG) ?>
-        <br />
-        <input name="watsonconv_auth_method" id="watsonconv_auth_method" type="radio" value="token"
-            <?php checked('token', get_option('watsonconv_auth_method')) ?> >
-            <?php esc_html_e('Authentication Token (Direct requests to Watson)', self::SLUG) ?>
-        <br />
-        <p style='margin-top: 1em' >
-            <a href="https://www.ibm.com/watson/developercloud/doc/common/getting-started-develop.html" target="_blank">
-                <?php esc_html_e('Click here for details', self::SLUG) ?>
-            </a>
-        </p>
+        <input name="watsonconv_font_size" id="watsonconv_font_size"
+            type="number" min=9 max=13 step=0.5 style="width: 4em"
+            value="<?php echo empty(get_option('watsonconv_font_size')) ?
+                        11 : get_option('watsonconv_font_size')?>" />
     <?php
     }
-
 }

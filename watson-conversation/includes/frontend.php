@@ -4,6 +4,20 @@ namespace WatsonConv;
 class Frontend {
     public static function load_styles() {
         wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css');
+
+        $font_size = get_option('watsonconv_font_size', 11);
+
+        wp_add_inline_style('chat-style', '
+            .popup-box
+            {
+                font-size: '.$font_size.'pt;
+                width: '.(165 + 4.2*$font_size).'pt;
+            }
+            .popup-box .popup-message-form .popup-message-input
+            {
+                font-size: '.$font_size.'pt;
+            }
+        ');
     }
 
     public static function render_chat_box() {
