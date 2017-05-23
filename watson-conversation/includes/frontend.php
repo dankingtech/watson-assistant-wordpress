@@ -12,7 +12,7 @@ class Frontend {
             is_single(get_option('watsonconv_posts', -1)) ||
             in_category(get_option('watsonconv_categories', -1));
 
-        if ($page_selected == (get_option('watsonconv_show_on', 'only') == 'only')) {
+        if ($page_selected == (get_option('watsonconv_show_on', 'all_except') == 'only')) {
             if (!empty(get_option('watsonconv_id')) &&
                 !empty(get_option('watsonconv_username')) &&
                 !empty(get_option('watsonconv_password'))) {

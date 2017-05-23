@@ -172,7 +172,7 @@ class Settings {
     ?>
         <input name="watsonconv_show_on" id="watsonconv_show_on" type="radio" value="all_except"
             <?php echo empty(get_option('watsonconv_show_on')) ?
-                'all_except' : checked('all_except', get_option('watsonconv_show_on'), false) ?> >
+                'checked' : checked('all_except', get_option('watsonconv_show_on'), false) ?> >
             <?php esc_html_e('All Pages Except the Following', self::SLUG) ?>
         <br />
         <input name="watsonconv_show_on" id="watsonconv_show_on" type="radio" value="only"

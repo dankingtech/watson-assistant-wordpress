@@ -29,7 +29,7 @@ class API {
                     'Content-Type' => 'application/json'
                 ), 'body' => json_encode(array(
                     'input' => $body['input'],
-                    'context' => empty($body['context']) ? new stdClass() : $body['context']
+                    'context' => empty($body['context']) ? new \stdClass() : $body['context']
                 ))
             )
         );
