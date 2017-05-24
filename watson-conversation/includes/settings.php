@@ -22,6 +22,14 @@ class Settings {
         unregister_setting(self::SLUG, 'watsonconv_delay');
     }
 
+    public static function init_color_picker($hook_suffix) {
+        if ($hook_suffix == 'settings_page_'.self::SLUG) {
+            wp_enqueue_style('wp-color-picker');
+            wp_enqueue_script('color-picker', WATSON_CONV_URL.'includes/color-picker.js',
+                array('wp-color-picker'), false, true );
+        }
+    }
+
     public static function render_notice($plugin_file, $plugin_data, $status) {
         if (empty(get_option('watsonconv_id')) ||
             empty(get_option('watsonconv_username')) ||
@@ -277,10 +285,13 @@ class Settings {
         add_settings_section('watsonconv_appearance', 'Appearance',
             array(__CLASS__, 'description_appearance'), self::SLUG);
 
-        add_settings_field('watsonconv_font_size', 'Font Size', array(__CLASS__, 'font_size_render'),
+        add_settings_field('watsonconv_font_size', 'Font Size',
+            array(__CLASS__, 'font_size_render'), self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_color', 'Color', array(__CLASS__, 'color_render'),
             self::SLUG, 'watsonconv_appearance');
 
         register_setting(self::SLUG, 'watsonconv_font_size');
+        register_setting(self::SLUG, 'watsonconv_color');
     }
 
     public static function description_appearance($args) {
@@ -296,8 +307,15 @@ class Settings {
     ?>
         <input name="watsonconv_font_size" id="watsonconv_font_size"
             type="number" min=9 max=13 step=0.5 style="width: 4em"
-            value="<?php echo empty(get_option('watsonconv_font_size')) ?
-                        11 : get_option('watsonconv_font_size')?>" />
+            value="<?php echo get_option('watsonconv_font_size', 11) ?>" />
+    <?php
+    }
+
+    public static function color_render() {
+    ?>
+        <input name="watsonconv_color" id="watsonconv_color"
+            type="text" style="width: 6em"
+            value="<?php echo get_option('watsonconv_color', '#23282d')?>" />
     <?php
     }
 }

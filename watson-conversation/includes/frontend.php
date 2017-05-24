@@ -6,6 +6,17 @@ class Frontend {
         wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css');
 
         $font_size = get_option('watsonconv_font_size', 11);
+        $color = get_option('watsonconv_color', '#23282d');
+
+        $r = hexdec(substr($color,1,2));
+        $g = hexdec(substr($color,3,2));
+        $b = hexdec(substr($color,5,2));
+
+        if($r + $g + $b > 382){
+            $text_color = 'black';
+        } else {
+            $text_color = 'white';
+        }
 
         wp_add_inline_style('chat-style', '
             .popup-box
@@ -13,9 +24,20 @@ class Frontend {
                 font-size: '.$font_size.'pt;
                 width: '.(165 + 4.2*$font_size).'pt;
             }
+            .popup-box .popup-head
+            {
+                background-color: '.$color.';
+                color: '.$text_color.';
+            }
             .popup-box .popup-message-form .popup-message-input
             {
                 font-size: '.$font_size.'pt;
+            }
+            .popup-box .popup-messages .watson-message
+            {
+              float: left;
+              background-color: '.$color.';
+              color: '.$text_color.';
             }
         ');
     }
