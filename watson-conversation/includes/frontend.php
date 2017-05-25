@@ -3,7 +3,7 @@ namespace WatsonConv;
 
 class Frontend {
     public static function load_styles() {
-        wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css');
+        wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
         $color = get_option('watsonconv_color', '#23282d');

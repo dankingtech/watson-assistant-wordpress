@@ -96,11 +96,13 @@ export default class ChatBox extends Component {
   }
 
   savePosition(e, data) {
-    let {bottom, right} = data.node.getBoundingClientRect();
-    sessionStorage.setItem('chat_bot_position', JSON.stringify({
-      bottom: (1 - bottom / window.innerHeight) * 100,
-      right: (1 - right / window.innerWidth) * 100
-    }));
+    if (typeof(sessionStorage) !== 'undefined') {
+      let {bottom, right} = data.node.getBoundingClientRect();
+      sessionStorage.setItem('chat_bot_position', JSON.stringify({
+        bottom: (1 - bottom / window.innerHeight) * 100,
+        right: (1 - right / window.innerWidth) * 100
+      }));
+    }
   }
 
   renderMessage(message, index) {
@@ -108,8 +110,8 @@ export default class ChatBox extends Component {
       <div
         key={`message${index}`}
         className={`popup-message ${message.from}-message`}
+        dangerouslySetInnerHTML={{__html: message.text}}
       >
-        {message.text}
       </div>
     );
   }
@@ -117,39 +119,39 @@ export default class ChatBox extends Component {
   render() {
     let {bottom, right} = this.defaultPosition;
 
-    return (
-      <Draggable handle='.popup-head' onStop={this.savePosition}>
-      <span
-        style={{bottom: `${bottom}%`, right: `${right}%`}}
-        className='popup-box-wrapper'
-      >
-        <div className='popup-box'>
-          <div className='popup-head'>
-            Watson
-            <span className='dashicons dashicons-no-alt popup-control'
-              onClick={this.props.closeChat}></span>
-            <span className={`dashicons
-              dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
-              popup-control`}
-              onClick={this.toggleMinimize.bind(this)}></span>
-          </div>
-          {!this.state.minimized && <div>
-            <div className='popup-messages' ref={div => {this.messageList = div}}>
-              {this.state.messages.map(this.renderMessage)}
+    return (this.state.messages.length != 0) && <div>
+        <Draggable handle='.popup-head' onStop={this.savePosition}>
+        <span
+          style={{bottom: `${bottom}%`, right: `${right}%`}}
+          className='popup-box-wrapper'
+        >
+          <div className='popup-box'>
+            <div className='popup-head'>
+              Watson
+              <span className='dashicons dashicons-no-alt popup-control'
+                onClick={this.props.closeChat}></span>
+              <span className={`dashicons
+                dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
+                popup-control`}
+                onClick={this.toggleMinimize.bind(this)}></span>
             </div>
-            <form onSubmit={this.submitMessage.bind(this)} className='popup-message-form'>
-              <input
-                className='popup-message-input'
-                type='text'
-                placeholder='Type a message'
-                value={this.state.newMessage}
-                onChange={this.setMessage.bind(this)}
-              />
-            </form>
-          </div>}
-        </div>
-      </span>
-      </Draggable>
-    );
+            {!this.state.minimized && <div>
+              <div className='popup-messages' ref={div => {this.messageList = div}}>
+                {this.state.messages.map(this.renderMessage)}
+              </div>
+              <form onSubmit={this.submitMessage.bind(this)} className='popup-message-form'>
+                <input
+                  className='popup-message-input'
+                  type='text'
+                  placeholder='Type a message'
+                  value={this.state.newMessage}
+                  onChange={this.setMessage.bind(this)}
+                />
+              </form>
+            </div>}
+          </div>
+        </span>
+        </Draggable>
+      </div>;
   }
 }
