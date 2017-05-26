@@ -21,9 +21,7 @@ export default class ChatBox extends Component {
     if (typeof(sessionStorage) !== 'undefined' &&
         sessionStorage.getItem('chat_bot_position') !== null)
     {
-      this.defaultPosition = JSON.parse(sessionStorage.getItem('chat_bot_position'));
-    } else {
-      this.defaultPosition = this.props.defaultPosition || {bottom: 10, right: 10};
+      this.savedPosition = JSON.parse(sessionStorage.getItem('chat_bot_position'));
     }
   }
 
@@ -108,7 +106,7 @@ export default class ChatBox extends Component {
   renderMessage(message, index) {
     return (
       <div
-        key={`message${index}`}
+        key={index}
         className={`popup-message ${message.from}-message`}
         dangerouslySetInnerHTML={{__html: message.text}}
       >
@@ -117,12 +115,14 @@ export default class ChatBox extends Component {
   }
 
   render() {
-    let {bottom, right} = this.defaultPosition;
+    if (this.savedPosition) {
+      var {bottom, right} = this.savedPosition;
+    }
 
     return (this.state.messages.length != 0) && <div>
         <Draggable handle='.popup-head' onStop={this.savePosition}>
         <span
-          style={{bottom: `${bottom}%`, right: `${right}%`}}
+          style={this.savedPosition && {bottom: `${bottom}%`, right: `${right}%`}}
           className='popup-box-wrapper'
         >
           <div className='popup-box'>

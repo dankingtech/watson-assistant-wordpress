@@ -178,12 +178,11 @@ class Settings {
     public static function show_on_render() {
     ?>
         <input name="watsonconv_show_on" id="watsonconv_show_on" type="radio" value="all_except"
-            <?php echo empty(get_option('watsonconv_show_on')) ?
-                'checked' : checked('all_except', get_option('watsonconv_show_on'), false) ?> >
+            <?php checked('all_except', get_option('watsonconv_show_on', 'all_except')) ?> >
             <?php esc_html_e('All Pages Except the Following', self::SLUG) ?>
         <br />
         <input name="watsonconv_show_on" id="watsonconv_show_on" type="radio" value="only"
-            <?php checked('only', get_option('watsonconv_show_on')) ?> >
+            <?php checked('only', get_option('watsonconv_show_on', 'all_except')) ?> >
             <?php esc_html_e('Only the Following Pages', self::SLUG) ?>
         <br />
     <?php
@@ -289,9 +288,18 @@ class Settings {
             array(__CLASS__, 'font_size_render'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_color', 'Color', array(__CLASS__, 'color_render'),
             self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_x', 'Horizontal Position', array(__CLASS__, 'x_render'),
+            self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_y', 'Vertical Position', array(__CLASS__, 'y_render'),
+            self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_size', 'Window Size', array(__CLASS__, 'size_render'),
+            self::SLUG, 'watsonconv_appearance');
 
         register_setting(self::SLUG, 'watsonconv_font_size');
         register_setting(self::SLUG, 'watsonconv_color');
+        register_setting(self::SLUG, 'watsonconv_x');
+        register_setting(self::SLUG, 'watsonconv_y');
+        register_setting(self::SLUG, 'watsonconv_size');
     }
 
     public static function description_appearance($args) {
@@ -316,6 +324,48 @@ class Settings {
         <input name="watsonconv_color" id="watsonconv_color"
             type="text" style="width: 6em"
             value="<?php echo get_option('watsonconv_color', '#23282d')?>" />
+    <?php
+    }
+
+    public static function x_render() {
+    ?>
+        <input name="watsonconv_x" id="watsonconv_x" type="radio" value="left"
+            <?php checked('left', get_option('watsonconv_x', 'right')) ?> >
+            <?php esc_html_e('Left Side of Screen', self::SLUG) ?>
+        <br />
+        <input name="watsonconv_x" id="watsonconv_x" type="radio" value="right"
+            <?php checked('right', get_option('watsonconv_x', 'right')) ?> >
+            <?php esc_html_e('Right Side of Screen', self::SLUG) ?>
+        <br />
+    <?php
+    }
+
+    public static function y_render() {
+    ?>
+        <input name="watsonconv_y" id="watsonconv_y" type="radio" value="top"
+            <?php checked('top', get_option('watsonconv_y', 'bottom')) ?> >
+            <?php esc_html_e('Top Side of Screen', self::SLUG) ?>
+        <br />
+        <input name="watsonconv_y" id="watsonconv_y" type="radio" value="bottom"
+            <?php checked('bottom', get_option('watsonconv_y', 'bottom')) ?> >
+            <?php esc_html_e('Bottom Side of Screen', self::SLUG) ?>
+        <br />
+    <?php
+    }
+
+    public static function size_render() {
+    ?>
+        <input name="watsonconv_size" id="watsonconv_size" type="radio" value=160
+            <?php checked(160, get_option('watsonconv_size', 200)) ?> >
+            <?php esc_html_e('Small', self::SLUG) ?>
+        <br />
+        <input name="watsonconv_size" id="watsonconv_size" type="radio" value=200
+            <?php checked(200, get_option('watsonconv_size', 200)) ?> >
+            <?php esc_html_e('Medium', self::SLUG) ?>
+        <br />
+        <input name="watsonconv_size" id="watsonconv_size" type="radio" value=240
+            <?php checked(240, get_option('watsonconv_size', 200)) ?> >
+            <?php esc_html_e('Large', self::SLUG) ?>
     <?php
     }
 }

@@ -6,28 +6,44 @@ class Frontend {
         wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
+        $x_side = get_option('watsonconv_x', right);
+        $y_side = get_option('watsonconv_y', bottom);
         $color = get_option('watsonconv_color', '#23282d');
+        $messages_height = get_option('watsonconv_size', 200);
 
         $r = hexdec(substr($color,1,2));
         $g = hexdec(substr($color,3,2));
         $b = hexdec(substr($color,5,2));
 
-        if($r + $g + $b > 382){
+        if($r + $g + $b > 500){
             $text_color = 'black';
         } else {
             $text_color = 'white';
         }
 
         wp_add_inline_style('chat-style', '
+            .popup-box-wrapper
+            {
+              '.$x_side.': 10%;
+              '.$y_side.': 10%;
+            }
             .popup-box
             {
                 font-size: '.$font_size.'pt;
-                width: '.(165 + 4.2*$font_size).'pt;
+                width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
             }
             .popup-box .popup-head
             {
                 background-color: '.$color.';
                 color: '.$text_color.';
+            }
+            .popup-box .popup-messages
+            {
+                height: '.$messages_height.'pt
+            }
+            .popup-box .popup-messages:before
+            {
+                height: '.$messages_height.'pt
             }
             .popup-box .popup-message-form .popup-message-input
             {
