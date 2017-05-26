@@ -41,11 +41,7 @@ class Frontend {
             {
                 height: '.$messages_height.'pt
             }
-            .popup-box .popup-messages:before
-            {
-                height: '.$messages_height.'pt
-            }
-            .popup-box .popup-message-form .popup-message-input
+            .popup-box .popup-message-input
             {
                 font-size: '.$font_size.'pt;
             }

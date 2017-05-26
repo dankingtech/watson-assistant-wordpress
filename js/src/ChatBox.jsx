@@ -139,7 +139,7 @@ export default class ChatBox extends Component {
               <div className='popup-messages' ref={div => {this.messageList = div}}>
                 {this.state.messages.map(this.renderMessage)}
               </div>
-              <form onSubmit={this.submitMessage.bind(this)} className='popup-message-form'>
+              <form onSubmit={this.submitMessage.bind(this)}>
                 <input
                   className='popup-message-input'
                   type='text'
