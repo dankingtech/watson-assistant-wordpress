@@ -115,14 +115,17 @@ export default class ChatBox extends Component {
   }
 
   render() {
-    if (this.savedPosition) {
-      var {bottom, right} = this.savedPosition;
-    }
+    let {bottom, right} = this.savedPosition;
 
-    return (this.state.messages.length != 0) && <div>
-        <Draggable handle='.popup-head' onStop={this.savePosition}>
+    return (this.state.messages.length != 0) && (
+      <Draggable handle='.popup-head' onStop={this.savePosition}>
         <span
-          style={this.savedPosition && {bottom: `${bottom}%`, right: `${right}%`}}
+          style={this.savedPosition && {
+            bottom: `${this.savedPosition.bottom}%`,
+            right: `${this.savedPosition.right}%`,
+            top: 'auto',
+            left: 'auto'
+          }}
           className='popup-box-wrapper'
         >
           <div className='popup-box'>
@@ -151,7 +154,7 @@ export default class ChatBox extends Component {
             </div>}
           </div>
         </span>
-        </Draggable>
-      </div>;
+      </Draggable>
+    );
   }
 }
