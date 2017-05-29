@@ -47,9 +47,9 @@ class Frontend {
             }
             .popup-box .popup-messages .watson-message
             {
-              float: left;
-              background-color: '.$color.';
-              color: '.$text_color.';
+                float: left;
+                background-color: '.$color.';
+                color: '.$text_color.';
             }
         ');
     }
