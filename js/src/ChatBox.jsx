@@ -133,35 +133,33 @@ export default class ChatBox extends Component {
           className='popup-box-wrapper'
         >
           <div className='popup-box'>
-            <Collapse isOpened={true}>
-              <div
-                className='popup-head'
-                style={this.state.minimized ? {cursor: 'pointer'} : {cursor: 'move'}}
-                onMouseDown={e => e.preventDefault()}
-                onClick={this.state.minimized && this.toggleMinimize.bind(this)}
-              >
-                Watson
-                <span className='dashicons dashicons-no-alt popup-control'
-                  onClick={this.props.closeChat}></span>
-                <span className={`dashicons
-                  dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
-                  popup-control`}
-                  onClick={this.toggleMinimize.bind(this)}></span>
+            <div
+              className='popup-head'
+              style={this.state.minimized ? {cursor: 'pointer'} : {cursor: 'move'}}
+              onMouseDown={e => e.preventDefault()}
+              onClick={this.state.minimized && this.toggleMinimize.bind(this)}
+            >
+              Watson
+              <span className='dashicons dashicons-no-alt popup-control'
+                onClick={this.props.closeChat}></span>
+              <span className={`dashicons
+                dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
+                popup-control`}
+                onClick={this.toggleMinimize.bind(this)}></span>
+            </div>
+            <Collapse isOpened={!this.state.minimized}>
+              <div className='popup-messages' ref={div => {this.messageList = div}}>
+                {this.state.messages.map(this.renderMessage)}
               </div>
-              {!this.state.minimized && <div>
-                <div className='popup-messages' ref={div => {this.messageList = div}}>
-                  {this.state.messages.map(this.renderMessage)}
-                </div>
-                <form onSubmit={this.submitMessage.bind(this)}>
-                  <input
-                    className='popup-message-input'
-                    type='text'
-                    placeholder='Type a message'
-                    value={this.state.newMessage}
-                    onChange={this.setMessage.bind(this)}
-                  />
-                </form>
-              </div>}
+              <form onSubmit={this.submitMessage.bind(this)}>
+                <input
+                  className='popup-message-input'
+                  type='text'
+                  placeholder='Type a message'
+                  value={this.state.newMessage}
+                  onChange={this.setMessage.bind(this)}
+                />
+              </form>
             </Collapse>
           </div>
         </span>
