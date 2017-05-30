@@ -69,6 +69,20 @@ class Settings {
     <?php
     }
 
+    // ------------- Sanitization Functions -------------
+
+    public static function boolean_sanitize($val) {
+        return $val == 'yes' ? true : false;
+    }
+
+    public static function array_sanitize($val) {
+        return empty($val) ? -1 : $val;
+    }
+
+    public static function show_on_sanitize($val) {
+        return ($val == 'only') ? 'only' : 'all_except';
+    }
+
     // ------------ Workspace Credentials ---------------
 
     public static function init_workspace_settings() {
@@ -137,7 +151,7 @@ class Settings {
         add_settings_field('watsonconv_interval', 'Time Interval',
             array(__CLASS__, 'interval_render'), self::SLUG, 'watsonconv_rate_limit');
 
-        register_setting(self::SLUG, 'watsonconv_use_limit', array(__CLASS__, 'use_limit_sanitize'));
+        register_setting(self::SLUG, 'watsonconv_use_limit', array(__CLASS__, 'boolean_sanitize'));
         register_setting(self::SLUG, 'watsonconv_interval');
         register_setting(self::SLUG, 'watsonconv_limit');
     }
@@ -163,10 +177,6 @@ class Settings {
             <?php esc_html_e('No', self::SLUG) ?>
         <br />
     <?php
-    }
-
-    public static function use_limit_sanitize($val) {
-        return $val == 'yes' ? true : false;
     }
 
     public static function limit_render() {
@@ -253,10 +263,6 @@ class Settings {
             <?php esc_html_e('Only the Following Pages', self::SLUG) ?>
         <br />
     <?php
-    }
-
-    public static function show_on_sanitize($val) {
-        return ($val == 'only') ? 'only' : 'all_except';
     }
 
     public static function pages_render() {
@@ -349,10 +355,6 @@ class Settings {
     <?php
     }
 
-    public static function array_sanitize($val) {
-        return empty($val) ? -1 : $val;
-    }
-
     // ------------- Appearance Settings ----------------
 
     public static function init_appearance_settings() {
@@ -361,20 +363,23 @@ class Settings {
 
         add_settings_field('watsonconv_font_size', 'Font Size',
             array(__CLASS__, 'font_size_render'), self::SLUG, 'watsonconv_appearance');
-        add_settings_field('watsonconv_color', 'Color', array(__CLASS__, 'color_render'),
-            self::SLUG, 'watsonconv_appearance');
-        add_settings_field('watsonconv_x', 'Horizontal Position', array(__CLASS__, 'x_render'),
-            self::SLUG, 'watsonconv_appearance');
-        add_settings_field('watsonconv_y', 'Vertical Position', array(__CLASS__, 'y_render'),
-            self::SLUG, 'watsonconv_appearance');
-        add_settings_field('watsonconv_size', 'Window Size', array(__CLASS__, 'size_render'),
-            self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_color', 'Color',
+            array(__CLASS__, 'color_render'), self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_x', 'Horizontal Position',
+            array(__CLASS__, 'x_render'), self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_y', 'Vertical Position',
+            array(__CLASS__, 'y_render'), self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_size', 'Window Size',
+            array(__CLASS__, 'size_render'), self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
+            array(__CLASS__, 'minimized_render'), self::SLUG, 'watsonconv_appearance');
 
         register_setting(self::SLUG, 'watsonconv_font_size');
         register_setting(self::SLUG, 'watsonconv_color');
         register_setting(self::SLUG, 'watsonconv_x');
         register_setting(self::SLUG, 'watsonconv_y');
         register_setting(self::SLUG, 'watsonconv_size');
+        register_setting(self::SLUG, 'watsonconv_minimized', array(__CLASS__, 'boolean_sanitize'));
     }
 
     public static function description_appearance($args) {
@@ -441,6 +446,19 @@ class Settings {
         <input name="watsonconv_size" id="watsonconv_size" type="radio" value=240
             <?php checked(240, get_option('watsonconv_size', 200)) ?> >
             <?php esc_html_e('Large', self::SLUG) ?>
+    <?php
+    }
+
+    public static function minimized_render() {
+    ?>
+        <input name="watsonconv_minimized" id="watsonconv_minimized" type="radio" value="yes"
+            <?php checked(true, get_option('watsonconv_minimized', false)) ?> >
+            <?php esc_html_e('Yes', self::SLUG) ?>
+        <br />
+        <input name="watsonconv_minimized" id="watsonconv_minimized" type="radio" value="no"
+            <?php checked(false, get_option('watsonconv_minimized', false)) ?> >
+            <?php esc_html_e('No', self::SLUG) ?>
+        <br />
     <?php
     }
 }

@@ -70,7 +70,8 @@ class Frontend {
             <div id="chat-box"></div>
         <?php
             $settings = array(
-                'delay' => (int) get_option('watsonconv_delay', 0)
+                'delay' => (int) get_option('watsonconv_delay', 0),
+                'minimized' => get_option('watsonconv_minimized', false)
             );
 
             wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');

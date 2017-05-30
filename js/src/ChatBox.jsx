@@ -15,7 +15,7 @@ export default class ChatBox extends Component {
         messages: [],
         newMessage: '',
         context: null,
-        minimized: false
+        minimized: this.props.minimized
       };
     }
 

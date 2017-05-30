@@ -8,7 +8,7 @@ function closeChat() {
 
 function renderApp() {
   ReactDOM.render(
-    <ChatBox closeChat={closeChat} />,
+    <ChatBox closeChat={closeChat} minimized={settings.minimized} />,
     document.getElementById('chat-box')
   );
 }
@@ -18,5 +18,5 @@ if (typeof(sessionStorage) !== 'undefined' &&
 {
   renderApp();
 } else {
-  setTimeout(renderApp, settings['delay']*1000);
+  setTimeout(renderApp, settings.delay*1000);
 }
