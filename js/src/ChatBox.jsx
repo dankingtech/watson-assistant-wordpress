@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
+import { Collapse } from 'react-collapse';
 
 export default class ChatBox extends Component {
   constructor(props) {
@@ -116,7 +117,12 @@ export default class ChatBox extends Component {
 
   render() {
     return (this.state.messages.length != 0) && (
-      <Draggable handle='.popup-head' onStop={this.savePosition}>
+      <Draggable
+        handle='.popup-head'
+        cancel={this.state.minimized ? '.popup-head' : ''}
+        onStart={e => e.preventDefault()}
+        onStop={this.savePosition}
+      >
         <span
           style={this.savedPosition && {
             bottom: `${this.savedPosition.bottom}%`,
@@ -127,29 +133,36 @@ export default class ChatBox extends Component {
           className='popup-box-wrapper'
         >
           <div className='popup-box'>
-            <div className='popup-head'>
-              Watson
-              <span className='dashicons dashicons-no-alt popup-control'
-                onClick={this.props.closeChat}></span>
-              <span className={`dashicons
-                dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
-                popup-control`}
-                onClick={this.toggleMinimize.bind(this)}></span>
-            </div>
-            {!this.state.minimized && <div>
-              <div className='popup-messages' ref={div => {this.messageList = div}}>
-                {this.state.messages.map(this.renderMessage)}
+            <Collapse isOpened={true}>
+              <div
+                className='popup-head'
+                style={this.state.minimized ? {cursor: 'pointer'} : {cursor: 'move'}}
+                onMouseDown={e => e.preventDefault()}
+                onClick={this.state.minimized && this.toggleMinimize.bind(this)}
+              >
+                Watson
+                <span className='dashicons dashicons-no-alt popup-control'
+                  onClick={this.props.closeChat}></span>
+                <span className={`dashicons
+                  dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
+                  popup-control`}
+                  onClick={this.toggleMinimize.bind(this)}></span>
               </div>
-              <form onSubmit={this.submitMessage.bind(this)}>
-                <input
-                  className='popup-message-input'
-                  type='text'
-                  placeholder='Type a message'
-                  value={this.state.newMessage}
-                  onChange={this.setMessage.bind(this)}
-                />
-              </form>
-            </div>}
+              {!this.state.minimized && <div>
+                <div className='popup-messages' ref={div => {this.messageList = div}}>
+                  {this.state.messages.map(this.renderMessage)}
+                </div>
+                <form onSubmit={this.submitMessage.bind(this)}>
+                  <input
+                    className='popup-message-input'
+                    type='text'
+                    placeholder='Type a message'
+                    value={this.state.newMessage}
+                    onChange={this.setMessage.bind(this)}
+                  />
+                </form>
+              </div>}
+            </Collapse>
           </div>
         </span>
       </Draggable>
