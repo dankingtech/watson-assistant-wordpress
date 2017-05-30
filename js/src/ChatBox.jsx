@@ -115,8 +115,6 @@ export default class ChatBox extends Component {
   }
 
   render() {
-    let {bottom, right} = this.savedPosition;
-
     return (this.state.messages.length != 0) && (
       <Draggable handle='.popup-head' onStop={this.savePosition}>
         <span
