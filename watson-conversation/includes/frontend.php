@@ -6,8 +6,8 @@ class Frontend {
         wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
-        $x_side = get_option('watsonconv_x', right);
-        $y_side = get_option('watsonconv_y', bottom);
+        $x_side = get_option('watsonconv_x', 'right');
+        $y_side = get_option('watsonconv_y', 'bottom');
         $color = get_option('watsonconv_color', '#23282d');
         $messages_height = get_option('watsonconv_size', 200);
 
@@ -60,20 +60,21 @@ class Frontend {
             is_single(get_option('watsonconv_posts', -1)) ||
             in_category(get_option('watsonconv_categories', -1));
 
-        if ($page_selected == (get_option('watsonconv_show_on', 'all_except') == 'only')) {
-            if (!empty(get_option('watsonconv_id')) &&
-                !empty(get_option('watsonconv_username')) &&
-                !empty(get_option('watsonconv_password'))) {
-            ?>
-                <div id="chat-box"></div>
-            <?php
-                $settings = array(
-                    'delay' => (int) get_option('watsonconv_delay', 0)
-                );
+        if ($page_selected == (get_option('watsonconv_show_on', 'all_except') == 'only') &&
+            (get_option('watsonconv_total_requests', 0) < get_option('watsonconv_limit') ||
+                get_option('watsonconv_use_limit', false) == false) &&
+            !empty(get_option('watsonconv_id')) &&
+            !empty(get_option('watsonconv_username')) &&
+            !empty(get_option('watsonconv_password'))) {
+        ?>
+            <div id="chat-box"></div>
+        <?php
+            $settings = array(
+                'delay' => (int) get_option('watsonconv_delay', 0)
+            );
 
-                wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');
-                wp_localize_script('chat-app', 'settings', $settings);
-            }
+            wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');
+            wp_localize_script('chat-app', 'settings', $settings);
         }
     }
 }

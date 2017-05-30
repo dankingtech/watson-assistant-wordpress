@@ -33,4 +33,10 @@ add_action('wp_footer', array('WatsonConv\Frontend', 'render_chat_box'));
 
 // ----- Server-side Proxy API --------
 
+register_activation_hook(__FILE__, array('WatsonConv\Api', 'init_rate_limit'));
+register_deactivation_hook(__FILE__, array('WatsonConv\Api', 'uninit_rate_limit'));
+add_action('watson_save_to_disk', array('WatsonConv\API', 'record_api_usage'));
+add_action('watson_reset_api_usage', array('WatsonConv\API', 'reset_api_usage'));
 add_action('rest_api_init', array('WatsonConv\API', 'register_proxy'));
+add_action('update_option_watsonconv_interval', array('WatsonConv\API', 'init_rate_limit'));
+add_filter('cron_schedules', array('WatsonConv\API', 'add_cron_schedules'));

@@ -11,6 +11,7 @@ class Settings {
 
     public static function init_settings() {
         self::init_workspace_settings();
+        self::init_rate_limit_settings();
         self::init_behaviour_settings();
         self::init_appearance_settings();
     }
@@ -123,6 +124,79 @@ class Settings {
     <?php
     }
 
+    // ---------------- Rate Limiting -------------------
+
+    public static function init_rate_limit_settings() {
+        add_settings_section('watsonconv_rate_limit', 'API Rate Limiting',
+            array(__CLASS__, 'description_rate_limit'), self::SLUG);
+
+        add_settings_field('watsonconv_use_limit', 'Use API Rate Limiting',
+            array(__CLASS__, 'use_limit_render'), self::SLUG, 'watsonconv_rate_limit');
+        add_settings_field('watsonconv_limit', 'Maximum Number of Requests',
+            array(__CLASS__, 'limit_render'), self::SLUG, 'watsonconv_rate_limit');
+        add_settings_field('watsonconv_interval', 'Time Interval',
+            array(__CLASS__, 'interval_render'), self::SLUG, 'watsonconv_rate_limit');
+
+        register_setting(self::SLUG, 'watsonconv_use_limit', array(__CLASS__, 'use_limit_sanitize'));
+        register_setting(self::SLUG, 'watsonconv_interval');
+        register_setting(self::SLUG, 'watsonconv_limit');
+    }
+
+    public static function description_rate_limit($args) {
+    ?>
+        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+            <?php esc_html_e('This section allows you to prevent overusage of your
+                credentials by limiting use of the chat bot.', self::SLUG) ?>
+            </a>
+        </p>
+    <?php
+    }
+
+    public static function use_limit_render() {
+    ?>
+        <input name="watsonconv_use_limit" id="watsonconv_use_limit" type="radio" value="yes"
+            <?php checked(true, get_option('watsonconv_use_limit', false)) ?> >
+            <?php esc_html_e('Yes', self::SLUG) ?>
+        <br />
+        <input name="watsonconv_use_limit" id="watsonconv_use_limit" type="radio" value="no"
+            <?php checked(false, get_option('watsonconv_use_limit', false)) ?> >
+            <?php esc_html_e('No', self::SLUG) ?>
+        <br />
+    <?php
+    }
+
+    public static function use_limit_sanitize($val) {
+        return $val == 'yes' ? true : false;
+    }
+
+    public static function limit_render() {
+    ?>
+        <input name="watsonconv_limit" id="watsonconv_limit" type="number"
+            value="<?php echo empty(get_option('watsonconv_limit')) ?
+                        0 : get_option('watsonconv_limit')?>"
+            style="width: 4em" />
+    <?php
+    }
+
+    public static function interval_render() {
+    ?>
+        <select name="watsonconv_interval" id="watsonconv_interval">
+            <option value="monthly" <?php selected(get_option('watsonconv_interval', 'monthly'), 'monthly')?>>
+                Per Month
+            </option>
+            <option value="weekly" <?php selected(get_option('watsonconv_interval', 'monthly'), 'weekly')?>>
+                Per Week
+            </option>
+            <option value="daily" <?php selected(get_option('watsonconv_interval', 'monthly'), 'daily')?>>
+                Per Day
+            </option>
+            <option value="hourly" <?php selected(get_option('watsonconv_interval', 'monthly'), 'hourly')?>>
+                Per Hour
+            </option>
+        </select>
+    <?php
+    }
+
     // ------------- Behaviour Settings ----------------
 
     public static function init_behaviour_settings() {
@@ -152,17 +226,10 @@ class Settings {
     public static function description_behaviour($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
-            <?php esc_html_e('Here you can customize how you want the chat box to behave.', self::SLUG) ?>
+            <?php esc_html_e('This section allows you to customize
+                how you want the chat box to behave.', self::SLUG) ?>
         </p>
     <?php
-    }
-
-    public static function show_on_sanitize($val) {
-        return ($val == 'only') ? 'only' : 'all_except';
-    }
-
-    public static function array_sanitize($val) {
-        return empty($val) ? -1 : $val;
     }
 
     public static function delay_render() {
@@ -186,6 +253,10 @@ class Settings {
             <?php esc_html_e('Only the Following Pages', self::SLUG) ?>
         <br />
     <?php
+    }
+
+    public static function show_on_sanitize($val) {
+        return ($val == 'only') ? 'only' : 'all_except';
     }
 
     public static function pages_render() {
@@ -276,6 +347,10 @@ class Settings {
             ?>
         </fieldset
     <?php
+    }
+
+    public static function array_sanitize($val) {
+        return empty($val) ? -1 : $val;
     }
 
     // ------------- Appearance Settings ----------------
