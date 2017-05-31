@@ -15,7 +15,8 @@ export default class ChatBox extends Component {
         messages: [],
         newMessage: '',
         context: null,
-        minimized: this.props.minimized
+        minimized: this.props.minimized,
+        closed: false
       };
     }
 
@@ -30,7 +31,7 @@ export default class ChatBox extends Component {
     // If conversation already exists, scroll to bottom, otherwise start conversation.
     if (this.state.messages.length === 0) {
       this.sendMessage();
-    } else if (!this.state.minimized) {
+    } else if (typeof(this.messageList) !== 'undefined') {
       this.messageList.scrollTop = this.messageList.scrollHeight;
     }
   }
@@ -41,7 +42,7 @@ export default class ChatBox extends Component {
     }
 
     // Ensure that chat box stays scrolled to bottom
-    if (!this.state.minimized) {
+    if (typeof(this.messageList) !== 'undefined') {
       if (prevState.messages.length !== this.state.messages.length) {
         jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
       } else if (prevState.minimized != this.state.minimized) {
@@ -52,6 +53,10 @@ export default class ChatBox extends Component {
 
   toggleMinimize() {
     this.setState({minimized: !this.state.minimized});
+  }
+
+  closeChat() {
+    this.setState({closed: this.state.closed});
   }
 
   submitMessage(e) {
@@ -116,7 +121,7 @@ export default class ChatBox extends Component {
   }
 
   render() {
-    return (this.state.messages.length != 0) && (
+    return (this.state.messages.length != 0) && !this.state.closed && (
       <Draggable
         handle='.popup-head'
         cancel={this.state.minimized ? '.popup-head' : ''}
@@ -136,12 +141,11 @@ export default class ChatBox extends Component {
             <div
               className='popup-head'
               style={this.state.minimized ? {cursor: 'pointer'} : {cursor: 'move'}}
-              onMouseDown={e => e.preventDefault()}
               onClick={this.state.minimized && this.toggleMinimize.bind(this)}
             >
               Watson
               <span className='dashicons dashicons-no-alt popup-control'
-                onClick={this.props.closeChat}></span>
+                onClick={this.closeChat.bind(this)}></span>
               <span className={`dashicons
                 dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
                 popup-control`}

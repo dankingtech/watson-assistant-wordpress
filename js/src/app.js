@@ -2,13 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ChatBox from './ChatBox.jsx';
 
-function closeChat() {
-  ReactDOM.unmountComponentAtNode(document.getElementById('chat-box'));
-}
-
 function renderApp() {
   ReactDOM.render(
-    <ChatBox closeChat={closeChat} minimized={settings.minimized} />,
+    <ChatBox minimized={settings.minimized} />,
     document.getElementById('chat-box')
   );
 }
