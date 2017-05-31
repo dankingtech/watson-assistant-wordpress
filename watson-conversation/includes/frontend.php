@@ -6,16 +6,25 @@ class Frontend {
         wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
-        $x_side = get_option('watsonconv_x', 'right');
-        $y_side = get_option('watsonconv_y', 'bottom');
         $color = get_option('watsonconv_color', '#23282d');
         $messages_height = get_option('watsonconv_size', 200);
 
-        $r = hexdec(substr($color,1,2));
-        $g = hexdec(substr($color,3,2));
-        $b = hexdec(substr($color,5,2));
+        switch (get_option('watsonconv_position', 'bottom_right')) {
+            case 'top_left':
+                $position = 'top: 10vmin; left: 10vmin;';
+                break;
+            case 'top_right':
+                $position = 'top: 10vmin; right: 10vmin;';
+                break;
+            case 'bottom_left':
+                $position = 'bottom: 10vmin; left: 10vmin;';
+                break;
+            case 'bottom_right':
+                $position = 'bottom: 10vmin; right: 10vmin;';
+                break;
+        }
 
-        if($r + $g + $b > 500){
+        if(array_sum(sscanf($color, "#%02x%02x%02x")) > 500){
             $text_color = 'black';
         } else {
             $text_color = 'white';
@@ -24,8 +33,7 @@ class Frontend {
         wp_add_inline_style('chat-style', '
             .popup-box-wrapper
             {
-              '.$x_side.': 10%;
-              '.$y_side.': 10%;
+                '.$position.'
             }
             .popup-box
             {
@@ -71,7 +79,8 @@ class Frontend {
         <?php
             $settings = array(
                 'delay' => (int) get_option('watsonconv_delay', 0),
-                'minimized' => get_option('watsonconv_minimized', false)
+                'minimized' => get_option('watsonconv_minimized', false),
+                'is_bottom' => substr(get_option('watsonconv_position', 'bottom_right'), 0, 6) == 'bottom'
             );
 
             wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');

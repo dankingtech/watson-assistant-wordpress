@@ -101,10 +101,10 @@ export default class ChatBox extends Component {
 
   savePosition(e, data) {
     if (typeof(sessionStorage) !== 'undefined') {
-      let {bottom, right} = data.node.getBoundingClientRect();
+      let {top, left} = data.node.getBoundingClientRect();
       sessionStorage.setItem('chat_bot_position', JSON.stringify({
-        bottom: (1 - bottom / window.innerHeight) * 100,
-        right: (1 - right / window.innerWidth) * 100
+        top: (top / window.innerHeight) * 100,
+        left: (left / window.innerWidth) * 100
       }));
     }
   }
@@ -130,10 +130,10 @@ export default class ChatBox extends Component {
       >
         <span
           style={this.savedPosition && {
-            bottom: `${this.savedPosition.bottom}%`,
-            right: `${this.savedPosition.right}%`,
-            top: 'auto',
-            left: 'auto'
+            top: `${this.savedPosition.top}%`,
+            left: `${this.savedPosition.left}%`,
+            bottom: 'auto',
+            right: 'auto'
           }}
           className='popup-box-wrapper'
         >
@@ -146,9 +146,9 @@ export default class ChatBox extends Component {
               Watson
               <span className='dashicons dashicons-no-alt popup-control'
                 onClick={this.closeChat.bind(this)}></span>
-              <span className={`dashicons
-                dashicons-arrow-${this.state.minimized ? 'up' : 'down'}-alt2
-                popup-control`}
+              <span className={`dashicons dashicons-arrow-${
+                  (this.props.bottom && !this.savedPosition) != this.state.minimized ? 'down' : 'up'
+                }-alt2 popup-control`}
                 onClick={this.toggleMinimize.bind(this)}></span>
             </div>
             <Collapse isOpened={!this.state.minimized}>

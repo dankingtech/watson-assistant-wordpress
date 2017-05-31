@@ -365,10 +365,8 @@ class Settings {
             array(__CLASS__, 'font_size_render'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_color', 'Color',
             array(__CLASS__, 'color_render'), self::SLUG, 'watsonconv_appearance');
-        add_settings_field('watsonconv_x', 'Horizontal Position',
-            array(__CLASS__, 'x_render'), self::SLUG, 'watsonconv_appearance');
-        add_settings_field('watsonconv_y', 'Vertical Position',
-            array(__CLASS__, 'y_render'), self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_position', 'Position',
+            array(__CLASS__, 'position_render'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_size', 'Window Size',
             array(__CLASS__, 'size_render'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
@@ -376,8 +374,7 @@ class Settings {
 
         register_setting(self::SLUG, 'watsonconv_font_size');
         register_setting(self::SLUG, 'watsonconv_color');
-        register_setting(self::SLUG, 'watsonconv_x');
-        register_setting(self::SLUG, 'watsonconv_y');
+        register_setting(self::SLUG, 'watsonconv_position');
         register_setting(self::SLUG, 'watsonconv_size');
         register_setting(self::SLUG, 'watsonconv_minimized', array(__CLASS__, 'boolean_sanitize'));
     }
@@ -407,28 +404,31 @@ class Settings {
     <?php
     }
 
-    public static function x_render() {
+    public static function position_render() {
     ?>
-        <input name="watsonconv_x" id="watsonconv_x" type="radio" value="left"
-            <?php checked('left', get_option('watsonconv_x', 'right')) ?> >
-            <?php esc_html_e('Left Side of Screen', self::SLUG) ?>
+        <input
+            name="watsonconv_position" id="watsonconv_position" type="radio" value='top_left'
+            <?php checked('top_left', get_option('watsonconv_position', 'bottom_right')) ?>
+        >
+            <?php esc_html_e('Top-Left', self::SLUG) ?>
         <br />
-        <input name="watsonconv_x" id="watsonconv_x" type="radio" value="right"
-            <?php checked('right', get_option('watsonconv_x', 'right')) ?> >
-            <?php esc_html_e('Right Side of Screen', self::SLUG) ?>
+        <input
+            name="watsonconv_position" id="watsonconv_position" type="radio" value='top_right'
+            <?php checked('top_right', get_option('watsonconv_position', 'bottom_right')) ?>
+        >
+            <?php esc_html_e('Top-Right', self::SLUG) ?>
         <br />
-    <?php
-    }
-
-    public static function y_render() {
-    ?>
-        <input name="watsonconv_y" id="watsonconv_y" type="radio" value="top"
-            <?php checked('top', get_option('watsonconv_y', 'bottom')) ?> >
-            <?php esc_html_e('Top Side of Screen', self::SLUG) ?>
+        <input
+            name="watsonconv_position" id="watsonconv_position" type="radio" value='bottom_left'
+            <?php checked('bottom_left', get_option('watsonconv_position', 'bottom_right')) ?>
+        >
+            <?php esc_html_e('Bottom-Left', self::SLUG) ?>
         <br />
-        <input name="watsonconv_y" id="watsonconv_y" type="radio" value="bottom"
-            <?php checked('bottom', get_option('watsonconv_y', 'bottom')) ?> >
-            <?php esc_html_e('Bottom Side of Screen', self::SLUG) ?>
+        <input
+            name="watsonconv_position" id="watsonconv_position" type="radio" value='bottom_right'
+            <?php checked('bottom_right', get_option('watsonconv_position', 'bottom_right')) ?>
+        >
+            <?php esc_html_e('Bottom-Right', self::SLUG) ?>
         <br />
     <?php
     }

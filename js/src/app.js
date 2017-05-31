@@ -4,7 +4,7 @@ import ChatBox from './ChatBox.jsx';
 
 function renderApp() {
   ReactDOM.render(
-    <ChatBox minimized={settings.minimized} />,
+    <ChatBox minimized={settings.minimized} bottom={settings.is_bottom} />,
     document.getElementById('chat-box')
   );
 }
