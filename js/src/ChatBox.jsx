@@ -56,7 +56,7 @@ export default class ChatBox extends Component {
   }
 
   closeChat() {
-    this.setState({closed: this.state.closed});
+    this.setState({closed: true});
   }
 
   submitMessage(e) {
