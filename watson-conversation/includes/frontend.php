@@ -3,7 +3,7 @@ namespace WatsonConv;
 
 class Frontend {
     public static function load_styles() {
-        wp_enqueue_style('chat-style', WATSON_CONV_URL.'styles.css', array('dashicons'));
+        wp_enqueue_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
         $color = get_option('watsonconv_color', '#23282d');
@@ -30,7 +30,7 @@ class Frontend {
             $text_color = 'white';
         }
 
-        wp_add_inline_style('chat-style', '
+        wp_add_inline_style('watsonconv-chatbox', '
             .popup-box-wrapper
             {
                 '.$position.'

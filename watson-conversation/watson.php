@@ -18,7 +18,7 @@ require_once(WATSON_CONV_PATH.'includes/api.php');
 
 add_action('admin_menu', array('WatsonConv\Settings', 'init_page'));
 add_action('admin_init', array('WatsonConv\Settings', 'init_settings'));
-add_action('admin_enqueue_scripts', array('WatsonConv\Settings', 'init_color_picker'));
+add_action('admin_enqueue_scripts', array('WatsonConv\Settings', 'init_scripts'));
 register_deactivation_hook(__FILE__, array('WatsonConv\Settings', 'unregister'));
 
 $path = plugin_basename(__FILE__);

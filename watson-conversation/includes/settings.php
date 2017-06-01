@@ -23,8 +23,9 @@ class Settings {
         unregister_setting(self::SLUG, 'watsonconv_delay');
     }
 
-    public static function init_color_picker($hook_suffix) {
+    public static function init_scripts($hook_suffix) {
         if ($hook_suffix == 'settings_page_'.self::SLUG) {
+            wp_enqueue_style('watsonconv-settings', WATSON_CONV_URL.'css/settings.css');
             wp_enqueue_style('wp-color-picker');
             wp_enqueue_script('color-picker', WATSON_CONV_URL.'includes/color-picker.js',
                 array('wp-color-picker'), false, true );
@@ -187,7 +188,7 @@ class Settings {
         <input name="watsonconv_limit" id="watsonconv_limit" type="number"
             value="<?php echo empty(get_option('watsonconv_limit')) ?
                         0 : get_option('watsonconv_limit')?>"
-            style="width: 4em" />
+            style="width: 8em" />
     <?php
     }
 
@@ -416,29 +417,49 @@ class Settings {
 
     public static function position_render() {
     ?>
-        <input name="watsonconv_position" id="position_topleft" type="radio" value='top_left'
-            <?php checked('top_left', get_option('watsonconv_position', 'bottom_right')) ?>>
-        <label for="position_topleft">
-            <?php esc_html_e('Top-Left', self::SLUG) ?>
-        </label><br />
+        <div style='display: inline-block'>
+            <input name="watsonconv_position" id="position_topleft" type="radio" value='top_left'
+                <?php checked('top_left', get_option('watsonconv_position', 'bottom_right')) ?>>
+            <label for="position_topleft">
+                <?php esc_html_e('Top-Left', self::SLUG) ?>
+                <div class='preview-window'>
+                    <div class='preview-box' style='top: 1em; left: 1em'></div>
+                </div>
+            </label><br />
+        </div>
 
-        <input name="watsonconv_position" id="position_topright" type="radio" value='top_right'
-            <?php checked('top_right', get_option('watsonconv_position', 'bottom_right')) ?>>
-        <label for="position_topright">
-            <?php esc_html_e('Top-Right', self::SLUG) ?>
-        </label><br />
+        <div style='display: inline-block'>
+            <input name="watsonconv_position" id="position_topright" type="radio" value='top_right'
+                <?php checked('top_right', get_option('watsonconv_position', 'bottom_right')) ?>>
+            <label for="position_topright">
+                <?php esc_html_e('Top-Right', self::SLUG) ?>
+                <div class='preview-window'>
+                    <div class='preview-box' style='top: 1em; right: 1em'></div>
+                </div>
+            </label><br />
+        </div><br />
 
-        <input name="watsonconv_position" id="position_bottomleft" type="radio" value='bottom_left'
-            <?php checked('bottom_left', get_option('watsonconv_position', 'bottom_right')) ?>>
-        <label for="position_bottomleft">
-            <?php esc_html_e('Bottom-Left', self::SLUG) ?>
-        </label><br />
+        <div style='display: inline-block'>
+            <input name="watsonconv_position" id="position_bottomleft" type="radio" value='bottom_left'
+                <?php checked('bottom_left', get_option('watsonconv_position', 'bottom_right')) ?>>
+            <label for="position_bottomleft">
+                <?php esc_html_e('Bottom-Left', self::SLUG) ?>
+                <div class='preview-window'>
+                    <div class='preview-box' style='bottom: 1em; left: 1em'></div>
+                </div>
+            </label><br />
+        </div>
 
-        <input name="watsonconv_position" id="position_bottomright" type="radio" value='bottom_right'
-            <?php checked('bottom_right', get_option('watsonconv_position', 'bottom_right')) ?>>
-        <label for="position_bottomright">
-            <?php esc_html_e('Bottom-Right', self::SLUG) ?>
-        </label>
+        <div style='display: inline-block'>
+            <input name="watsonconv_position" id="position_bottomright" type="radio" value='bottom_right'
+                <?php checked('bottom_right', get_option('watsonconv_position', 'bottom_right')) ?>>
+            <label for="position_bottomright">
+                <?php esc_html_e('Bottom-Right', self::SLUG) ?>
+                <div class='preview-window'>
+                    <div class='preview-box' style='bottom: 1em; right: 1em'></div>
+                </div>
+            </label><br />
+        </div>
     <?php
     }
 
