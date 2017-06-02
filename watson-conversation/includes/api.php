@@ -1,6 +1,14 @@
 <?php
 namespace WatsonConv;
 
+register_activation_hook(__FILE__, array('WatsonConv\API', 'init_rate_limit'));
+register_deactivation_hook(__FILE__, array('WatsonConv\API', 'uninit_rate_limit'));
+add_action('watson_save_to_disk', array('WatsonConv\API', 'record_api_usage'));
+add_action('watson_reset_api_usage', array('WatsonConv\API', 'reset_api_usage'));
+add_action('rest_api_init', array('WatsonConv\API', 'register_proxy'));
+add_action('update_option_watsonconv_interval', array('WatsonConv\API', 'init_rate_limit'));
+add_filter('cron_schedules', array('WatsonConv\API', 'add_cron_schedules'));
+
 class API {
     const API_VERSION = '2017-04-21';
     const BASE_URL = 'https://gateway.watsonplatform.net/conversation/api/v1';

@@ -1,6 +1,16 @@
 <?php
 namespace WatsonConv;
 
+add_action('admin_menu', array('WatsonConv\Settings', 'init_page'));
+add_action('admin_init', array('WatsonConv\Settings', 'init_settings'));
+add_action('admin_enqueue_scripts', array('WatsonConv\Settings', 'init_scripts'));
+register_deactivation_hook(__FILE__, array('WatsonConv\Settings', 'unregister'));
+
+$path = plugin_basename(__FILE__);
+
+add_action("after_plugin_row_{$path}", array('WatsonConv\Settings', 'render_notice'), 10, 3);
+add_filter("plugin_action_links_{$path}", array('WatsonConv\Settings', 'add_settings_link'));
+
 class Settings {
     const SLUG = 'watsonconv';
 

@@ -1,6 +1,9 @@
 <?php
 namespace WatsonConv;
 
+add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'load_styles'));
+add_action('wp_footer', array('WatsonConv\Frontend', 'render_chat_box'));
+
 class Frontend {
     public static function load_styles() {
         wp_enqueue_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'));
