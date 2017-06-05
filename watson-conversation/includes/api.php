@@ -1,8 +1,8 @@
 <?php
 namespace WatsonConv;
 
-register_activation_hook(__FILE__, array('WatsonConv\API', 'init_rate_limit'));
-register_deactivation_hook(__FILE__, array('WatsonConv\API', 'uninit_rate_limit'));
+register_activation_hook(WATSON_CONV_FILE, array('WatsonConv\API', 'init_rate_limit'));
+register_deactivation_hook(WATSON_CONV_FILE, array('WatsonConv\API', 'uninit_rate_limit'));
 add_action('watson_save_to_disk', array('WatsonConv\API', 'record_api_usage'));
 add_action('watson_reset_api_usage', array('WatsonConv\API', 'reset_api_usage'));
 add_action('rest_api_init', array('WatsonConv\API', 'register_proxy'));

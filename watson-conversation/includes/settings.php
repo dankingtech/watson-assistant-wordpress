@@ -4,9 +4,9 @@ namespace WatsonConv;
 add_action('admin_menu', array('WatsonConv\Settings', 'init_page'));
 add_action('admin_init', array('WatsonConv\Settings', 'init_settings'));
 add_action('admin_enqueue_scripts', array('WatsonConv\Settings', 'init_scripts'));
-register_deactivation_hook(__FILE__, array('WatsonConv\Settings', 'unregister'));
+register_deactivation_hook(WATSON_CONV_FILE, array('WatsonConv\Settings', 'unregister'));
 
-$path = plugin_basename(__FILE__);
+$path = plugin_basename(WATSON_CONV_FILE);
 
 add_action("after_plugin_row_{$path}", array('WatsonConv\Settings', 'render_notice'), 10, 3);
 add_filter("plugin_action_links_{$path}", array('WatsonConv\Settings', 'add_settings_link'));
@@ -301,7 +301,9 @@ class Settings {
                     <input
                         type="checkbox" id="pages_<?php echo $page->ID ?>"
                         name="watsonconv_pages[]" value="<?php echo $page->ID ?>"
-                        <?php if (in_array($page->ID, (array)$checked_pages)) {echo 'checked';} ?>
+                        <?php if (in_array($page->ID, (array)$checked_pages)): ?>
+                            checked
+                        <?php endif; ?>
                     />
                     <label for="pages_<?php echo $page->ID; ?>">
                         <?php echo $page->post_title ?>
@@ -330,7 +332,9 @@ class Settings {
                     <input
                         type="checkbox" id="posts_<?php echo $post->ID ?>"
                         name="watsonconv_posts[]" value="<?php echo $post->ID ?>"
-                        <?php if (in_array($post->ID, (array)$checked_posts)) {echo 'checked';} ?>
+                        <?php if (in_array($post->ID, (array)$checked_posts)): ?>
+                            checked
+                        <?php endif; ?>
                     />
                     <label for="posts_<?php echo $post->ID; ?>">
                         <?php echo $post->post_title ?>
@@ -359,7 +363,9 @@ class Settings {
                     <input
                         type="checkbox" id="cats_<?php echo $cat->cat_ID ?>"
                         name="watsonconv_categories[]" value="<?php echo $cat->cat_ID ?>"
-                        <?php if (in_array($cat->cat_ID, (array)$checked_cats)) {echo 'checked';} ?>
+                        <?php if (in_array($cat->cat_ID, (array)$checked_cats)): ?>
+                            checked
+                        <?php endif; ?>
                     />
                     <label for="cats_<?php echo $cat->cat_ID ?>">
                         <?php echo $cat->cat_name ?>

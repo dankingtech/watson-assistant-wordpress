@@ -7,6 +7,7 @@ Version: 0.1.0
 Text Domain: watsonconv
 */
 
+define('WATSON_CONV_FILE', __FILE__);
 define('WATSON_CONV_PATH', plugin_dir_path(__FILE__));
 define('WATSON_CONV_URL', plugin_dir_url(__FILE__));
 
