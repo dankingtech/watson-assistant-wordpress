@@ -23,8 +23,11 @@ class API {
     }
 
     public static function route_request(\WP_REST_Request $request) {
+        $num_requests = get_option('watsonconv_total_requests', 0) +
+            get_transient('watsonconv_total_requests') ?: 0;
+
         if (get_option('watsonconv_use_limit', false) == false ||
-            get_option('watsonconv_total_requests', 0) < get_option('watsonconv_limit'))
+            $num_requests < get_option('watsonconv_limit', 100))
         {
             set_transient(
                 'watsonconv_total_requests',
