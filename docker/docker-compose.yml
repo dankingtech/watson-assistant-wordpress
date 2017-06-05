@@ -17,7 +17,7 @@ services:
        - db
      image: wordpress:latest
      volumes:
-       - ./watson-conversation:/var/www/html/wp-content/plugins/watsonconversation
+       - ../watson-conversation:/var/www/html/wp-content/plugins/watsonconversation
        - ./wp-config.php:/var/www/html/wp-config.php
        - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
      ports:
