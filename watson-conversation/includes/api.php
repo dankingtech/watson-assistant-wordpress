@@ -23,19 +23,33 @@ class API {
     }
 
     public static function route_request(\WP_REST_Request $request) {
-        $num_requests = get_option('watsonconv_total_requests', 0) +
+        $ip_addr = self::get_client_ip();
+        $body = $request->get_json_params();
+
+        $total_requests = get_option('watsonconv_total_requests', 0) +
+            get_transient('watsonconv_total_requests') ?: 0;
+        $client_requests = get_option("watsonconv_requests_$ip_addr", 0) +
             get_transient('watsonconv_total_requests') ?: 0;
 
         if (get_option('watsonconv_use_limit', false) == false ||
-            $num_requests < get_option('watsonconv_limit', 100))
+            $total_requests < get_option('watsonconv_limit', 10000) &&
+            $client_requests < get_option('watsonconv_client_limit', 10000))
         {
             set_transient(
                 'watsonconv_total_requests',
                 (get_transient('watsonconv_total_requests') ?: 0) + 1,
                 3600
             );
+            set_transient(
+                "watsonconv_requests_$ip_addr",
+                (get_transient("watsonconv_requests_$ip_addr") ?: 0) + 1,
+                3600
+            );
 
-            $body = $request->get_json_params();
+            $client_list = get_transient('watsonconv_client_list', array());
+            $client_list[$ip_addr] = true;
+            set_transient('watsonconv_client_list', $ip_addr, 3600);
+
             $auth_token = 'Basic ' . base64_encode(
                 get_option('watsonconv_username').':'.
                 get_option('watsonconv_password'));
@@ -48,13 +62,25 @@ class API {
                         'Authorization' => $auth_token,
                         'Content-Type' => 'application/json'
                     ), 'body' => json_encode(array(
-                        'input' => $body['input'],
+                        'input' => empty($body['input']) ? new \stdClass : $body['input'],
                         'context' => empty($body['context']) ? new \stdClass() : $body['context']
                     ))
                 )
             );
 
-            return json_decode(wp_remote_retrieve_body($response));
+            $response_body = json_decode(wp_remote_retrieve_body($response), true);
+            $response_code = wp_remote_retrieve_response_code($response);
+
+            if ($response_code !== 200) {
+                return new \WP_Error(
+                    'watson_error',
+                    isset($response_body['error']) ?
+                        $response_body['error'] : wp_remote_retrieve_response_message($response),
+                    $response_code
+                );
+            } else {
+                return $response_body;
+            }
         } else {
             return array('output' => array('text' => "Sorry, I can't talk right now. Try again later."));
         }
@@ -72,6 +98,27 @@ class API {
         );
 
         delete_transient('watsonconv_total_requests');
+
+        foreach (get_transient('watsonconv_client_list', array()) as $client_id => $val) {
+            update_option(
+                "watsonconv_requests_$client_id",
+                get_option("watsonconv_requests_$client_id", 0) +
+                    get_transient("watsonconv_requests_$client_id") ?: 0
+            );
+
+            delete_transient("watsonconv_requests_$client_id");
+        };
+
+        update_option(
+            'watsonconv_total_requests',
+            array_intersect_key(
+                get_option('watsonconv_client_list', array()),
+                get_transient('watsonconv_client_list') ?: array()
+            )
+        );
+        
+        delete_transient('watsonconv_client_list');
+
     }
 
     public static function init_rate_limit() {
@@ -90,5 +137,23 @@ class API {
       $schedules['weekly'] = array('interval' => WEEK_IN_SECONDS, 'display' => 'Once every week');
       $schedules['minutely'] = array('interval' => MINUTE_IN_SECONDS, 'display' => 'Once every minute');
       return $schedules;
+    }
+
+    private static function get_client_ip() {
+        $ip_addr = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ip_addr = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ip_addr = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ip_addr = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ip_addr = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ip_addr = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ip_addr = $_SERVER['REMOTE_ADDR'];
+
+        return $ip_addr;
     }
 }
