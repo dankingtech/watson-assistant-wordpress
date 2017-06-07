@@ -71,12 +71,16 @@ class Frontend {
             is_single(get_option('watsonconv_posts', -1)) ||
             in_category(get_option('watsonconv_categories', -1));
 
-        $num_requests = get_option('watsonconv_total_requests', 0) +
+        $total_requests = get_option('watsonconv_total_requests', 0) +
             get_transient('watsonconv_total_requests') ?: 0;
+        $client_requests = get_option("watsonconv_requests_$ip_addr", 0) +
+            get_transient("watsonconv_requests_$ip_addr") ?: 0;
 
         if ($page_selected == (get_option('watsonconv_show_on', 'all_except') == 'only') &&
             (get_option('watsonconv_use_limit', 'no') == 'no' ||
-                $num_requests < get_option('watsonconv_limit', 100)) &&
+                $num_requests < get_option('watsonconv_limit', 10000)) &&
+            (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
+                $num_requests < get_option('watsonconv_client_limit', 100)) &&
             !empty(get_option('watsonconv_id')) &&
             !empty(get_option('watsonconv_username')) &&
             !empty(get_option('watsonconv_password'))) {

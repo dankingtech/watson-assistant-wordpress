@@ -148,19 +148,28 @@ class Settings {
     // ---------------- Rate Limiting -------------------
 
     public static function init_rate_limit_settings() {
-        add_settings_section('watsonconv_rate_limit', 'API Rate Limiting',
+        add_settings_section('watsonconv_rate_limit', 'Usage Management',
             array(__CLASS__, 'rate_limit_description'), self::SLUG);
 
-        add_settings_field('watsonconv_use_limit', 'Use API Rate Limiting',
+        add_settings_field('watsonconv_use_limit', 'Limit Total API Requests',
             array(__CLASS__, 'render_use_limit'), self::SLUG, 'watsonconv_rate_limit');
-        add_settings_field('watsonconv_limit', 'Maximum Number of Requests',
+        add_settings_field('watsonconv_limit', 'Maximum Number of Total Requests',
             array(__CLASS__, 'render_limit'), self::SLUG, 'watsonconv_rate_limit');
         add_settings_field('watsonconv_interval', 'Time Interval',
             array(__CLASS__, 'render_interval'), self::SLUG, 'watsonconv_rate_limit');
+        add_settings_field('watsonconv_use_client_limit', 'Limit API Requests Per Client',
+            array(__CLASS__, 'render_use_client_limit'), self::SLUG, 'watsonconv_rate_limit');
+        add_settings_field('watsonconv_client_limit', 'Maximum Number of Requests Per Client',
+            array(__CLASS__, 'render_client_limit'), self::SLUG, 'watsonconv_rate_limit');
+        add_settings_field('watsonconv_client_interval', 'Time Interval',
+            array(__CLASS__, 'render_client_interval'), self::SLUG, 'watsonconv_rate_limit');
 
         register_setting(self::SLUG, 'watsonconv_use_limit');
         register_setting(self::SLUG, 'watsonconv_interval');
         register_setting(self::SLUG, 'watsonconv_limit');
+        register_setting(self::SLUG, 'watsonconv_use_client_limit');
+        register_setting(self::SLUG, 'watsonconv_client_interval');
+        register_setting(self::SLUG, 'watsonconv_client_limit');
     }
 
     public static function rate_limit_description($args) {
@@ -211,6 +220,50 @@ class Settings {
                 Per Day
             </option>
             <option value="hourly" <?php selected(get_option('watsonconv_interval', 'monthly'), 'hourly')?>>
+                Per Hour
+            </option>
+        </select>
+    <?php
+    }
+
+    public static function render_use_client_limit() {
+        self::render_radio_buttons(
+            'watsonconv_use_client_limit',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
+    }
+
+    public static function render_client_limit() {
+    ?>
+        <input name="watsonconv_client_limit" id="watsonconv_client_limit" type="number"
+            value="<?php echo empty(get_option('watsonconv_client_limit')) ?
+                        0 : get_option('watsonconv_client_limit')?>"
+            style="width: 8em" />
+    <?php
+    }
+
+    public static function render_client_interval() {
+    ?>
+        <select name="watsonconv_client_interval" id="watsonconv_client_interval">
+            <option value="monthly" <?php selected(get_option('watsonconv_client_interval', 'monthly'), 'monthly')?>>
+                Per Month
+            </option>
+            <option value="weekly" <?php selected(get_option('watsonconv_client_interval', 'monthly'), 'weekly')?>>
+                Per Week
+            </option>
+            <option value="daily" <?php selected(get_option('watsonconv_client_interval', 'monthly'), 'daily')?>>
+                Per Day
+            </option>
+            <option value="hourly" <?php selected(get_option('watsonconv_client_interval', 'monthly'), 'hourly')?>>
                 Per Hour
             </option>
         </select>

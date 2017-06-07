@@ -3,8 +3,10 @@ namespace WatsonConv;
 
 register_activation_hook(WATSON_CONV_FILE, array('WatsonConv\API', 'init_rate_limit'));
 register_deactivation_hook(WATSON_CONV_FILE, array('WatsonConv\API', 'uninit_rate_limit'));
+
 add_action('watson_save_to_disk', array('WatsonConv\API', 'record_api_usage'));
-add_action('watson_reset_api_usage', array('WatsonConv\API', 'reset_api_usage'));
+add_action('watson_reset_total_usage', array('WatsonConv\API', 'reset_total_usage'));
+add_action('watson_reset_client_usage', array('WatsonConv\API', 'reset_client_usage'));
 add_action('rest_api_init', array('WatsonConv\API', 'register_proxy'));
 add_action('update_option_watsonconv_interval', array('WatsonConv\API', 'init_rate_limit'));
 add_filter('cron_schedules', array('WatsonConv\API', 'add_cron_schedules'));
@@ -29,11 +31,12 @@ class API {
         $total_requests = get_option('watsonconv_total_requests', 0) +
             get_transient('watsonconv_total_requests') ?: 0;
         $client_requests = get_option("watsonconv_requests_$ip_addr", 0) +
-            get_transient('watsonconv_total_requests') ?: 0;
+            get_transient("watsonconv_requests_$ip_addr") ?: 0;
 
-        if (get_option('watsonconv_use_limit', false) == false ||
-            $total_requests < get_option('watsonconv_limit', 10000) &&
-            $client_requests < get_option('watsonconv_client_limit', 10000))
+        if ((get_option('watsonconv_use_limit', 'no') == 'no' ||
+                $total_requests < get_option('watsonconv_limit', 10000)) &&
+            (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
+                $client_requests < get_option('watsonconv_client_limit', 100)))
         {
             set_transient(
                 'watsonconv_total_requests',
@@ -48,7 +51,7 @@ class API {
 
             $client_list = get_transient('watsonconv_client_list', array());
             $client_list[$ip_addr] = true;
-            set_transient('watsonconv_client_list', $ip_addr, 3600);
+            set_transient('watsonconv_client_list', $client_list, 3600);
 
             $auth_token = 'Basic ' . base64_encode(
                 get_option('watsonconv_username').':'.
@@ -86,8 +89,16 @@ class API {
         }
     }
 
-    public static function reset_api_usage() {
+    public static function reset_total_usage() {
         delete_option('watsonconv_total_requests');
+    }
+
+    public static function reset_client_usage() {
+        foreach (get_transient('watsonconv_client_list', array()) as $client_id => $val) {
+            delete_option("watsonconv_requests_$client_id");
+        };
+
+        delete_option('watsonconv_client_list');
     }
 
     public static function record_api_usage() {
@@ -110,26 +121,25 @@ class API {
         };
 
         update_option(
-            'watsonconv_total_requests',
-            array_intersect_key(
-                get_option('watsonconv_client_list', array()),
+            'watsonconv_client_list',
+            get_option('watsonconv_client_list', array()) +
                 get_transient('watsonconv_client_list') ?: array()
-            )
         );
-        
-        delete_transient('watsonconv_client_list');
 
+        delete_transient('watsonconv_client_list');
     }
 
     public static function init_rate_limit() {
         self::uninit_rate_limit();
         wp_schedule_event(time(), 'minutely', 'watson_save_to_disk');
-        wp_schedule_event(time(), get_option('watsonconv_interval', 'monthly'), 'watson_reset_api_usage');
+        wp_schedule_event(time(), get_option('watsonconv_interval', 'monthly'), 'watson_reset_total_usage');
+        wp_schedule_event(time(), get_option('watsonconv_client_interval', 'monthly'), 'watson_reset_client_usage');
     }
 
     public static function uninit_rate_limit() {
         wp_clear_scheduled_hook('watson_save_to_disk');
-        wp_clear_scheduled_hook('watson_reset_api_usage');
+        wp_clear_scheduled_hook('watson_reset_total_usage');
+        wp_clear_scheduled_hook('watson_reset_client_usage');
     }
 
     public static function add_cron_schedules($schedules) {
