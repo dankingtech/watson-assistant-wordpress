@@ -75,8 +75,8 @@ class Frontend {
             get_transient('watsonconv_total_requests') ?: 0;
 
         if ($page_selected == (get_option('watsonconv_show_on', 'all_except') == 'only') &&
-            ($num_requests < get_option('watsonconv_limit', 100) ||
-                get_option('watsonconv_use_limit', false) == false) &&
+            (get_option('watsonconv_use_limit', 'no') == 'no' ||
+                $num_requests < get_option('watsonconv_limit', 100)) &&
             !empty(get_option('watsonconv_id')) &&
             !empty(get_option('watsonconv_username')) &&
             !empty(get_option('watsonconv_password'))) {
@@ -85,7 +85,7 @@ class Frontend {
         <?php
             $settings = array(
                 'delay' => (int) get_option('watsonconv_delay', 0),
-                'minimized' => get_option('watsonconv_minimized', false),
+                'minimized' => get_option('watsonconv_minimized', 'no') == 'no',
                 'is_bottom' => substr(get_option('watsonconv_position', 'bottom_right'), 0, 6) == 'bottom'
             );
 

@@ -82,10 +82,6 @@ class Settings {
 
     // ------------- Sanitization Functions -------------
 
-    public static function sanitize_boolean($val) {
-        return $val == 'yes' ? true : false;
-    }
-
     public static function sanitize_array($val) {
         return empty($val) ? -1 : $val;
     }
@@ -162,7 +158,7 @@ class Settings {
         add_settings_field('watsonconv_interval', 'Time Interval',
             array(__CLASS__, 'render_interval'), self::SLUG, 'watsonconv_rate_limit');
 
-        register_setting(self::SLUG, 'watsonconv_use_limit', array(__CLASS__, 'sanitize_boolean'));
+        register_setting(self::SLUG, 'watsonconv_use_limit');
         register_setting(self::SLUG, 'watsonconv_interval');
         register_setting(self::SLUG, 'watsonconv_limit');
     }
@@ -178,19 +174,19 @@ class Settings {
     }
 
     public static function render_use_limit() {
-    ?>
-        <input name="watsonconv_use_limit" id="use_limit_yes" type="radio" value="yes"
-            <?php checked(true, get_option('watsonconv_use_limit', false)) ?> >
-        <label for="use_limit_yes">
-            <?php esc_html_e('Yes', self::SLUG) ?>
-        </label><br />
-
-        <input name="watsonconv_use_limit" id="use_limit_no" type="radio" value="no"
-            <?php checked(false, get_option('watsonconv_use_limit', false)) ?> >
-        <label for="use_limit_no">
-            <?php esc_html_e('No', self::SLUG) ?>
-        </label>
-    <?php
+        self::render_radio_buttons(
+            'watsonconv_use_limit',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
     }
 
     public static function render_limit() {
@@ -267,22 +263,19 @@ class Settings {
     }
 
     public static function render_show_on() {
-    ?>
-        <input
-            name="watsonconv_show_on" id="show_on_only" type="radio" value="all_except"
-            <?php checked('all_except', get_option('watsonconv_show_on', 'all_except')) ?>
-        >
-        <label for="show_on_only">
-            <?php esc_html_e('All Pages Except the Following', self::SLUG) ?>
-        </label><br />
-        <input
-            name="watsonconv_show_on" id="show_on_all_except" type="radio" value="only"
-            <?php checked('only', get_option('watsonconv_show_on', 'all_except')) ?>
-        >
-        <label for="show_on_all_except">
-            <?php esc_html_e('Only the Following Pages', self::SLUG) ?>
-        </label>
-    <?php
+        self::render_radio_buttons(
+            'watsonconv_show_on',
+            'all_except',
+            array(
+                array(
+                    'label' => esc_html__('All Pages Except the Following', self::SLUG),
+                    'value' => 'all_except'
+                ), array(
+                    'label' => esc_html__('Only the Following Pages', self::SLUG),
+                    'value' => 'only'
+                )
+            )
+        );
     }
 
     public static function render_pages() {
@@ -402,7 +395,7 @@ class Settings {
         register_setting(self::SLUG, 'watsonconv_color');
         register_setting(self::SLUG, 'watsonconv_position');
         register_setting(self::SLUG, 'watsonconv_size');
-        register_setting(self::SLUG, 'watsonconv_minimized', array(__CLASS__, 'sanitize_boolean'));
+        register_setting(self::SLUG, 'watsonconv_minimized');
     }
 
     public static function appearance_description($args) {
@@ -432,88 +425,99 @@ class Settings {
     }
 
     public static function render_position() {
-    ?>
-        <div style='display: inline-block'>
-            <input name="watsonconv_position" id="position_topleft" type="radio" value='top_left'
-                <?php checked('top_left', get_option('watsonconv_position', 'bottom_right')) ?>>
-            <label for="position_topleft">
-                <?php esc_html_e('Top-Left', self::SLUG) ?>
-                <div class='preview-window'>
-                    <div class='preview-box' style='top: 1em; left: 1em'></div>
-                </div>
-            </label><br />
-        </div>
+        $top_left_box =
+            "<div class='preview-window'>
+                <div class='preview-box' style='top: 1em; left: 1em'></div>
+            </div>";
 
-        <div style='display: inline-block'>
-            <input name="watsonconv_position" id="position_topright" type="radio" value='top_right'
-                <?php checked('top_right', get_option('watsonconv_position', 'bottom_right')) ?>>
-            <label for="position_topright">
-                <?php esc_html_e('Top-Right', self::SLUG) ?>
-                <div class='preview-window'>
-                    <div class='preview-box' style='top: 1em; right: 1em'></div>
-                </div>
-            </label><br />
-        </div><br />
+        $top_right_box =
+            "<div class='preview-window'>
+                <div class='preview-box' style='top: 1em; right: 1em'></div>
+            </div>";
 
-        <div style='display: inline-block'>
-            <input name="watsonconv_position" id="position_bottomleft" type="radio" value='bottom_left'
-                <?php checked('bottom_left', get_option('watsonconv_position', 'bottom_right')) ?>>
-            <label for="position_bottomleft">
-                <?php esc_html_e('Bottom-Left', self::SLUG) ?>
-                <div class='preview-window'>
-                    <div class='preview-box' style='bottom: 1em; left: 1em'></div>
-                </div>
-            </label><br />
-        </div>
+        $bottom_left_box =
+            "<div class='preview-window'>
+                <div class='preview-box' style='bottom: 1em; left: 1em'></div>
+            </div>";
 
-        <div style='display: inline-block'>
-            <input name="watsonconv_position" id="position_bottomright" type="radio" value='bottom_right'
-                <?php checked('bottom_right', get_option('watsonconv_position', 'bottom_right')) ?>>
-            <label for="position_bottomright">
-                <?php esc_html_e('Bottom-Right', self::SLUG) ?>
-                <div class='preview-window'>
-                    <div class='preview-box' style='bottom: 1em; right: 1em'></div>
-                </div>
-            </label><br />
-        </div>
-    <?php
+        $bottom_right_box =
+            "<div class='preview-window'>
+                <div class='preview-box' style='bottom: 1em; right: 1em'></div>
+            </div>";
+
+        self::render_radio_buttons(
+            'watsonconv_position',
+            'bottom_right',
+            array(
+                array(
+                    'label' => esc_html__('Top-Left', self::SLUG) . $top_left_box,
+                    'value' => 'top_left'
+                ), array(
+                    'label' => esc_html__('Top-Right', self::SLUG) . $top_right_box,
+                    'value' => 'top_right'
+                ), array(
+                    'label' => esc_html__('Bottom-Left', self::SLUG) . $bottom_left_box,
+                    'value' => 'bottom_left'
+                ), array(
+                    'label' => esc_html__('Bottom-Right', self::SLUG) . $bottom_right_box,
+                    'value' => 'bottom_right'
+                )
+            ),
+            'display: inline-block'
+        );
     }
 
     public static function render_size() {
-    ?>
-        <input name="watsonconv_size" id="size_small" type="radio" value=160
-            <?php checked(160, get_option('watsonconv_size', 200)) ?> >
-        <label for="size_small">
-            <?php esc_html_e('Small', self::SLUG) ?>
-        </label><br />
-
-        <input name="watsonconv_size" id="size_medium" type="radio" value=200
-            <?php checked(200, get_option('watsonconv_size', 200)) ?> >
-        <label for="size_medium">
-            <?php esc_html_e('Medium', self::SLUG) ?>
-        </label><br />
-
-        <input name="watsonconv_size" id="size_large" type="radio" value=240
-            <?php checked(240, get_option('watsonconv_size', 200)) ?> >
-        <label for="size_large">
-            <?php esc_html_e('Large', self::SLUG) ?>
-        </label>
-    <?php
+        self::render_radio_buttons(
+            'watsonconv_size',
+            200,
+            array(
+                array(
+                    'label' => esc_html__('Small', self::SLUG),
+                    'value' => 160
+                ), array(
+                    'label' => esc_html__('Medium', self::SLUG),
+                    'value' => 200
+                ), array(
+                    'label' => esc_html__('Large', self::SLUG),
+                    'value' => 240
+                )
+            )
+        );
     }
 
     public static function render_minimized() {
-    ?>
-        <input name="watsonconv_minimized" id="minimized_yes" type="radio" value="yes"
-            <?php checked(true, get_option('watsonconv_minimized', false)) ?> >
-        <label for="minimized_yes">
-            <?php esc_html_e('Yes', self::SLUG) ?>
-        </label><br />
+        self::render_radio_buttons(
+            'watsonconv_minimized',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
+    }
 
-        <input name="watsonconv_minimized" id="minimized_no" type="radio" value="no"
-            <?php checked(false, get_option('watsonconv_minimized', false)) ?> >
-        <label for="minimized_no">
-            <?php esc_html_e('No', self::SLUG) ?>
-        </label>
-    <?php
+    private static function render_radio_buttons($option_name, $default_value, $options, $div_style = '') {
+        foreach ($options as $option) {
+        ?>
+            <div style="<?php echo $div_style ?>" >
+                <input
+                    name=<?php echo $option_name ?>
+                    id="<?php echo $option_name.'_'.$option['value'] ?>"
+                    type="radio"
+                    value="<?php echo $option['value'] ?>"
+                    <?php checked($option['value'], get_option($option_name, $default_value)) ?>
+                >
+                <label for="<?php echo $option_name.'_'.$option['value'] ?>">
+                    <?php echo $option['label'] ?>
+                </label><br />
+            </div>
+        <?php
+        }
     }
 }
