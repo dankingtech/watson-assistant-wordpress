@@ -9,6 +9,7 @@ add_action('watson_reset_total_usage', array('WatsonConv\API', 'reset_total_usag
 add_action('watson_reset_client_usage', array('WatsonConv\API', 'reset_client_usage'));
 add_action('rest_api_init', array('WatsonConv\API', 'register_proxy'));
 add_action('update_option_watsonconv_interval', array('WatsonConv\API', 'init_rate_limit'));
+add_action('update_option_watsonconv_client_interval', array('WatsonConv\API', 'init_rate_limit'));
 add_filter('cron_schedules', array('WatsonConv\API', 'add_cron_schedules'));
 
 class API {

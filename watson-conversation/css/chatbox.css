@@ -65,6 +65,7 @@
   margin: -10px 0 0 -10px;
   height: 8px;
   width: 100%;
+  border: none;
 }
 
 .popup-box .popup-message-input
