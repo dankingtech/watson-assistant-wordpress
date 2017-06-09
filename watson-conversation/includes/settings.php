@@ -85,7 +85,7 @@ class Settings {
     }
 
     public static function sanitize_show_on($val) {
-        return ($val == 'only') ? 'only' : 'all_except';
+        return ($val == 'all_except') ? 'all_except' : 'only';
     }
 
     // ------------ Workspace Credentials ---------------
@@ -360,7 +360,7 @@ class Settings {
     public static function render_show_on() {
         self::render_radio_buttons(
             'watsonconv_show_on',
-            'all_except',
+            'only',
             array(
                 array(
                     'label' => esc_html__('All Pages Except the Following', self::SLUG),

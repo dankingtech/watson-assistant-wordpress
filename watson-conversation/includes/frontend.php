@@ -76,7 +76,7 @@ class Frontend {
         $client_requests = get_option("watsonconv_requests_$ip_addr", 0) +
             get_transient("watsonconv_requests_$ip_addr") ?: 0;
 
-        if ($page_selected == (get_option('watsonconv_show_on', 'all_except') == 'only') &&
+        if ($page_selected == (get_option('watsonconv_show_on', 'only') == 'only') &&
             (get_option('watsonconv_use_limit', 'no') == 'no' ||
                 $num_requests < get_option('watsonconv_limit', 10000)) &&
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
