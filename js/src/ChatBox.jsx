@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
 import { Collapse } from 'react-collapse';
+import Message from './Message.jsx';
 
 export default class ChatBox extends Component {
   constructor(props) {
@@ -15,7 +16,7 @@ export default class ChatBox extends Component {
         messages: [],
         newMessage: '',
         context: null,
-        minimized: this.props.minimized,
+        minimized: props.minimized,
         closed: false
       };
     }
@@ -108,18 +109,7 @@ export default class ChatBox extends Component {
       }));
     }
   }
-
-  renderMessage(message, index) {
-    return (
-      <div
-        key={index}
-        className={`popup-message ${message.from}-message`}
-        dangerouslySetInnerHTML={{__html: message.text}}
-      >
-      </div>
-    );
-  }
-
+  
   render() {
     return (this.state.messages.length != 0) && !this.state.closed && (
       <Draggable
@@ -149,11 +139,13 @@ export default class ChatBox extends Component {
               <span className={`dashicons dashicons-arrow-${
                   (this.props.bottom && !this.savedPosition) != this.state.minimized ? 'down' : 'up'
                 }-alt2 popup-control`}
-                onClick={this.toggleMinimize.bind(this)}></span>
+                onClick={!this.state.minimized && this.toggleMinimize.bind(this)}></span>
             </div>
             <Collapse isOpened={!this.state.minimized}>
               <div className='popup-messages' ref={div => {this.messageList = div}}>
-                {this.state.messages.map(this.renderMessage)}
+                {this.state.messages.map(
+                  (message, index) => <Message message={message} key={index} />
+                )}
               </div>
               <form onSubmit={this.submitMessage.bind(this)}>
                 <input

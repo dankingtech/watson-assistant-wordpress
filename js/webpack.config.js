@@ -1,6 +1,5 @@
 webpack = require('webpack')
 fs = require('fs');
-babelSettings = JSON.parse(fs.readFileSync('.babelrc'));
 
 const config = {
   context: __dirname,
@@ -17,19 +16,19 @@ const config = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: babelSettings
+        loader: 'babel-loader'
       }
     ]
   },
+  resolve: {
+    alias: {
+      'react': 'preact-compat',
+      'react-dom': 'preact-compat',
+      'create-react-class': 'preact-compat/lib/create-react-class'
+    }
+  },
   cache: false,
   plugins: []
-};
-
-if (process.env.NODE_ENV == 'production') {
-    babelSettings.plugins.push('transform-react-inline-elements');
-    babelSettings.plugins.push('transform-react-constant-elements');
-    config.plugins.push(new webpack.optimize.DedupePlugin())
 };
 
 module.exports = config;
