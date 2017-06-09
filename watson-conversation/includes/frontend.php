@@ -89,7 +89,7 @@ class Frontend {
         <?php
             $settings = array(
                 'delay' => (int) get_option('watsonconv_delay', 0),
-                'minimized' => get_option('watsonconv_minimized', 'no') == 'no',
+                'minimized' => get_option('watsonconv_minimized', 'no') == 'yes',
                 'is_bottom' => substr(get_option('watsonconv_position', 'bottom_right'), 0, 6) == 'bottom'
             );
 
