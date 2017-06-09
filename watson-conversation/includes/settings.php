@@ -19,6 +19,7 @@ class Settings {
     public static function init_settings() {
         self::init_workspace_settings();
         self::init_rate_limit_settings();
+        self::init_client_rate_limit_settings();
         self::init_behaviour_settings();
         self::init_appearance_settings();
     }
@@ -66,7 +67,7 @@ class Settings {
 
     public static function render_page() {
     ?>
-      <div class="wrap">
+      <div class="wrap" style="max-width: 95em">
           <h2><?php esc_html_e('Watson Conversation Settings', self::SLUG); ?></h2>
           <form action="options.php" method="POST">
             <?php settings_fields(self::SLUG); ?>
@@ -145,7 +146,7 @@ class Settings {
     // ---------------- Rate Limiting -------------------
 
     public static function init_rate_limit_settings() {
-        add_settings_section('watsonconv_rate_limit', 'Usage Management',
+        add_settings_section('watsonconv_rate_limit', 'Total Usage Management',
             array(__CLASS__, 'rate_limit_description'), self::SLUG);
 
         add_settings_field('watsonconv_use_limit', 'Limit Total API Requests',
@@ -154,27 +155,39 @@ class Settings {
             array(__CLASS__, 'render_limit'), self::SLUG, 'watsonconv_rate_limit');
         add_settings_field('watsonconv_interval', 'Time Interval',
             array(__CLASS__, 'render_interval'), self::SLUG, 'watsonconv_rate_limit');
-        add_settings_field('watsonconv_use_client_limit', 'Limit API Requests Per Client',
-            array(__CLASS__, 'render_use_client_limit'), self::SLUG, 'watsonconv_rate_limit');
-        add_settings_field('watsonconv_client_limit', 'Maximum Number of Requests Per Client',
-            array(__CLASS__, 'render_client_limit'), self::SLUG, 'watsonconv_rate_limit');
-        add_settings_field('watsonconv_client_interval', 'Time Interval',
-            array(__CLASS__, 'render_client_interval'), self::SLUG, 'watsonconv_rate_limit');
 
         register_setting(self::SLUG, 'watsonconv_use_limit');
         register_setting(self::SLUG, 'watsonconv_interval');
         register_setting(self::SLUG, 'watsonconv_limit');
-        register_setting(self::SLUG, 'watsonconv_use_client_limit');
-        register_setting(self::SLUG, 'watsonconv_client_interval');
-        register_setting(self::SLUG, 'watsonconv_client_limit');
     }
 
     public static function rate_limit_description($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
-            <?php esc_html_e('This section allows you to prevent overusage of your
-                credentials by limiting use of the chat bot.', self::SLUG) ?>
-            </a>
+            <p>
+                <?php esc_html_e('
+                    This section allows you to prevent overusage of your credentials by
+                    limiting use of the chat bot.
+                ', self::SLUG) ?>
+            </p>
+            <p>
+                <?php esc_html_e("
+                    If you have a paid plan for Watson
+                    Conversation, then the amount you have to pay is directly related to the
+                    number of API requests made. The number of API requests is equal to the
+                    number of messages sent by users of your chat bot, in addition to the chatbot's initial greeting.
+                ", self::SLUG) ?>
+            </p>
+            <p>
+                <?php esc_html_e("
+                    For example, the Standard plan charges $0.0025 per API
+                    call. That means if visitors to your site send a total of 1000 messages in
+                    a month, you will be charged ($0.0025 per API call) x (1000 calls) =
+                    $2.50. If you want to limit the costs incurred by this chatbot, you can
+                    put a limit on the total number of API requests for a specific period of
+                    time here.
+                ", self::SLUG) ?>
+            </p>
         </p>
     <?php
     }
@@ -223,6 +236,24 @@ class Settings {
     <?php
     }
 
+    // ---------- Rate Limiting Per Client --------------
+
+    public static function init_client_rate_limit_settings() {
+        add_settings_section('watsonconv_client_rate_limit', 'Usage Per Client',
+            array(__CLASS__, 'client_rate_limit_description'), self::SLUG);
+
+        add_settings_field('watsonconv_use_client_limit', 'Limit API Requests Per Client',
+            array(__CLASS__, 'render_use_client_limit'), self::SLUG, 'watsonconv_client_rate_limit');
+        add_settings_field('watsonconv_client_limit', 'Maximum Number of Requests Per Client',
+            array(__CLASS__, 'render_client_limit'), self::SLUG, 'watsonconv_client_rate_limit');
+        add_settings_field('watsonconv_client_interval', 'Time Interval',
+            array(__CLASS__, 'render_client_interval'), self::SLUG, 'watsonconv_client_rate_limit');
+
+        register_setting(self::SLUG, 'watsonconv_use_client_limit');
+        register_setting(self::SLUG, 'watsonconv_client_interval');
+        register_setting(self::SLUG, 'watsonconv_client_limit');
+    }
+
     public static function render_use_client_limit() {
         self::render_radio_buttons(
             'watsonconv_use_client_limit',
@@ -237,6 +268,20 @@ class Settings {
                 )
             )
         );
+    }
+
+    public static function client_rate_limit_description($args) {
+    ?>
+        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+            <?php esc_html_e('
+                These settings allow you to control how many messages can be sent by each
+                visitor to your site, rather than in total. This can help protect against
+                a few visitors from using up too many messages and, therefore, preventing
+                the rest of the visitors from having access to the chatbot.
+            ', self::SLUG) ?>
+            </a>
+        </p>
+    <?php
     }
 
     public static function render_client_limit() {
