@@ -323,6 +323,8 @@ class Settings {
 
         add_settings_field('watsonconv_show_on', esc_html__('Show Chat Box On', self::SLUG),
             array(__CLASS__, 'render_show_on'), self::SLUG, 'watsonconv_behaviour');
+        add_settings_field('watsonconv_home_page', esc_html__('Home Page', self::SLUG),
+            array(__CLASS__, 'render_home_page'), self::SLUG, 'watsonconv_behaviour');
         add_settings_field('watsonconv_pages', esc_html__('Pages', self::SLUG),
             array(__CLASS__, 'render_pages'), self::SLUG, 'watsonconv_behaviour');
         add_settings_field('watsonconv_posts', esc_html__('Posts', self::SLUG),
@@ -333,6 +335,7 @@ class Settings {
         register_setting(self::SLUG, 'watsonconv_delay');
 
         register_setting(self::SLUG, 'watsonconv_show_on', array(__CLASS__, 'sanitize_show_on'));
+        register_setting(self::SLUG, 'watsonconv_home_page');
         register_setting(self::SLUG, 'watsonconv_pages', array(__CLASS__, 'sanitize_array'));
         register_setting(self::SLUG, 'watsonconv_posts', array(__CLASS__, 'sanitize_array'));
         register_setting(self::SLUG, 'watsonconv_categories', array(__CLASS__, 'sanitize_array'));
@@ -371,6 +374,19 @@ class Settings {
                 )
             )
         );
+    }
+
+    public static function render_home_page() {
+    ?>
+        <input
+            type="checkbox" id="watsonconv_home_page"
+            name="watsonconv_home_page" value="true"
+            <?php checked('true', get_option('watsonconv_home_page', 'false')) ?>
+        />
+        <label for="watsonconv_home_page">
+            Home Page
+        </label>
+    <?php
     }
 
     public static function render_pages() {
