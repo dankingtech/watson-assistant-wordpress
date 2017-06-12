@@ -68,7 +68,12 @@
   border: none;
 }
 
-.popup-box .popup-message-input
+.popup-box .popup-message-form
+{
+  height: 2.5em;
+}
+
+.popup-box .popup-message-form .popup-message-input
 {
   height: 100%;
   width: 100%;

@@ -109,7 +109,7 @@ export default class ChatBox extends Component {
       }));
     }
   }
-  
+
   render() {
     return (this.state.messages.length != 0) && !this.state.closed && (
       <Draggable
@@ -147,7 +147,7 @@ export default class ChatBox extends Component {
                   (message, index) => <Message message={message} key={index} />
                 )}
               </div>
-              <form onSubmit={this.submitMessage.bind(this)}>
+              <form className='popup-message-form' onSubmit={this.submitMessage.bind(this)}>
                 <input
                   className='popup-message-input'
                   type='text'
