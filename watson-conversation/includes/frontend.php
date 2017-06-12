@@ -79,9 +79,9 @@ class Frontend {
 
         if ($page_selected == (get_option('watsonconv_show_on', 'only') == 'only') &&
             (get_option('watsonconv_use_limit', 'no') == 'no' ||
-                $num_requests < get_option('watsonconv_limit', 10000)) &&
+                $total_requests < get_option('watsonconv_limit', 10000)) &&
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
-                $num_requests < get_option('watsonconv_client_limit', 100)) &&
+                $client_requests < get_option('watsonconv_client_limit', 100)) &&
             !empty(get_option('watsonconv_id')) &&
             !empty(get_option('watsonconv_username')) &&
             !empty(get_option('watsonconv_password'))) {
