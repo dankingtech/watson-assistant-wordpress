@@ -35,7 +35,7 @@ class Settings {
         if ($hook_suffix == 'settings_page_'.self::SLUG) {
             wp_enqueue_style('watsonconv-settings', WATSON_CONV_URL.'css/settings.css');
             wp_enqueue_style('wp-color-picker');
-            wp_enqueue_script('color-picker', WATSON_CONV_URL.'includes/color-picker.js',
+            wp_enqueue_script('settings-script', WATSON_CONV_URL.'includes/settings.js',
                 array('wp-color-picker'), false, true );
         }
     }

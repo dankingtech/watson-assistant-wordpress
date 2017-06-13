@@ -1,4 +1,4 @@
-jQuery(document).ready(function($){
+jQuery(document).ready(function($) {
     $('#watsonconv_color').wpColorPicker({
       palettes: true
     });
