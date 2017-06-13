@@ -150,7 +150,7 @@ class API {
       return $schedules;
     }
 
-    private static function get_client_ip() {
+    public static function get_client_ip() {
         $ip_addr = '';
         if (isset($_SERVER['HTTP_CLIENT_IP']))
             $ip_addr = $_SERVER['HTTP_CLIENT_IP'];

@@ -66,6 +66,8 @@ class Frontend {
     }
 
     public static function render_chat_box() {
+        $ip_addr = \WatsonConv\API::get_client_ip();
+
         $page_selected =
             (is_home() && get_option('watsonconv_home_page', 'false') == 'true') ||
             is_page(get_option('watsonconv_pages', -1)) ||
