@@ -85,6 +85,9 @@ export default class ChatBox extends Component {
         context: this.state.context
       })
     }).then(response => {
+      if (!response.ok) {
+          throw Error('Message could not be sent.');
+      }
       return response.json();
     }).then(body => {
       this.setState({

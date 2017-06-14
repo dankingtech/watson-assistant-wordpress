@@ -73,6 +73,14 @@ class Settings {
             <?php settings_fields(self::SLUG); ?>
             <?php do_settings_sections(self::SLUG); ?>
             <?php submit_button(); ?>
+            <p 
+                class="update-message notice inline notice-warning notice-alt"
+                style="padding-top: 0.5em; padding-bottom: 0.5em"
+            >
+                <b>Note:</b> If you have a server-side caching plugin installed such as
+                WP Super Cache, you may need to clear your cache after changing settings or
+                deactivating the plugin. Otherwise, your action may not take effect.
+            <p>
           </form>
       </div>
     <?php

@@ -4,8 +4,8 @@ Tags: chatbot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.7.5
 Stable tag: 0.1.0
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License: Apache v2.0
+License URI: http://www.apache.org/licenses/LICENSE-2.0
 
 This plugin allows you to easily add chatbots powered by IBM Watson Conversation
 to your website.
@@ -56,6 +56,11 @@ Wordpress.
 
 1. In your plugin settings, you can choose which pages to show the chat bot on.
 Your chat bot should now pop up on the pages you chose.
+
+**Note:**
+If you have a server-side caching plugin installed such as WP Super Cache, you may need to
+clear your cache after changing settings or deactivating the plugin. Otherwise, your action
+may not take effect.
 
 == Frequently Asked Questions ==
 
