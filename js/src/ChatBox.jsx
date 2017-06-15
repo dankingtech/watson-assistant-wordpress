@@ -136,13 +136,13 @@ export default class ChatBox extends Component {
               style={this.state.minimized ? {cursor: 'pointer'} : {cursor: 'move'}}
               onClick={this.state.minimized && this.toggleMinimize.bind(this)}
             >
-              Watson
               <span className='dashicons dashicons-no-alt popup-control'
                 onClick={this.closeChat.bind(this)}></span>
               <span className={`dashicons dashicons-arrow-${
                   (this.props.bottom && !this.savedPosition) != this.state.minimized ? 'down' : 'up'
                 }-alt2 popup-control`}
                 onClick={!this.state.minimized && this.toggleMinimize.bind(this)}></span>
+              <div className='popup-head-left'>{this.props.title}</div>
             </div>
             <Collapse isOpened={!this.state.minimized}>
               <div className='message-container'>

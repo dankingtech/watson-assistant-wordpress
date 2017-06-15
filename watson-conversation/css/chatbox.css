@@ -24,14 +24,20 @@ body .popup-box, .message-form .message-input
 .popup-box .popup-head
 {
   padding: 0.5em 0.6em;
+  height: 2.5em;
   font-weight: 600;
   color: white;
   background-color: rgb(35, 40, 45);
+
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 
 .popup-box .popup-head .popup-head-left
 {
-  float: left;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .popup-box .popup-head .popup-control

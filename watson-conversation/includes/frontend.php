@@ -96,7 +96,8 @@ class Frontend {
             $settings = array(
                 'delay' => (int) get_option('watsonconv_delay', 0),
                 'minimized' => get_option('watsonconv_minimized', 'no') == 'yes',
-                'is_bottom' => substr(get_option('watsonconv_position', 'bottom_right'), 0, 6) == 'bottom'
+                'is_bottom' => substr(get_option('watsonconv_position', 'bottom_right'), 0, 6) == 'bottom',
+                'title' => get_option('watsonconv_title', '')
             );
 
             wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');

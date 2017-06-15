@@ -77,9 +77,9 @@ class Settings {
             <h1 style='text-align: center'>Preview</h3>
             <div class='popup-box' style='display: block; margin: 10px auto; cursor: default;'>
                 <div class='popup-head'>
-                    Chat Bot
                     <span class='dashicons dashicons-no-alt popup-control'></span>
                     <span class='dashicons dashicons-arrow-down-alt2 popup-control'></span>
+                    <div class='popup-head-left' ><?php echo get_option('watsonconv_title', '') ?></div>
                 </div>
                 <div class='message-container'>
                     <div class='messages'>
@@ -535,6 +535,8 @@ class Settings {
             array(__CLASS__, 'render_minimized'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_position', 'Position',
             array(__CLASS__, 'render_position'), self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_title', 'Chat Box Title',
+            array(__CLASS__, 'render_title'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_font_size', 'Font Size',
             array(__CLASS__, 'render_font_size'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_color', 'Color',
@@ -544,6 +546,7 @@ class Settings {
 
         register_setting(self::SLUG, 'watsonconv_minimized');
         register_setting(self::SLUG, 'watsonconv_position');
+        register_setting(self::SLUG, 'watsonconv_title');
         register_setting(self::SLUG, 'watsonconv_font_size');
         register_setting(self::SLUG, 'watsonconv_color');
         register_setting(self::SLUG, 'watsonconv_size');
@@ -615,6 +618,14 @@ class Settings {
             ),
             'display: inline-block'
         );
+    }
+
+    public static function render_title() {
+    ?>
+        <input name="watsonconv_title" id="watsonconv_title"
+            type="text" style="width: 10em"
+            value="<?php echo get_option('watsonconv_title', '') ?>" />
+    <?php
     }
 
     public static function render_font_size() {

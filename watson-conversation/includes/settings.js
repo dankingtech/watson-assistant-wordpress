@@ -51,4 +51,8 @@ jQuery(document).ready(function($) {
       $('.popup-box').css('width', (0.825 * this.value + 4.2 * fontSize) + 'pt');
       $('.message-container').css('height', this.value + 'pt');
     });
+
+    $('#watsonconv_title').on('input', function() {
+      $('.popup-head-left').text(this.value)
+    });
 });
