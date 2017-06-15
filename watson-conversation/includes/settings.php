@@ -531,22 +531,22 @@ class Settings {
         add_settings_section('watsonconv_appearance', 'Appearance',
             array(__CLASS__, 'appearance_description'), self::SLUG);
 
+        add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
+            array(__CLASS__, 'render_minimized'), self::SLUG, 'watsonconv_appearance');
+        add_settings_field('watsonconv_position', 'Position',
+            array(__CLASS__, 'render_position'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_font_size', 'Font Size',
             array(__CLASS__, 'render_font_size'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_color', 'Color',
             array(__CLASS__, 'render_color'), self::SLUG, 'watsonconv_appearance');
-        add_settings_field('watsonconv_position', 'Position',
-            array(__CLASS__, 'render_position'), self::SLUG, 'watsonconv_appearance');
         add_settings_field('watsonconv_size', 'Window Size',
             array(__CLASS__, 'render_size'), self::SLUG, 'watsonconv_appearance');
-        add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
-            array(__CLASS__, 'render_minimized'), self::SLUG, 'watsonconv_appearance');
 
+        register_setting(self::SLUG, 'watsonconv_minimized');
+        register_setting(self::SLUG, 'watsonconv_position');
         register_setting(self::SLUG, 'watsonconv_font_size');
         register_setting(self::SLUG, 'watsonconv_color');
-        register_setting(self::SLUG, 'watsonconv_position');
         register_setting(self::SLUG, 'watsonconv_size');
-        register_setting(self::SLUG, 'watsonconv_minimized');
     }
 
     public static function appearance_description($args) {
@@ -558,21 +558,20 @@ class Settings {
     <?php
     }
 
-    public static function render_font_size() {
-    ?>
-        <input name="watsonconv_font_size" id="watsonconv_font_size"
-            type="number" min=9 max=13 step=0.5 style="width: 4em"
-            value="<?php echo get_option('watsonconv_font_size', 11) ?>" />
-        pt
-    <?php
-    }
-
-    public static function render_color() {
-    ?>
-        <input name="watsonconv_color" id="watsonconv_color"
-            type="text" style="width: 6em"
-            value="<?php echo get_option('watsonconv_color', '#23282d')?>" />
-    <?php
+    public static function render_minimized() {
+        self::render_radio_buttons(
+            'watsonconv_minimized',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
     }
 
     public static function render_position() {
@@ -618,6 +617,23 @@ class Settings {
         );
     }
 
+    public static function render_font_size() {
+    ?>
+        <input name="watsonconv_font_size" id="watsonconv_font_size"
+            type="number" min=9 max=13 step=0.5 style="width: 4em"
+            value="<?php echo get_option('watsonconv_font_size', 11) ?>" />
+        pt
+    <?php
+    }
+
+    public static function render_color() {
+    ?>
+        <input name="watsonconv_color" id="watsonconv_color"
+            type="text" style="width: 6em"
+            value="<?php echo get_option('watsonconv_color', '#23282d')?>" />
+    <?php
+    }
+
     public static function render_size() {
         self::render_radio_buttons(
             'watsonconv_size',
@@ -632,22 +648,6 @@ class Settings {
                 ), array(
                     'label' => esc_html__('Large', self::SLUG),
                     'value' => 240
-                )
-            )
-        );
-    }
-
-    public static function render_minimized() {
-        self::render_radio_buttons(
-            'watsonconv_minimized',
-            'no',
-            array(
-                array(
-                    'label' => esc_html__('Yes', self::SLUG),
-                    'value' => 'yes'
-                ), array(
-                    'label' => esc_html__('No', self::SLUG),
-                    'value' => 'no'
                 )
             )
         );
