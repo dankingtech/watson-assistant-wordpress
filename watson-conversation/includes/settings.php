@@ -37,6 +37,8 @@ class Settings {
             wp_enqueue_style('wp-color-picker');
             wp_enqueue_script('settings-script', WATSON_CONV_URL.'includes/settings.js',
                 array('wp-color-picker'), false, true );
+
+            Frontend::load_styles();
         }
     }
 
@@ -72,11 +74,41 @@ class Settings {
           <form action="options.php" method="POST">
             <?php settings_fields(self::SLUG); ?>
             <?php do_settings_sections(self::SLUG); ?>
+            <h1 style='text-align: center'>Preview</h3>
+            <div class='popup-box' style='display: block; margin: 10px auto; cursor: default;'>
+                <div class='popup-head'>
+                    Chat Bot
+                    <span class='dashicons dashicons-no-alt popup-control'></span>
+                    <span class='dashicons dashicons-arrow-down-alt2 popup-control'></span>
+                </div>
+                <div class='message-container'>
+                    <div class='messages'>
+                        <div class='message watson-message'>
+                            This is a message from the chatbot.
+                        </div>
+                        <div class='message user-message'>
+                            This is a message from the user.
+                        </div>
+                        <div class='message watson-message'>
+                            This message is a slightly longer message than the previous one from the chatbot.
+                        </div>
+                        <div class='message user-message'>
+                            This message is a slightly longer message than the previous one from the user.
+                        </div>
+                    </div>
+                </div>
+                <div class='message-form'>
+                    <input
+                      class='message-input'
+                      type='text'
+                      placeholder='Type a message'
+                      disabled='true'
+                    />
+                </div>
+            </div>
             <?php submit_button(); ?>
-            <p 
-                class="update-message notice inline notice-warning notice-alt"
-                style="padding-top: 0.5em; padding-bottom: 0.5em"
-            >
+            <p class="update-message notice inline notice-warning notice-alt"
+               style="padding-top: 0.5em; padding-bottom: 0.5em">
                 <b>Note:</b> If you have a server-side caching plugin installed such as
                 WP Super Cache, you may need to clear your cache after changing settings or
                 deactivating the plugin. Otherwise, your action may not take effect.

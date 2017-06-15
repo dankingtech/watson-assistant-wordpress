@@ -7,7 +7,6 @@
 .popup-box
 {
   width: 300px;
-  font-size: 11pt;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
   background-color: rgb(240, 240, 240);
@@ -17,9 +16,15 @@
   box-shadow: 0 10px 20px rgba(0,0,0,0.25), 0 8px 8px rgba(0,0,0,0.22);
 }
 
+body .popup-box
+{
+  line-height: 1.5em;
+  font-size: 11pt;
+}
+
 .popup-box .popup-head
 {
-  padding: 0.5em 0.6em 0.5em 0.6em;
+  padding: 0.5em 0.6em;
   font-weight: 600;
   color: white;
   background-color: rgb(35, 40, 45);
@@ -44,60 +49,78 @@
   opacity: 0.9;
 }
 
-.popup-box .popup-messages
+.message-container
 {
-  padding: 10px;
-  padding-bottom: 0;
+  position: relative;
   height: 200pt;
   width: 100%;
-  bottom: 0;
-  overflow-y: scroll;
   border-bottom: 1px solid rgb(215, 215, 215);
   background-color: rgb(235, 235, 235);
 }
 
-.popup-box .popup-messages:before
+.message-container .messages
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  padding-bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+.message-container:after
 {
   content: '';
   display: block;
   box-shadow: inset 0  8px 8px -10px rgba(0, 0, 0, 0.5);
   position: absolute;
-  margin: -10px 0 0 -10px;
+  top: 0;
+  left: 0;
   height: 8px;
   width: 100%;
   border: none;
 }
 
-.popup-box .popup-message-form
+.popup-box .message-form
 {
   height: 2.75em;
 }
 
-.popup-box .popup-message-form .popup-message-input
+.message-form .message-input
 {
   height: 100%;
   width: 100%;
   border: 0;
-  font-size: 11pt;
+  padding: 0 0.75em;
 }
 
-.popup-box .popup-messages .popup-message
+.message-container .messages .message
 {
   clear: both;
   border-radius: 1.4em;
   margin-bottom: 10px;
-  padding: 0.5em 0.8em 0.5em 0.8em;
+  padding: 0.5em 0.8em;
   max-width: 80%;
+
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 
-.popup-box .popup-messages .watson-message
+.message-container .messages .watson-message
 {
   float: left;
   background-color: rgb(35, 40, 45);
   color: white;
 }
 
-.popup-box .popup-messages .user-message
+.message-container .messages .user-message
 {
   float: right;
   background-color: white;

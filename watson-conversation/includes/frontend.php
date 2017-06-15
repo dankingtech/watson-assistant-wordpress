@@ -27,7 +27,7 @@ class Frontend {
                 break;
         }
 
-        if(array_sum(sscanf($color, "#%02x%02x%02x")) > 500){
+        if(array_sum(sscanf($color, "#%02x%02x%02x")) > 600){
             $text_color = 'black';
         } else {
             $text_color = 'white';
@@ -38,9 +38,12 @@ class Frontend {
             {
                 '.$position.'
             }
-            .popup-box
+            body .popup-box
             {
                 font-size: '.$font_size.'pt;
+            }
+            .popup-box
+            {
                 width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
             }
             .popup-box .popup-head
@@ -48,15 +51,11 @@ class Frontend {
                 background-color: '.$color.';
                 color: '.$text_color.';
             }
-            .popup-box .popup-messages
+            .message-container
             {
                 height: '.$messages_height.'pt
             }
-            .popup-box .popup-message-form .popup-message-input
-            {
-                font-size: '.$font_size.'pt;
-            }
-            .popup-box .popup-messages .watson-message
+            .message-container .messages .watson-message
             {
                 float: left;
                 background-color: '.$color.';
@@ -66,7 +65,7 @@ class Frontend {
     }
 
     public static function render_chat_box() {
-        $ip_addr = \WatsonConv\API::get_client_ip();
+        $ip_addr = API::get_client_ip();
 
         $page_selected =
             (is_home() && get_option('watsonconv_home_page', 'false') == 'true') ||

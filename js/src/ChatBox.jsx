@@ -145,14 +145,16 @@ export default class ChatBox extends Component {
                 onClick={!this.state.minimized && this.toggleMinimize.bind(this)}></span>
             </div>
             <Collapse isOpened={!this.state.minimized}>
-              <div className='popup-messages' ref={div => {this.messageList = div}}>
-                {this.state.messages.map(
-                  (message, index) => <Message message={message} key={index} />
-                )}
+              <div className='message-container'>
+                <div className='messages' ref={div => {this.messageList = div}}>
+                  {this.state.messages.map(
+                    (message, index) => <Message message={message} key={index} />
+                  )}
+                </div>
               </div>
-              <form className='popup-message-form' onSubmit={this.submitMessage.bind(this)}>
+              <form className='message-form' onSubmit={this.submitMessage.bind(this)}>
                 <input
-                  className='popup-message-input'
+                  className='message-input'
                   type='text'
                   placeholder='Type a message'
                   value={this.state.newMessage}
