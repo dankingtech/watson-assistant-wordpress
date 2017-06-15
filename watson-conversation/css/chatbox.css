@@ -9,14 +9,13 @@
   width: 300px;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-  background-color: rgb(240, 240, 240);
 }
 
 .popup-box:hover {
   box-shadow: 0 10px 20px rgba(0,0,0,0.25), 0 8px 8px rgba(0,0,0,0.22);
 }
 
-body .popup-box
+body .popup-box, .message-form .message-input
 {
   line-height: 1.5em;
   font-size: 11pt;

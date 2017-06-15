@@ -27,18 +27,14 @@ class Frontend {
                 break;
         }
 
-        if(array_sum(sscanf($color, "#%02x%02x%02x")) > 600){
-            $text_color = 'black';
-        } else {
-            $text_color = 'white';
-        }
+        $text_color = self::luminance($color) > 0.5 ? 'black' : 'white';
 
         wp_add_inline_style('watsonconv-chatbox', '
             .popup-box-wrapper
             {
                 '.$position.'
             }
-            body .popup-box
+            body .popup-box, .message-form .message-input
             {
                 font-size: '.$font_size.'pt;
             }
@@ -46,7 +42,7 @@ class Frontend {
             {
                 width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
             }
-            .popup-box .popup-head
+            .popup-box .popup-head, .message-container .messages .watson-message
             {
                 background-color: '.$color.';
                 color: '.$text_color.';
@@ -55,13 +51,21 @@ class Frontend {
             {
                 height: '.$messages_height.'pt
             }
-            .message-container .messages .watson-message
-            {
-                float: left;
-                background-color: '.$color.';
-                color: '.$text_color.';
-            }
         ');
+    }
+
+    private static function luminance($hex) {
+        $rgb = array_map(function($val) {
+            $val /= 255;
+
+            if ($val <= 0.03928) {
+                return $val / 12.92;
+            } else {
+                return pow(($val + 0.055) / 1.055, 2.4);
+            }
+        }, sscanf($hex, "#%02x%02x%02x"));
+
+        return 0.2126 * $rgb[0] + 0.7152 * $rgb[1] + 0.0722 * $rgb[2];
     }
 
     public static function render_chat_box() {
