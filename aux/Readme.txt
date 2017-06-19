@@ -80,13 +80,3 @@ instructions](https://www.ibm.com/watson/developercloud/doc/conversation/getting
 will guide you through this intuitive process, and there's a course specifically
 designed to teach you how to do this coming soon! No prior technical knowledge
 necessary.
-
-== Screenshots ==
-
-1. This screenshot doesn't exist as of yet.
-
-== Changelog ==
-
-= 0.1.0 =
-
-This version works.
