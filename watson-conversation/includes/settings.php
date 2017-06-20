@@ -193,8 +193,6 @@ class Settings {
             array(__CLASS__, 'render_use_limit'), self::SLUG, 'watsonconv_rate_limit');
         add_settings_field('watsonconv_limit', 'Maximum Number of Total Requests',
             array(__CLASS__, 'render_limit'), self::SLUG, 'watsonconv_rate_limit');
-        add_settings_field('watsonconv_interval', 'Time Interval',
-            array(__CLASS__, 'render_interval'), self::SLUG, 'watsonconv_rate_limit');
 
         register_setting(self::SLUG, 'watsonconv_use_limit');
         register_setting(self::SLUG, 'watsonconv_interval');
@@ -254,11 +252,6 @@ class Settings {
             value="<?php echo empty(get_option('watsonconv_limit')) ?
                         0 : get_option('watsonconv_limit')?>"
             style="width: 8em" />
-    <?php
-    }
-
-    public static function render_interval() {
-    ?>
         <select name="watsonconv_interval" id="watsonconv_interval">
             <option value="monthly" <?php selected(get_option('watsonconv_interval', 'monthly'), 'monthly')?>>
                 Per Month
@@ -286,8 +279,6 @@ class Settings {
             array(__CLASS__, 'render_use_client_limit'), self::SLUG, 'watsonconv_client_rate_limit');
         add_settings_field('watsonconv_client_limit', 'Maximum Number of Requests Per Client',
             array(__CLASS__, 'render_client_limit'), self::SLUG, 'watsonconv_client_rate_limit');
-        add_settings_field('watsonconv_client_interval', 'Time Interval',
-            array(__CLASS__, 'render_client_interval'), self::SLUG, 'watsonconv_client_rate_limit');
 
         register_setting(self::SLUG, 'watsonconv_use_client_limit');
         register_setting(self::SLUG, 'watsonconv_client_interval');
@@ -330,11 +321,6 @@ class Settings {
             value="<?php echo empty(get_option('watsonconv_client_limit')) ?
                         0 : get_option('watsonconv_client_limit')?>"
             style="width: 8em" />
-    <?php
-    }
-
-    public static function render_client_interval() {
-    ?>
         <select name="watsonconv_client_interval" id="watsonconv_client_interval">
             <option value="monthly" <?php selected(get_option('watsonconv_client_interval', 'monthly'), 'monthly')?>>
                 Per Month
