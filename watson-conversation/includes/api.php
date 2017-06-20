@@ -17,12 +17,14 @@ class API {
     const BASE_URL = 'https://gateway.watsonplatform.net/conversation/api/v1';
 
     public static function register_proxy() {
-        register_rest_route('watsonconv/v1', '/message',
-            array(
-                'methods' => 'post',
-                'callback' => array(__CLASS__, 'route_request')
-            )
-        );
+        if (get_option('watsonconv_credentials')) {
+            register_rest_route('watsonconv/v1', '/message',
+                array(
+                    'methods' => 'post',
+                    'callback' => array(__CLASS__, 'route_request')
+                )
+            );
+        }
     }
 
     public static function route_request(\WP_REST_Request $request) {
@@ -54,13 +56,23 @@ class API {
             $client_list[$ip_addr] = true;
             set_transient('watsonconv_client_list', $client_list, 3600);
 
+            $credentials = get_option('watsonconv_credentials');
+
+            if (empty($credentials)) {
+                return new \WP_Error(
+                    'config_error',
+                    'Service not configured.',
+                    503
+                );
+            }
+
             $auth_token = 'Basic ' . base64_encode(
-                get_option('watsonconv_username').':'.
-                get_option('watsonconv_password'));
-            $watsonconv_id = get_option('watsonconv_id');
+                $credentials['username'].':'.
+                $credentials['password']);
+            $workspace_id = $credentials['id'];
 
             $response = wp_remote_post(
-                self::BASE_URL."/workspaces/$watsonconv_id/message?version=".self::API_VERSION,
+                self::BASE_URL."/workspaces/$workspace_id/message?version=".self::API_VERSION,
                 array(
                     'headers' => array(
                         'Authorization' => $auth_token,

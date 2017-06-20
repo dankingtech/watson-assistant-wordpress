@@ -43,9 +43,7 @@ class Settings {
     }
 
     public static function render_notice($plugin_file, $plugin_data, $status) {
-        if (empty(get_option('watsonconv_id')) ||
-            empty(get_option('watsonconv_username')) ||
-            empty(get_option('watsonconv_password'))) {
+        if (empty(get_option('watsonconv_credentials'))) {
         ?>
             <tr class="active icon-settings"><td colspan=3>
                 <div class="update-message notice inline notice-warning notice-alt"
@@ -141,9 +139,52 @@ class Settings {
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'render_password'),
             self::SLUG, 'watsonconv_workspace');
 
-        register_setting(self::SLUG, 'watsonconv_id');
-        register_setting(self::SLUG, 'watsonconv_username');
-        register_setting(self::SLUG, 'watsonconv_password');
+        register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
+    }
+
+    public static function validate_credentials($credentials) {
+        if (empty($credentials['id'])) {
+            add_settings_error('watsonconv_credentials', 'invalid-id', 'Please enter a workspace ID.');
+            $empty = true;
+        }
+        if (empty($credentials['username'])) {
+            add_settings_error('watsonconv_credentials', 'invalid-username', 'Please enter a username.');
+            $empty = true;
+        }
+        if (empty($credentials['password'])) {
+            add_settings_error('watsonconv_credentials', 'invalid-password', 'Please enter a password.');
+            $empty = true;
+        }
+
+        if (isset($empty)) {
+            return get_option('watsonconv_credentials');
+        }
+
+        $auth_token = 'Basic ' . base64_encode(
+            $credentials['username'].':'.
+            $credentials['password']);
+        $workspace_id = $credentials['id'];
+
+        $response = wp_remote_get(
+            API::BASE_URL."/workspaces/$workspace_id/?version=".API::API_VERSION,
+            array(
+                'headers' => array(
+                    'Authorization' => $auth_token
+                )
+            )
+        );
+
+        $response_code = wp_remote_retrieve_response_code($response);
+
+        if ($response_code == 401) {
+            add_settings_error('watsonconv_credentials', 'invalid-credentials', $auth_token.': '.wp_remote_retrieve_response_message($response));
+            return get_option('watsonconv_credentials');
+        } else if ($response_code == 404 || $response_code == 400) {
+            add_settings_error('watsonconv_credentials', 'invalid-id', 'You do not have a workspace with that Workspace ID.');
+            return get_option('watsonconv_credentials');
+        }
+
+        return $credentials;
     }
 
     public static function workspace_description($args) {
@@ -161,24 +202,24 @@ class Settings {
 
     public static function render_id() {
     ?>
-        <input name="watsonconv_id" id="watsonconv_id" type="text"
-            value="<?php echo get_option('watsonconv_id') ?>"
+        <input name="watsonconv_credentials[id]" id="watsonconv_id" type="text"
+            value="<?php echo get_option('watsonconv_credentials')['id'] ?>"
             style="width: 22em" />
     <?php
     }
 
     public static function render_username() {
     ?>
-        <input name="watsonconv_username" id="watsonconv_username" type="text"
-            value="<?php echo get_option('watsonconv_username') ?>"
+        <input name="watsonconv_credentials[username]" id="watsonconv_username" type="text"
+            value="<?php echo get_option('watsonconv_credentials')['username'] ?>"
             style="width: 22em"/>
     <?php
     }
 
     public static function render_password() {
     ?>
-        <input name="watsonconv_password" id="watsonconv_password" type="password"
-            size=11 value="<?php echo get_option('watsonconv_password') ?>"
+        <input name="watsonconv_credentials[password]" id="watsonconv_password" type="password"
+            size=11 value="<?php echo get_option('watsonconv_credentials')['password'] ?>"
             style="width: 8em" />
     <?php
     }

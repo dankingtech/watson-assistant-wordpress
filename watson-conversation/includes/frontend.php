@@ -87,9 +87,7 @@ class Frontend {
                 $total_requests < get_option('watsonconv_limit', 10000)) &&
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
                 $client_requests < get_option('watsonconv_client_limit', 100)) &&
-            !empty(get_option('watsonconv_id')) &&
-            !empty(get_option('watsonconv_username')) &&
-            !empty(get_option('watsonconv_password'))) {
+            !empty(get_option('watsonconv_credentials'))) {
         ?>
             <div id="chat-box"></div>
         <?php
