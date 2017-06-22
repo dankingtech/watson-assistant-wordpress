@@ -12,13 +12,13 @@ function luminance(hex) {
   });
 
   return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-}
+} 
 
 jQuery(document).ready(function($) {
     $('#watsonconv_color').wpColorPicker({
       palettes: true,
       change: function() {
-        $('.popup-box .popup-head, .message-container .messages .watson-message')
+        $('#watson-box #watson-header, #message-container #messages .watson-message')
           .css({
             'background-color': this.value,
             'color': luminance(this.value) > 0.5 ? 'black' : 'white'
@@ -43,18 +43,18 @@ jQuery(document).ready(function($) {
     $('#watsonconv_font_size').on('change', function() {
       var size = $('input[name="watsonconv_size"]:checked').val();
 
-      $('body .popup-box, .message-form .message-input').css('font-size', this.value + 'pt');
-      $('.popup-box').css('width', (0.825 * size + 4.2 * this.value) + 'pt');
+      $('#watson-box .watson-font').css('font-size', this.value + 'pt');
+      $('#watson-box').css('width', (0.825 * size + 4.2 * this.value) + 'pt');
     });
 
     $('input[name="watsonconv_size"]').on('change', function() {
       var fontSize = $('#watsonconv_font_size').val();
 
-      $('.popup-box').css('width', (0.825 * this.value + 4.2 * fontSize) + 'pt');
-      $('.message-container').css('height', this.value + 'pt');
+      $('#watson-box').css('width', (0.825 * this.value + 4.2 * fontSize) + 'pt');
+      $('#message-container').css('height', this.value + 'pt');
     });
 
     $('#watsonconv_title').on('input', function() {
-      $('.popup-head-left').text(this.value)
+      $('#title').text(this.value)
     });
 });

@@ -116,7 +116,7 @@ export default class ChatBox extends Component {
   render() {
     return (this.state.messages.length != 0) && !this.state.closed && (
       <Draggable
-        handle='.popup-head'
+        handle='#watson-header'
         cancel={this.state.minimized ? '.popup-head' : ''}
         onStart={e => e.preventDefault()}
         onStop={this.savePosition}
@@ -128,11 +128,12 @@ export default class ChatBox extends Component {
             bottom: 'auto',
             right: 'auto'
           }}
-          className='popup-box-wrapper'
+          id='watson-float'
         >
-          <div className='popup-box'>
+          <div id='watson-box' className='drop-shadow animated'>
             <div
-              className='popup-head'
+              id='watson-header'
+              class='watson-font'
               style={this.state.minimized ? {cursor: 'pointer'} : {cursor: 'move'}}
               onClick={this.state.minimized && this.toggleMinimize.bind(this)}
             >
@@ -142,19 +143,19 @@ export default class ChatBox extends Component {
                   (this.props.bottom && !this.savedPosition) != this.state.minimized ? 'down' : 'up'
                 }-alt2 popup-control`}
                 onClick={!this.state.minimized && this.toggleMinimize.bind(this)}></span>
-              <div className='popup-head-left'>{this.props.title}</div>
+              <div className='overflow-hidden watson-font'>{this.props.title}</div>
             </div>
             <Collapse isOpened={!this.state.minimized}>
-              <div className='message-container'>
-                <div className='messages' ref={div => {this.messageList = div}}>
+              <div id='message-container'>
+                <div id='messages' ref={div => {this.messageList = div}}>
                   {this.state.messages.map(
                     (message, index) => <Message message={message} key={index} />
                   )}
                 </div>
               </div>
-              <form className='message-form' onSubmit={this.submitMessage.bind(this)}>
+              <form className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
                 <input
-                  className='message-input'
+                  className='message-input watson-font'
                   type='text'
                   placeholder='Type a message'
                   value={this.state.newMessage}

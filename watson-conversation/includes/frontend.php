@@ -30,24 +30,24 @@ class Frontend {
         $text_color = self::luminance($color) > 0.5 ? 'black' : 'white';
 
         wp_add_inline_style('watsonconv-chatbox', '
-            .popup-box-wrapper
+            #watson-float
             {
                 '.$position.'
             }
-            body .popup-box, .message-form .message-input
-            {
-                font-size: '.$font_size.'pt;
-            }
-            .popup-box
+            #watson-box
             {
                 width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
             }
-            .popup-box .popup-head, .message-container .messages .watson-message
+            #watson-box .watson-font
+            {
+                font-size: '.$font_size.'pt;
+            }
+            #watson-box #watson-header, #message-container #messages .watson-message
             {
                 background-color: '.$color.';
                 color: '.$text_color.';
             }
-            .message-container
+            #message-container
             {
                 height: '.$messages_height.'pt
             }

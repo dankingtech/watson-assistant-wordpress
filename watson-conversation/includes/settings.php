@@ -65,6 +65,42 @@ class Settings {
             return [$settings_link] + $links;
     }
 
+    private static function render_preview() {
+    ?>
+        <div id='watson-box' class='drop-shadow animated' style='display: block; margin: 10px auto; cursor: default;'>
+            <div id='watson-header' class='watson-font'>
+                <span class='dashicons dashicons-no-alt popup-control'></span>
+                <span class='dashicons dashicons-arrow-down-alt2 popup-control'></span>
+                <div id='title' class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
+            </div>
+            <div id='message-container'>
+                <div id='messages'>
+                    <div class='message watson-message'>
+                        This is a message from the chatbot.
+                    </div>
+                    <div class='message user-message'>
+                        This is a message from the user.
+                    </div>
+                    <div class='message watson-message'>
+                        This message is a slightly longer message than the previous one from the chatbot.
+                    </div>
+                    <div class='message user-message'>
+                        This message is a slightly longer message than the previous one from the user.
+                    </div>
+                </div>
+            </div>
+            <div class='message-form watson-font'>
+                <input
+                    class='message-input watson-font'
+                    type='text'
+                    placeholder='Type a message'
+                    disabled='true'
+                />
+            </div>
+        </div>
+    <?php
+    }
+
     public static function render_page() {
     ?>
       <div class="wrap" style="max-width: 95em">
@@ -73,37 +109,7 @@ class Settings {
             <?php settings_fields(self::SLUG); ?>
             <?php do_settings_sections(self::SLUG); ?>
             <h1 style='text-align: center'>Preview</h3>
-            <div class='popup-box' style='display: block; margin: 10px auto; cursor: default;'>
-                <div class='popup-head'>
-                    <span class='dashicons dashicons-no-alt popup-control'></span>
-                    <span class='dashicons dashicons-arrow-down-alt2 popup-control'></span>
-                    <div class='popup-head-left' ><?php echo get_option('watsonconv_title', '') ?></div>
-                </div>
-                <div class='message-container'>
-                    <div class='messages'>
-                        <div class='message watson-message'>
-                            This is a message from the chatbot.
-                        </div>
-                        <div class='message user-message'>
-                            This is a message from the user.
-                        </div>
-                        <div class='message watson-message'>
-                            This message is a slightly longer message than the previous one from the chatbot.
-                        </div>
-                        <div class='message user-message'>
-                            This message is a slightly longer message than the previous one from the user.
-                        </div>
-                    </div>
-                </div>
-                <div class='message-form'>
-                    <input
-                      class='message-input'
-                      type='text'
-                      placeholder='Type a message'
-                      disabled='true'
-                    />
-                </div>
-            </div>
+            <?php self::render_preview() ?>
             <?php submit_button(); ?>
             <p class="update-message notice inline notice-warning notice-alt"
                style="padding-top: 0.5em; padding-bottom: 0.5em">
