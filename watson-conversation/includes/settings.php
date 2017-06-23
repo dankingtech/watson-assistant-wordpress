@@ -199,7 +199,7 @@ class Settings {
             <?php esc_html_e('Here, you can specify the Workspace ID for your Watson
                 Conversation Workspace in addition to the required credentials.', self::SLUG) ?> <br />
             <?php esc_html_e('Note: These are not the same as your Bluemix Login Credentials.', self::SLUG) ?>
-            <a href='https://www.ibm.com/watson/developercloud/doc/common/getting-started-credentials.html' target="_blank">
+            <a href='https://cocl.us/watson-credentials-help' target="_blank">
                 <?php esc_html_e('Click here for details.', self::SLUG) ?>
             </a>
         </p>
