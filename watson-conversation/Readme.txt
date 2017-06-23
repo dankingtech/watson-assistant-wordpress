@@ -1,6 +1,6 @@
 === IBM Watson Conversation ===
-Contributors: hasidd
-Tags: chatbot, artificial intelligence
+Contributors: cognitiveclass
+Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.7.5
 Stable tag: 0.1.0
@@ -35,23 +35,25 @@ to be installed. If you have WordPress 4.7, this is installed by default.
 = Installing the Plugin =
 
 1. Log in to your site’s Dashboard.
-1. Click on the “Plugins” tab in the left panel, then click “Add New”.
+1. Click on the `Plugins` tab in the left panel, then click `Add New`.
 1. Find the Plugin through one of these two methods:
     - Search for “Watson Conversation” and the latest version will appear at the
       top of the list of results.
     - Click `Upload Plugin` and upload the `watson-conversation.0.2.0.zip` file
 
-1. Install the plugin by clicking the “Install Now” link.
-1. When installation finishes, click “Activate Plugin”.
+1. Install the plugin by clicking the `Install Now` link.
+1. When installation finishes, click `Activate Plugin`.
+
+This plugin can also be installed manually.
 
 = Building Your Chatbot =
 
 1. Sign up for a free IBM Bluemix trial
-[here](https://console.ng.bluemix.net/registration/).
+[here](https://cocl.us/bluemix-registration).
 
 1. Create a workspace and build a customized chat bot using Watson
 Conversation's intuitive interface. To do this, you can follow [these
-instructions](https://www.ibm.com/watson/developercloud/doc/conversation/getting-started.html),
+instructions](https://cocl.us/watson-conversation-help),
 from the `Getting Started` section to `Building a Dialog`.
 
 = Configuring the Plugin =
@@ -83,7 +85,10 @@ conversation on a topic of interest.
 
 Nope. This plugin allows you to easily deploy chatbots that you create using the
 Watson Conversation service on IBM Bluemix. [These
-instructions](https://www.ibm.com/watson/developercloud/doc/conversation/getting-started.html)
+instructions](https://cocl.us/watson-conversation-help)
 will guide you through this intuitive process, and there's a course coming soon that's specifically
 designed to teach you how to do this! No prior technical knowledge
 necessary.
+
+== Screenshots ==
+1. An example of your chatbot greeting a website visitor.
