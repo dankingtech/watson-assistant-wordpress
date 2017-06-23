@@ -44,17 +44,17 @@ class API {
             set_transient(
                 'watsonconv_total_requests',
                 (get_transient('watsonconv_total_requests') ?: 0) + 1,
-                3600
+                DAY_IN_SECONDS
             );
             set_transient(
                 "watsonconv_requests_$ip_addr",
                 (get_transient("watsonconv_requests_$ip_addr") ?: 0) + 1,
-                3600
+                DAY_IN_SECONDS
             );
 
             $client_list = get_transient('watsonconv_client_list', array());
             $client_list[$ip_addr] = true;
-            set_transient('watsonconv_client_list', $client_list, 3600);
+            set_transient('watsonconv_client_list', $client_list, DAY_IN_SECONDS);
 
             $credentials = get_option('watsonconv_credentials');
 

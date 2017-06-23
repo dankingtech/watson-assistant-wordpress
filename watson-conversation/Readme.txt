@@ -23,7 +23,14 @@ Currently supported features:
 * Choose the pages and posts you want the visitors to see the chat bot on
 * Customize the appearance of the chat box to your preference
 
+**Note:** This is an alpha release.
+
 == Installation ==
+
+= Requirements =
+
+This plugin requires the [WordPress REST API Plugin](https://en-ca.wordpress.org/plugins/rest-api/)
+to be installed. If you have WordPress 4.7, this is installed by default.
 
 = Installing the Plugin =
 
@@ -77,6 +84,6 @@ conversation on a topic of interest.
 Nope. This plugin allows you to easily deploy chatbots that you create using the
 Watson Conversation service on IBM Bluemix. [These
 instructions](https://www.ibm.com/watson/developercloud/doc/conversation/getting-started.html)
-will guide you through this intuitive process, and there's a course specifically
-designed to teach you how to do this coming soon! No prior technical knowledge
+will guide you through this intuitive process, and there's a course coming soon that's specifically
+designed to teach you how to do this! No prior technical knowledge
 necessary.
