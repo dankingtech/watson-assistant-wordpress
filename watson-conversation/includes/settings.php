@@ -144,6 +144,8 @@ class Settings {
             self::SLUG, 'watsonconv_workspace');
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'render_password'),
             self::SLUG, 'watsonconv_workspace');
+        add_settings_field('watsonconv_url', 'API Gateway URL', array(__CLASS__, 'render_url'),
+            self::SLUG, 'watsonconv_workspace');
 
         register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
@@ -171,8 +173,11 @@ class Settings {
             $credentials['password']);
         $workspace_id = $credentials['id'];
 
+        $base_url = isset($credentials['url']) ? $credentials['url'] : 
+            'https://gateway.watsonplatform.net/conversation/api/v1';
+
         $response = wp_remote_get(
-            API::BASE_URL."/workspaces/$workspace_id/?version=".API::API_VERSION,
+            "$base_url/workspaces/$workspace_id/?version=".API::API_VERSION,
             array(
                 'headers' => array(
                     'Authorization' => $auth_token
@@ -183,10 +188,16 @@ class Settings {
         $response_code = wp_remote_retrieve_response_code($response);
 
         if ($response_code == 401) {
-            add_settings_error('watsonconv_credentials', 'invalid-credentials', $auth_token.': '.wp_remote_retrieve_response_message($response));
+            add_settings_error('watsonconv_credentials', 'invalid-credentials', 
+                wp_remote_retrieve_response_message($response).': Please ensure you entered a valid username/password and URL');
             return get_option('watsonconv_credentials');
         } else if ($response_code == 404 || $response_code == 400) {
-            add_settings_error('watsonconv_credentials', 'invalid-id', 'You do not have a workspace with that Workspace ID.');
+            add_settings_error('watsonconv_credentials', 'invalid-id', 
+                'Please ensure you entered a valid URL and that you have a workspace with that Workspace ID.');
+            return get_option('watsonconv_credentials');
+        } else if ($response_code != 200) {
+            add_settings_error('watsonconv_credentials', 'invalid-url',
+                'Please ensure you entered a valid Watson Conversation gateway URL.');
             return get_option('watsonconv_credentials');
         }
 
@@ -201,7 +212,9 @@ class Settings {
             <?php esc_html_e('Note: These are not the same as your Bluemix Login Credentials.', self::SLUG) ?>
             <a href='https://cocl.us/watson-credentials-help' target="_blank">
                 <?php esc_html_e('Click here for details.', self::SLUG) ?>
-            </a>
+            </a> <br /><br />
+            <?php esc_html_e('If the URL specified in your Service Credentials page is different 
+                from the default, you will need to change it below.', self::SLUG) ?>
         </p>
     <?php
     }
@@ -225,8 +238,18 @@ class Settings {
     public static function render_password() {
     ?>
         <input name="watsonconv_credentials[password]" id="watsonconv_password" type="password"
-            size=11 value="<?php echo get_option('watsonconv_credentials')['password'] ?>"
+            value="<?php echo get_option('watsonconv_credentials')['password'] ?>"
             style="width: 8em" />
+    <?php
+    }
+
+    public static function render_url() {
+    ?>
+        <input name="watsonconv_credentials[url]" id="watsonconv_url" type="text"
+            value="<?php echo isset($credentials['url']) ? $credentials['url'] : 
+                'https://gateway.watsonplatform.net/conversation/api/v1'?>"
+            placeholder='https://gateway.watsonplatform.net/conversation/api/v1'
+            style="width: 30em" />
     <?php
     }
 

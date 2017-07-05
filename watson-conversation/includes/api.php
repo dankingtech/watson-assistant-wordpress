@@ -14,7 +14,6 @@ add_filter('cron_schedules', array('WatsonConv\API', 'add_cron_schedules'));
 
 class API {
     const API_VERSION = '2017-04-21';
-    const BASE_URL = 'https://gateway.watsonplatform.net/conversation/api/v1';
 
     public static function register_proxy() {
         if (get_option('watsonconv_credentials')) {
@@ -71,8 +70,11 @@ class API {
                 $credentials['password']);
             $workspace_id = $credentials['id'];
 
+            $base_url = isset($credentials['url']) ? $credentials['url'] : 
+                'https://gateway.watsonplatform.net/conversation/api/v1';
+
             $response = wp_remote_post(
-                self::BASE_URL."/workspaces/$workspace_id/message?version=".self::API_VERSION,
+                "$base_url/workspaces/$workspace_id/message?version=".self::API_VERSION,
                 array(
                     'headers' => array(
                         'Authorization' => $auth_token,
