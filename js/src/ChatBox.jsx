@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
-import { Collapse } from 'react-collapse';
 import Message from './Message.jsx';
 
 export default class ChatBox extends Component {
@@ -17,14 +16,19 @@ export default class ChatBox extends Component {
         newMessage: '',
         context: null,
         minimized: props.minimized,
-        closed: false
+        position: {x: 0, y: 0},
+        dragging: false
       };
     }
 
     if (typeof(sessionStorage) !== 'undefined' &&
         sessionStorage.getItem('chat_bot_position') !== null)
     {
-      this.savedPosition = JSON.parse(sessionStorage.getItem('chat_bot_position'));
+      let pos = JSON.parse(sessionStorage.getItem('chat_bot_position'));
+      this.state.position = {
+        x: pos.x * window.innerWidth,
+        y: pos.y * window.innerHeight
+      };
     }
   }
 
@@ -52,7 +56,8 @@ export default class ChatBox extends Component {
     }
   }
 
-  toggleMinimize() {
+  toggleMinimize(e) {
+    e.preventDefault();
     this.setState({minimized: !this.state.minimized});
   }
 
@@ -103,49 +108,51 @@ export default class ChatBox extends Component {
     this.setState({newMessage: e.target.value});
   }
 
+  startDragging(e) {
+    e.preventDefault();
+    this.setState({
+      dragging: true
+    })
+  }
+
   savePosition(e, data) {
+    this.setState({
+      dragging: false
+    });
+
     if (typeof(sessionStorage) !== 'undefined') {
-      let {top, left} = data.node.getBoundingClientRect();
+      this.setState({position: {x: data.x, y: data.y}});
       sessionStorage.setItem('chat_bot_position', JSON.stringify({
-        top: (top / window.innerHeight) * 100,
-        left: (left / window.innerWidth) * 100
-      }));
+        x: data.x / window.innerWidth,
+        y: data.y / window.innerHeight}));
     }
   }
 
   render() {
-    return (this.state.messages.length != 0) && !this.state.closed && (
-      <Draggable
-        handle='#watson-header'
-        cancel={this.state.minimized ? '.popup-head' : ''}
-        onStart={e => e.preventDefault()}
-        onStop={this.savePosition}
-      >
-        <span
-          style={this.savedPosition && {
-            top: `${this.savedPosition.top}%`,
-            left: `${this.savedPosition.left}%`,
-            bottom: 'auto',
-            right: 'auto'
-          }}
-          id='watson-float'
+    return (this.state.messages.length != 0) && (
+      <div>
+        <Draggable
+          handle='#watson-header'
+          onStart={this.startDragging.bind(this)}
+          onStop={this.savePosition.bind(this)}
+          position={this.state.minimized ? {x: 0, y: 0} : this.state.position}
         >
-          <div id='watson-box' className='drop-shadow animated'>
-            <div
-              id='watson-header'
-              class='watson-font'
-              style={this.state.minimized ? {cursor: 'pointer'} : {cursor: 'move'}}
-              onClick={this.state.minimized && this.toggleMinimize.bind(this)}
-            >
-              <span className='dashicons dashicons-no-alt popup-control'
-                onClick={this.closeChat.bind(this)}></span>
-              <span className={`dashicons dashicons-arrow-${
-                  (this.props.bottom && !this.savedPosition) != this.state.minimized ? 'down' : 'up'
-                }-alt2 popup-control`}
-                onClick={!this.state.minimized && this.toggleMinimize.bind(this)}></span>
-              <div className='overflow-hidden watson-font'>{this.props.title}</div>
-            </div>
-            <Collapse isOpened={!this.state.minimized}>
+          <span
+            id='watson-float'
+            class={!this.state.dragging && 'animated'}
+            style={{opacity: this.state.minimized ? 0 : 1}}
+          >
+            <div id='watson-box' className='drop-shadow animated'>
+              <div
+                id='watson-header'
+                class='watson-font'
+              >
+                <span className={`dashicons dashicons-arrow-${
+                    this.props.position[0] == 'bottom' ? 'down' : 'up'
+                  }-alt2 popup-control`}
+                  onClick={this.toggleMinimize.bind(this)}></span>
+                <div className='overflow-hidden watson-font'>{this.props.title}</div>
+              </div>
               <div id='message-container'>
                 <div id='messages' ref={div => {this.messageList = div}}>
                   {this.state.messages.map(
@@ -162,10 +169,18 @@ export default class ChatBox extends Component {
                   onChange={this.setMessage.bind(this)}
                 />
               </form>
-            </Collapse>
-          </div>
-        </span>
-      </Draggable>
+            </div>
+          </span>
+        </Draggable>
+        <div 
+          id='watson-fab' 
+          class='drop-shadow animated' 
+          style={{opacity: this.state.minimized ? 1 : 0}} 
+          onClick={this.toggleMinimize.bind(this)}
+        >
+          <span id='watson-fab-icon' class='dashicons dashicons-format-chat'></span>
+        </div>
+      </div>
     );
   }
 }

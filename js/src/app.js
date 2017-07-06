@@ -7,7 +7,7 @@ function renderApp() {
     <ChatBox
       title={settings.title}
       minimized={settings.minimized}
-      bottom={settings.is_bottom}
+      position={settings.position}
     />,
     document.getElementById('chat-box')
   );

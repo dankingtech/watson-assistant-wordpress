@@ -12,27 +12,22 @@ class Frontend {
         $color = get_option('watsonconv_color', '#23282d');
         $messages_height = get_option('watsonconv_size', 200);
 
-        switch (get_option('watsonconv_position', 'bottom_right')) {
-            case 'top_left':
-                $position = 'top: 10vmin; left: 10vmin;';
-                break;
-            case 'top_right':
-                $position = 'top: 10vmin; right: 10vmin;';
-                break;
-            case 'bottom_left':
-                $position = 'bottom: 10vmin; left: 10vmin;';
-                break;
-            case 'bottom_right':
-                $position = 'bottom: 10vmin; right: 10vmin;';
-                break;
-        }
+        $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
 
         $text_color = self::luminance($color) > 0.5 ? 'black' : 'white';
 
         wp_add_inline_style('watsonconv-chatbox', '
+            #watson-fab
+            {
+                '.$position[0].': 5vmin;
+                '.$position[1].': 5vmin;
+                background-color: '.$color.';
+                color: '.$text_color.';
+            }
             #watson-float
             {
-                '.$position.'
+                '.$position[0].': 10vmin;
+                '.$position[1].': 10vmin;
             }
             #watson-box
             {
@@ -94,7 +89,7 @@ class Frontend {
             $settings = array(
                 'delay' => (int) get_option('watsonconv_delay', 0),
                 'minimized' => get_option('watsonconv_minimized', 'no') == 'yes',
-                'is_bottom' => substr(get_option('watsonconv_position', 'bottom_right'), 0, 6) == 'bottom',
+                'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
                 'title' => get_option('watsonconv_title', '')
             );
 
