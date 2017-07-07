@@ -3,7 +3,7 @@ fs = require('fs');
 
 const config = {
   context: __dirname,
-  entry: './src/app.js',
+  entry: './src/index.js',
   output: {
     filename: 'app.js',
     path: __dirname + '/../watson-conversation',

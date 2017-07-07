@@ -17,10 +17,13 @@ class Frontend {
         $text_color = self::luminance($color) > 0.5 ? 'black' : 'white';
 
         wp_add_inline_style('watsonconv-chatbox', '
-            #watson-fab
+            #watson-fab-float
             {
                 '.$position[0].': 5vmin;
                 '.$position[1].': 5vmin;
+            }
+            #watson-fab
+            {
                 background-color: '.$color.';
                 color: '.$text_color.';
             }

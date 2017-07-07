@@ -1,10 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ChatBox from './ChatBox.jsx';
+import App from './App.jsx';
+
+if (typeof localStorage !== 'undefined') {
+    try {
+        localStorage.setItem('localStorage', 1);
+        localStorage.removeItem('localStorage');
+    } catch (e) {
+        Storage.prototype._setItem = Storage.prototype.setItem;
+        Storage.prototype.setItem = function() {};
+    }
+}
 
 function renderApp() {
   ReactDOM.render(
-    <ChatBox
+    <App
       title={settings.title}
       minimized={settings.minimized}
       position={settings.position}
