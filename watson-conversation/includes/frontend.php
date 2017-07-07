@@ -29,8 +29,8 @@ class Frontend {
             }
             #watson-float
             {
-                '.$position[0].': 10vmin;
-                '.$position[1].': 10vmin;
+                '.$position[0].': 5vmin;
+                '.$position[1].': 5vmin;
             }
             #watson-box
             {
