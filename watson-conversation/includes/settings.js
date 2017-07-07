@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
     $('#watsonconv_color').wpColorPicker({
       palettes: true,
       change: function() {
-        $('#watson-box #watson-header, #message-container #messages .watson-message')
+        $('#watson-box #watson-header, #message-container #messages .watson-message, #watson-fab')
           .css({
             'background-color': this.value,
             'color': luminance(this.value) > 0.5 ? 'black' : 'white'

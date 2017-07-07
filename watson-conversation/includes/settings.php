@@ -67,9 +67,11 @@ class Settings {
 
     private static function render_preview() {
     ?>
-        <div id='watson-box' class='drop-shadow animated' style='display: block; margin: 10px auto; cursor: default;'>
-            <div id='watson-header' class='watson-font'>
-                <span class='dashicons dashicons-no-alt popup-control'></span>
+        <div id='watson-fab' class='drop-shadow animated-shadow' style='display: block; margin: 20px auto; cursor: default;'>
+          <span id='watson-fab-icon' class='dashicons dashicons-format-chat'></span>
+        </div>
+        <div id='watson-box' class='drop-shadow animated' style='display: block; margin: 10px auto;'>
+            <div id='watson-header' class='watson-font' style='cursor: default;'>
                 <span class='dashicons dashicons-arrow-down-alt2 popup-control'></span>
                 <div id='title' class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
             </div>
