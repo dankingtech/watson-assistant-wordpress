@@ -421,7 +421,7 @@ class Settings {
 
         add_settings_field('watsonconv_show_on', esc_html__('Show Chat Box On', self::SLUG),
             array(__CLASS__, 'render_show_on'), self::SLUG, 'watsonconv_behaviour');
-        add_settings_field('watsonconv_home_page', esc_html__('Home Page', self::SLUG),
+        add_settings_field('watsonconv_home_page', esc_html__('Front Page', self::SLUG),
             array(__CLASS__, 'render_home_page'), self::SLUG, 'watsonconv_behaviour');
         add_settings_field('watsonconv_pages', esc_html__('Pages', self::SLUG),
             array(__CLASS__, 'render_pages'), self::SLUG, 'watsonconv_behaviour');
@@ -482,7 +482,7 @@ class Settings {
             <?php checked('true', get_option('watsonconv_home_page', 'false')) ?>
         />
         <label for="watsonconv_home_page">
-            Home Page
+            Front Page
         </label>
     <?php
     }

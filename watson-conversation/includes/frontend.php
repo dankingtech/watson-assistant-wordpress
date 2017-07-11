@@ -70,7 +70,7 @@ class Frontend {
         $ip_addr = API::get_client_ip();
 
         $page_selected =
-            (is_home() && get_option('watsonconv_home_page', 'false') == 'true') ||
+            (is_front_page() && get_option('watsonconv_home_page', 'false') == 'true') ||
             is_page(get_option('watsonconv_pages', -1)) ||
             is_single(get_option('watsonconv_posts', -1)) ||
             in_category(get_option('watsonconv_categories', -1));
