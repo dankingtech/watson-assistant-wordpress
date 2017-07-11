@@ -24,7 +24,7 @@
 #watson-fab-float
 {
   position: fixed;
-  z-index: 10;
+  z-index: 9999;
 }
 
 #watson-fab
@@ -47,7 +47,7 @@
 #watson-float
 {
   position: fixed;
-  z-index: 11;
+  z-index: 10000;
 }
 
 #watson-box
