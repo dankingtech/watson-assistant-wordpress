@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.7.5
-Stable tag: 0.1.1
+Stable tag: 0.1.3
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -70,10 +70,23 @@ Nope. This plugin allows you to easily deploy chatbots that you create using the
 
 == Changelog == 
 
+= 0.1.3 =
+* Fixed some UI issues with the chat box being hidden and not staying minimized across pages.
+* Adjusted `Show on Home Page` option to `Show on Front Page` instead.
+
+= 0.1.2 =
+* Changed UI to use floating action button for minimizing.
+
 = 0.1.1 =
 * Added setting allowing admin to specify API base URL.
 
 == Upgrade Notice ==
+
+= 0.1.3 =
+This version fixes some issues with UI and the Show on Home Page setting.
+
+= 0.1.2 =
+This version fixes issues with the UI on mobile devices by adding a floating action button.
 
 = 0.1.1 =
 This version adds support for custom API base URLs.
