@@ -10,24 +10,20 @@ export default class App extends Component {
     super(props);
 
     if (typeof(sessionStorage) !== 'undefined' &&
-        sessionStorage.getItem('chat_bot_state') !== null)
+        sessionStorage.getItem('watson_bot_window_state') !== null)
     {
-      this.state = JSON.parse(sessionStorage.getItem('chat_bot_state'));
+      this.state = JSON.parse(sessionStorage.getItem('watson_bot_window_state'));
     } else {
       this.state = {
         minimized: props.minimized,
         position: {x: 0, y: 0}
       };
     }
+  }
 
-    if (typeof(sessionStorage) !== 'undefined' &&
-        sessionStorage.getItem('chat_bot_position') !== null)
-    {
-      let pos = JSON.parse(sessionStorage.getItem('chat_bot_position'));
-      this.state.position = {
-        x: pos.x * window.innerWidth,
-        y: pos.y * window.innerHeight
-      };
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state != prevState && typeof(sessionStorage) !== 'undefined') {
+      sessionStorage.setItem('watson_bot_window_state', JSON.stringify(this.state));
     }
   }
 
@@ -58,12 +54,6 @@ export default class App extends Component {
     }
 
     this.setState({position: {x: data.x, y: data.y}});
-
-    if (typeof(sessionStorage) !== 'undefined') {
-      sessionStorage.setItem('chat_bot_position', JSON.stringify({
-        x: data.x / window.innerWidth,
-        y: data.y / window.innerHeight}));
-    }
   }
 
   render() {

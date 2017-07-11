@@ -8,9 +8,9 @@ export default class ChatBox extends Component {
     super(props);
 
     if (typeof(sessionStorage) !== 'undefined' &&
-        sessionStorage.getItem('chat_bot_state') !== null)
+        sessionStorage.getItem('watson_bot_state') !== null)
     {
-      this.state = JSON.parse(sessionStorage.getItem('chat_bot_state'));
+      this.state = JSON.parse(sessionStorage.getItem('watson_bot_state'));
     } else {
       this.state = {
         messages: [],
@@ -32,7 +32,7 @@ export default class ChatBox extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.messages.length !== this.state.messages.length) {
       if (typeof(sessionStorage) !== 'undefined') {
-        sessionStorage.setItem('chat_bot_state', JSON.stringify(this.state))
+        sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
       }
       // Ensure that chat box stays scrolled to bottom
       if (typeof(this.messageList) !== 'undefined') {
