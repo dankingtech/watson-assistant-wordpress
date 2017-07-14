@@ -10,7 +10,7 @@ export default class App extends Component {
     super(props);
 
     if (typeof(sessionStorage) !== 'undefined' &&
-        sessionStorage.getItem('watson_bot_window_state') !== null)
+        sessionStorage.getItem('watson_bot_window_state'))
     {
       this.state = JSON.parse(sessionStorage.getItem('watson_bot_window_state'));
     } else {

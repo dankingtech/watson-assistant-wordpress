@@ -8,7 +8,7 @@ export default class ChatBox extends Component {
     super(props);
 
     if (typeof(sessionStorage) !== 'undefined' &&
-        sessionStorage.getItem('watson_bot_state') !== null)
+        sessionStorage.getItem('watson_bot_state'))
     {
       this.state = JSON.parse(sessionStorage.getItem('watson_bot_state'));
     } else {
