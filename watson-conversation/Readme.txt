@@ -2,8 +2,8 @@
 Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
-Tested up to: 4.7.5
-Stable tag: 0.1.3
+Tested up to: 4.8
+Stable tag: 0.1.4
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -69,6 +69,9 @@ Nope. This plugin allows you to easily deploy chatbots that you create using the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.1.4 =
+* Fixed critical bug causing chat box to stick to cursor on some browsers, on some pages.
 
 = 0.1.3 =
 * Fixed some UI issues with the chat box being hidden and not staying minimized across pages.
