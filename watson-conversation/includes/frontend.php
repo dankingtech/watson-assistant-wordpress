@@ -27,15 +27,6 @@ class Frontend {
                 background-color: '.$color.';
                 color: '.$text_color.';
             }
-            #watson-float
-            {
-                '.$position[0].': 5vmin;
-                '.$position[1].': 5vmin;
-            }
-            #watson-box
-            {
-                width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
-            }
             #watson-box .watson-font
             {
                 font-size: '.$font_size.'pt;
@@ -45,9 +36,21 @@ class Frontend {
                 background-color: '.$color.';
                 color: '.$text_color.';
             }
-            #message-container
-            {
-                height: '.$messages_height.'pt
+            @media (min-width:769px)  {
+                #watson-float
+                {
+                    '.$position[0].': 5vmin;
+                    '.$position[1].': 5vmin;
+                }
+                #watson-box
+                {
+                    width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
+                    height: auto;
+                }
+                #message-container
+                {
+                    height: '.$messages_height.'pt
+                }
             }
         ');
     }

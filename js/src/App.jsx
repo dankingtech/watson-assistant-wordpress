@@ -24,6 +24,10 @@ export default class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state != prevState && typeof(sessionStorage) !== 'undefined') {
       sessionStorage.setItem('watson_bot_window_state', JSON.stringify(this.state));
+
+      if (this.state.minimized != prevState.minimized) {
+        document.body.style.overflow = this.state.minimized ? 'scroll' : 'hidden';
+      }
     }
   }
 
@@ -51,9 +55,9 @@ export default class App extends Component {
 
     if (Math.sqrt(Math.pow(data.x - this.state.position.x, 2) +  Math.pow(data.y - this.state.position.y, 2)) < 3) {
       this.toggleMinimize(e);
+    } else {
+      this.setState({position: {x: data.x, y: data.y}});
     }
-
-    this.setState({position: {x: data.x, y: data.y}});
   }
 
   render() {
@@ -61,6 +65,7 @@ export default class App extends Component {
       <div>
         <Draggable
           handle='#watson-header'
+          bounds={window.matchMedia("(max-width:768px)").matches && {left: 0, top: 0, right: 0, bottom: 0}}
           onStart={this.startDragging.bind(this)}
           onStop={this.savePosition.bind(this)}
           position={this.state.minimized ? {x: 0, y: 0} : this.state.position}
@@ -68,7 +73,7 @@ export default class App extends Component {
           <TransitionGroup
             id='watson-float'
             class={!this.state.dragging && 'animated'}
-            style={{opacity: this.state.minimized ? 0 : 1}}
+            style={this.state.minimized && {opacity: 0 , visibility: 'hidden'}}
           >
             {!this.state.minimized && 
               <ChatBox 

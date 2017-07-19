@@ -16,7 +16,7 @@ function renderApp() {
   ReactDOM.render(
     <App
       title={settings.title}
-      minimized={settings.minimized}
+      minimized={window.matchMedia("(max-width:768px)").matches ? true : settings.minimized}
       position={settings.position}
     />,
     document.getElementById('chat-box')

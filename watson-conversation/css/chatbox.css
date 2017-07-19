@@ -24,7 +24,7 @@
 #watson-fab-float
 {
   position: fixed;
-  z-index: 9999;
+  z-index: 999999;
 }
 
 #watson-fab
@@ -47,12 +47,13 @@
 #watson-float
 {
   position: fixed;
-  z-index: 10000;
+  z-index: 100000;
 }
 
 #watson-box
 {
-  width: 300px;
+  display: flex;
+  flex-direction: column;
   text-align: left;
 }
 
@@ -92,7 +93,7 @@
 #message-container
 {
   position: relative;
-  height: 200pt;
+  flex-grow: 1;
   width: 100%;
   border-bottom: 1px solid rgb(215, 215, 215);
   background-color: rgb(235, 235, 235);
@@ -118,7 +119,7 @@
 {
   content: '';
   display: block;
-  box-shadow: inset 0  8px 8px -10px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0  8px 12px -9px rgba(0, 0, 0, 0.3);
   position: absolute;
   top: 0;
   left: 0;
@@ -138,6 +139,12 @@
   width: 100%;
   border: 0;
   padding: 0 0.75em;
+  background-color: #fff;
+}
+
+.message-form .message-input:focus
+{
+  background-color: #fff;
 }
 
 #message-container #messages .message
@@ -165,4 +172,40 @@
   float: right;
   background-color: white;
   color: rgb(35, 40, 45);
+}
+
+@media (max-width:768px)
+{
+  #watson-box
+  {
+    width: 100%;
+    height: 100%;
+  }
+
+  #watson-float
+  {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  #watson-box #watson-header 
+  {
+    height: 48px;
+    line-height: 48px;
+    padding: 0 16px;
+  }
+
+  #watson-box #watson-header .watson-font, #watson-box #watson-header .popup-control
+  {
+    line-height: 48px;
+  }
+
+  #watson-box .message-form
+  {
+    margin: 0;
+    height: 48px;
+    width: 100vw;
+  }
 }
