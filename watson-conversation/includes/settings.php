@@ -225,7 +225,8 @@ class Settings {
     ?>
         <input name="watsonconv_credentials[id]" id="watsonconv_id" type="text"
             value="<?php echo get_option('watsonconv_credentials')['id'] ?>"
-            style="width: 22em" />
+            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            style="width: 24em" />
     <?php
     }
 
@@ -233,7 +234,8 @@ class Settings {
     ?>
         <input name="watsonconv_credentials[username]" id="watsonconv_username" type="text"
             value="<?php echo get_option('watsonconv_credentials')['username'] ?>"
-            style="width: 22em"/>
+            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            style="width: 24em"/>
     <?php
     }
 
@@ -681,7 +683,7 @@ class Settings {
     public static function render_title() {
     ?>
         <input name="watsonconv_title" id="watsonconv_title"
-            type="text" style="width: 10em"
+            type="text" style="width: 16em"
             value="<?php echo get_option('watsonconv_title', '') ?>" />
     <?php
     }
