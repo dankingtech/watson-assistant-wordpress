@@ -131,6 +131,7 @@
 #watson-box .message-form
 {
   height: 2.75em;
+  margin: 0;
 }
 
 .message-form .message-input
@@ -204,7 +205,6 @@
 
   #watson-box .message-form
   {
-    margin: 0;
     height: 48px;
     width: 100vw;
   }
