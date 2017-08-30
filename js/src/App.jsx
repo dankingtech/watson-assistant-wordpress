@@ -36,10 +36,6 @@ export default class App extends Component {
     this.setState({minimized: !this.state.minimized});
   }
 
-  setMessage(e) {
-    this.setState({newMessage: e.target.value});
-  }
-
   startDragging(e) {
     e.preventDefault();
 

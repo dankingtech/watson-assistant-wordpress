@@ -40,6 +40,9 @@ This plugin requires the [WordPress REST API Plugin](https://en-ca.wordpress.org
 
 This plugin can also be installed manually.
 
+**Note:**
+If your WordPress site is hosted by WordPress (with a URL like `websitename.wordpress.com`), you need a paid plan to install plugins. If your WordPress is hosted separately, you should have no issue.
+
 = Building Your Chatbot =
 
 1. Sign up for a free IBM Bluemix trial [here](https://cocl.us/bluemix-registration).
@@ -64,6 +67,10 @@ Watson Conversation, when used with this plugin, allows you to build and deploy 
 = Do I need to know how to code? =
 
 Nope. This plugin allows you to easily deploy chatbots that you create using the Watson Conversation service on IBM Bluemix. [These instructions](https://cocl.us/watson-conversation-help) will guide you through this intuitive process, and there's a course coming soon that's specifically designed to teach you how to do this! No prior technical knowledge necessary.
+
+= How do I see my chatbot's conversations with users? =
+
+On the same page where you build your chatbot in Bluemix, you can click on the Improve tab to view and analyze past conversations with users.
 
 == Screenshots ==
 1. An example of your chatbot greeting a website visitor.
