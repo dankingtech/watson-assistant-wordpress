@@ -80,7 +80,7 @@ class API {
                         'Authorization' => $auth_token,
                         'Content-Type' => 'application/json'
                     ), 'body' => json_encode(array(
-                        'input' => empty($body['input']) ? new \stdClass : $body['input'],
+                        'input' => empty($body['input']) ? new \stdClass : $body['input'], 
                         'context' => empty($body['context']) ? new \stdClass() : $body['context']
                     ))
                 )
@@ -92,8 +92,7 @@ class API {
             if ($response_code !== 200) {
                 return new \WP_Error(
                     'watson_error',
-                    isset($response_body['error']) ?
-                        $response_body['error'] : wp_remote_retrieve_response_message($response),
+                    $response_body,
                     $response_code
                 );
             } else {

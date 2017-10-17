@@ -89,14 +89,16 @@ export default class ChatBox extends Component {
   }
 
   render() {
-    return (this.state.messages.length != 0) && (
+    var position = this.props.position || ['bottom', 'right'];
+
+    return (
       <div id='watson-box' className='drop-shadow animated'>
         <div
           id='watson-header'
           class='watson-font'
         >
           <span className={`dashicons dashicons-arrow-${
-              this.props.position[0] == 'bottom' ? 'down' : 'up'
+              position[0] == 'bottom' ? 'down' : 'up'
             }-alt2 popup-control`}></span>
           <div className='overflow-hidden watson-font'>{this.props.title}</div>
         </div>

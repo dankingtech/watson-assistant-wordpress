@@ -15,7 +15,7 @@ export default class App extends Component {
       this.state = JSON.parse(sessionStorage.getItem('watson_bot_window_state'));
     } else {
       this.state = {
-        minimized: props.isMobile ? true : props.minimized,
+        minimized: props.isMobile || !props.minimized ? true : props.minimized,
         position: {x: 0, y: 0}
       };
     }
@@ -71,11 +71,11 @@ export default class App extends Component {
             class={!this.state.dragging && 'animated'}
             style={this.state.minimized && {opacity: 0 , visibility: 'hidden'}}
           >
-            {!this.state.minimized && 
-              <ChatBox 
+            {!this.state.minimized &&
+              <ChatBox
                   minimize={this.toggleMinimize.bind(this)}
                   position={this.props.position}
-                  title={this.props.title} 
+                  title={this.props.title}
               />
             }
           </TransitionGroup>
