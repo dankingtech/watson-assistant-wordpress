@@ -83,12 +83,14 @@ class Frontend {
         $client_requests = get_option("watsonconv_requests_$ip_addr", 0) +
             get_transient("watsonconv_requests_$ip_addr") ?: 0;
 
+        $credentials = get_option('watsonconv_credentials');
+
         if ($page_selected == (get_option('watsonconv_show_on', 'only') == 'only') &&
             (get_option('watsonconv_use_limit', 'no') == 'no' ||
                 $total_requests < get_option('watsonconv_limit', 10000)) &&
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
                 $client_requests < get_option('watsonconv_client_limit', 100)) &&
-            !empty(get_option('watsonconv_credentials'))) {
+            !empty($credentials)) {
         ?>
             <div id="chat-box"></div>
         <?php

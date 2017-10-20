@@ -43,7 +43,9 @@ class Settings {
     }
 
     public static function render_notice($plugin_file, $plugin_data, $status) {
-        if (empty(get_option('watsonconv_credentials'))) {
+        $credentials = get_option('watsonconv_credentials');
+
+        if (empty($credentials)) {
         ?>
             <tr class="active icon-settings"><td colspan=3>
                 <div class="update-message notice inline notice-warning notice-alt"
@@ -321,10 +323,10 @@ class Settings {
     }
 
     public static function render_limit() {
+        $limit = get_option('watsonconv_limit');
     ?>
         <input name="watsonconv_limit" id="watsonconv_limit" type="number"
-            value="<?php echo empty(get_option('watsonconv_limit')) ?
-                        0 : get_option('watsonconv_limit')?>"
+            value="<?php echo empty($limit) ? 0 : $limit?>"
             style="width: 8em" />
         <select name="watsonconv_interval" id="watsonconv_interval">
             <option value="monthly" <?php selected(get_option('watsonconv_interval', 'monthly'), 'monthly')?>>
@@ -390,10 +392,10 @@ class Settings {
     }
 
     public static function render_client_limit() {
+        $client_limit = get_option('watsonconv_client_limit');
     ?>
         <input name="watsonconv_client_limit" id="watsonconv_client_limit" type="number"
-            value="<?php echo empty(get_option('watsonconv_client_limit')) ?
-                        0 : get_option('watsonconv_client_limit')?>"
+            value="<?php echo empty($client_limit) ? 0 : $client_limit?>"
             style="width: 8em" />
         <select name="watsonconv_client_interval" id="watsonconv_client_interval">
             <option value="monthly" <?php selected(get_option('watsonconv_client_interval', 'monthly'), 'monthly')?>>
@@ -451,10 +453,10 @@ class Settings {
     }
 
     public static function render_delay() {
+        $delay = get_option('watsonconv_delay');
     ?>
         <input name="watsonconv_delay" id="watsonconv_delay" type="number"
-            value="<?php echo empty(get_option('watsonconv_delay')) ?
-                        0 : get_option('watsonconv_delay')?>"
+            value="<?php echo empty($delay) ? 0 : $delay?>"
             style="width: 4em" />
         seconds
     <?php
