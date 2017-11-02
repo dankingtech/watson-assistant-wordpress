@@ -110,6 +110,7 @@ export default class ChatBox extends Component {
           <span className={`dashicons dashicons-arrow-${
               position[0] == 'bottom' ? 'down' : 'up'
             }-alt2 popup-control`}></span>
+          <span className={`dashicons dashicons-phone header-button`}></span>
           <div className='overflow-hidden watson-font'>{this.props.title}</div>
         </div>
         <div id='message-container'>

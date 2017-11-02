@@ -61,6 +61,7 @@ export default class App extends Component {
       <div>
         <Draggable
           handle='#watson-header'
+          cancel='#watson-header .header-button'
           bounds={this.props.isMobile && {left: 0, top: 0, right: 0, bottom: 0}}
           onStart={this.startDragging.bind(this)}
           onStop={this.savePosition.bind(this)}

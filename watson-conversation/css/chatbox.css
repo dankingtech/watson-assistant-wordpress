@@ -96,14 +96,28 @@
 #watson-box #watson-header .popup-control
 {
   float: right;
-  font-size: 1.35em;
-  margin-left: 0.3em;
+  font-size: 1.45em;
+  margin-right: 0.1em;
   opacity: 0.6;
 }
 
-#watson-box #watson-header:hover .popup-control
+#watson-box #watson-header .header-button
+{
+  float: right;
+  font-size: 1.15em;
+  margin-top: 0.15em;
+  margin-right: 0.75em;
+  opacity: 0.6;
+}
+
+#watson-box #watson-header:hover .popup-control, #watson-box #watson-header .header-button:hover
 {
   opacity: 0.9;
+}
+
+#watson-box #watson-header .header-button:hover ~ .popup-control
+{
+  opacity: 0.6;
 }
 
 #message-container

@@ -12,10 +12,6 @@ if (typeof localStorage !== 'undefined') {
     }
 }
 
-let settings = typeof settings === 'undefined' ? 
-  {title: '', minimized: true, position: ['bottom', 'right'], delay: 0} :
-  settings;
-
 function renderApp() {
   ReactDOM.render(
     <App
