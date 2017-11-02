@@ -12,14 +12,9 @@ if (typeof localStorage !== 'undefined') {
     }
 }
 
-if (typeof settings === 'undefined') {
-  var settings = {
-    title: '',
-    minimized: true,
-    position: ['bottom', 'right'],
-    delay: 0
-  };
-}
+let settings = typeof settings === 'undefined' ? 
+  {title: '', minimized: true, position: ['bottom', 'right'], delay: 0} :
+  settings;
 
 function renderApp() {
   ReactDOM.render(
