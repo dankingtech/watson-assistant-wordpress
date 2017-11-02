@@ -88,6 +88,16 @@ export default class ChatBox extends Component {
     this.setState({newMessage: e.target.value});
   }
 
+  reset() {
+    this.setState({
+      messages: [],
+      newMessage: '',
+      context: null
+    });
+    
+    this.sendMessage();
+  }
+
   render() {
     var position = this.props.position || ['bottom', 'right'];
 
@@ -104,6 +114,9 @@ export default class ChatBox extends Component {
         </div>
         <div id='message-container'>
           <div id='messages' ref={div => {this.messageList = div}}>
+            <div style={{'text-align': 'right', 'margin-top': -5, 'margin-bottom': 5, 'margin-left': 10}} className='watson-font'>
+              <a style={{'font-size': '0.85em'}} onClick={this.reset.bind(this)}>Clear Messages</a>
+            </div>
             {this.state.messages.map(
               (message, index) => <Message message={message} key={index} />
             )}

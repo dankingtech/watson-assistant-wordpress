@@ -17,24 +17,19 @@ class Frontend {
         $text_color = self::luminance($color) > 0.5 ? 'black' : 'white';
 
         wp_add_inline_style('watsonconv-chatbox', '
+            :root {
+                --chatbot-color: '.$color.';
+                --chatbot-text-color: '.$text_color.';
+            }
+          
             #watson-fab-float
             {
                 '.$position[0].': 5vmin;
                 '.$position[1].': 5vmin;
             }
-            #watson-fab
-            {
-                background-color: '.$color.';
-                color: '.$text_color.';
-            }
             #watson-box .watson-font
             {
                 font-size: '.$font_size.'pt;
-            }
-            #watson-box #watson-header, #message-container #messages .watson-message
-            {
-                background-color: '.$color.';
-                color: '.$text_color.';
             }
             @media (min-width:769px)  {
                 #watson-float

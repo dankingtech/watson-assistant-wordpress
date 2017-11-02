@@ -1,3 +1,8 @@
+:root {
+  --chatbot-color: rgb(35, 40, 45);
+  --chatbot-text-color: white;
+}
+
 .drop-shadow
 {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
@@ -34,7 +39,8 @@
   height: 4em;
   border-radius: 2em;
   text-align: left;
-  background-color: rgb(35, 40, 45);
+  background-color: var(--chatbot-color);
+  color: var(--chatbot-text-color);
 }
 
 #watson-fab .dashicons
@@ -63,13 +69,23 @@
   font-size: 11pt;
 }
 
+#watson-box a
+{
+  color: var(--chatbot-color);
+  cursor: pointer;
+}
+#watson-box a:hover
+{
+  opacity: 0.75;
+}
+
 #watson-box #watson-header
 {
   padding: 0.5em 0.6em;
   height: 2.5em;
   font-weight: 600;
-  color: white;
-  background-color: rgb(35, 40, 45);
+  color: var(--chatbot-text-color);
+  background-color: var(--chatbot-color);
   cursor: pointer;
 
   box-sizing: border-box;
@@ -164,8 +180,8 @@
 #message-container #messages .watson-message
 {
   float: left;
-  background-color: rgb(35, 40, 45);
-  color: white;
+  background-color: var(--chatbot-color);
+  color: var(--chatbot-text-color);
 }
 
 #message-container #messages .user-message
