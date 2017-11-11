@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.8
-Stable tag: 0.2.0
+Stable tag: 0.2.1
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -19,7 +19,7 @@ Currently supported features:
 * Choose the pages and posts you want the visitors to see the chat bot on
 * Customize the appearance of the chat box to your preference
 
-**Note:** This is an alpha release.
+Learn how to set up your Watson Conversation chatbot with [this free course](https://cocl.us/build-a-chatbot).
 
 == Installation ==
 
@@ -31,10 +31,7 @@ This plugin requires the [WordPress REST API Plugin](https://en-ca.wordpress.org
 
 1. Log in to your site’s Dashboard.
 1. Click on the `Plugins` tab in the left panel, then click `Add New`.
-1. Find the Plugin through one of these two methods:
-    - Search for “Watson Conversation” and the latest version will appear at the top of the list of results.
-    - Click `Upload Plugin` and upload the `watson-conversation.0.2.0.zip` file
-
+1. Search for “Watson Conversation” and the latest version will appear at the top of the list of results.
 1. Install the plugin by clicking the `Install Now` link.
 1. When installation finishes, click `Activate Plugin`.
 
@@ -45,9 +42,11 @@ If your WordPress site is hosted by WordPress (with a URL like `websitename.word
 
 = Building Your Chatbot =
 
-1. Sign up for a free IBM Bluemix trial [here](https://cocl.us/bluemix-registration).
+1. Sign up for a free IBM Cloud Light account [here](https://cocl.us/bluemix-registration).
 
-1. Create a workspace and build a customized chat bot using Watson Conversation's intuitive interface. To do this, you can follow [these instructions](https://cocl.us/watson-conversation-help), from the `Getting Started` section to `Building a Dialog`.
+1. Learn how to set up your Watson Conversation chatbot with [this free course](https://cocl.us/build-a-chatbot).
+
+1. You can see [this page](https://cocl.us/watson-conversation-help) for more information.
 
 = Configuring the Plugin =
 
@@ -60,13 +59,17 @@ If you have a server-side caching plugin installed such as WP Super Cache, you m
 
 == Frequently Asked Questions ==
 
+= What is the best place to learn how to create a chatbot? =
+
+Check out [this free course](https://cocl.us/build-a-chatbot) to learn how to build your own chatbot.
+
 = Why should I use this? =
 
 Watson Conversation, when used with this plugin, allows you to build and deploy a fully customized chat bot with little technical knowledge. It can talk to your website's visitors about whatever you choose, from helping navigate the website and providing support with common questions, to just having a casual conversation on a topic of interest.
 
 = Do I need to know how to code? =
 
-Nope. This plugin allows you to easily deploy chatbots that you create using the Watson Conversation service on IBM Bluemix. [These instructions](https://cocl.us/watson-conversation-help) will guide you through this intuitive process, and there's a course coming soon that's specifically designed to teach you how to do this! No prior technical knowledge necessary.
+Nope. This plugin allows you to easily deploy chatbots that you create using the Watson Conversation service on IBM Bluemix. [This free course](https://cocl.us/build-a-chatbot) will guide you through this intuitive process – no prior technical knowledge necessary.
 
 = How do I see my chatbot's conversations with users? =
 
@@ -76,6 +79,9 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.2.1 =
+* Fixes bug where settings changes do not take effect.
 
 = 0.2.0 =
 * New UI for mobile devices.
@@ -96,6 +102,9 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 * Added setting allowing admin to specify API base URL.
 
 == Upgrade Notice ==
+
+= 0.2.1 =
+This verison fixes a bug from 0.2.0 where settings changes do not take effect.
 
 = 0.1.3 =
 This version fixes some issues with UI and the Show on Home Page setting.
