@@ -1,0 +1,8 @@
+{
+    "config": {
+        "vendor-dir": "watson-conversation/vendor"
+    },
+    "require": {
+        "twilio/sdk": "^5.15"
+    }
+}

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
 import { TransitionGroup } from 'react-transition-group';
+import ReactTooltip from 'react-tooltip';
+
 import Message from './Message.jsx';
+import CallInterface from './CallInterface/index.jsx';
 
 export default class ChatBox extends Component {
   constructor(props) {
@@ -15,7 +18,8 @@ export default class ChatBox extends Component {
       this.state = {
         messages: [],
         newMessage: '',
-        context: null
+        context: null,
+        showCallInterface: false
       };
     }
   }
@@ -43,6 +47,10 @@ export default class ChatBox extends Component {
 
   componentWillLeave(callback) {
     setTimeout(callback, 300);
+  }
+
+  toggleCallInterface() {
+    this.setState({showCallInterface: !this.state.showCallInterface});
   }
 
   submitMessage(e) {
@@ -81,7 +89,7 @@ export default class ChatBox extends Component {
       });
     }).catch(error => {
       console.log(error);
-    })
+    });
   }
 
   setMessage(e) {
@@ -100,6 +108,7 @@ export default class ChatBox extends Component {
 
   render() {
     var position = this.props.position || ['bottom', 'right'];
+    var showCallInterface = this.state.showCallInterface;
 
     return (
       <div id='watson-box' className='drop-shadow animated'>
@@ -110,28 +119,38 @@ export default class ChatBox extends Component {
           <span className={`dashicons dashicons-arrow-${
               position[0] == 'bottom' ? 'down' : 'up'
             }-alt2 popup-control`}></span>
-          <span className={`dashicons dashicons-phone header-button`}></span>
+          <span
+            onClick={this.toggleCallInterface.bind(this)} 
+            className={`dashicons dashicons-phone header-button`}
+            data-tip='Talk to a Live Agent'>
+          </span>
+          <ReactTooltip />
           <div className='overflow-hidden watson-font'>{this.props.title}</div>
         </div>
-        <div id='message-container'>
-          <div id='messages' ref={div => {this.messageList = div}}>
-            <div style={{'text-align': 'right', 'margin-top': -5, 'margin-bottom': 5, 'margin-left': 10}} className='watson-font'>
-              <a style={{'font-size': '0.85em'}} onClick={this.reset.bind(this)}>Clear Messages</a>
+        <div style={{position: 'relative'}}>
+          <TransitionGroup id='call-interface' class='animated' style={{opacity: showCallInterface ? 1 : 0}}>
+            {showCallInterface && <CallInterface />}
+          </TransitionGroup>
+          <div id='message-container'>
+            <div id='messages' ref={div => {this.messageList = div}}>
+              <div style={{'text-align': 'right', 'margin-top': -5, 'margin-bottom': 5, 'margin-left': 10}} className='watson-font'>
+                <a style={{'font-size': '0.85em'}} onClick={this.reset.bind(this)}>Clear Messages</a>
+              </div>
+              {this.state.messages.map(
+                (message, index) => <Message message={message} key={index} />
+              )}
             </div>
-            {this.state.messages.map(
-              (message, index) => <Message message={message} key={index} />
-            )}
           </div>
+          <form className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
+            <input
+              className='message-input watson-font'
+              type='text'
+              placeholder='Type a message'
+              value={this.state.newMessage}
+              onChange={this.setMessage.bind(this)}
+            />
+          </form>
         </div>
-        <form className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
-          <input
-            className='message-input watson-font'
-            type='text'
-            placeholder='Type a message'
-            value={this.state.newMessage}
-            onChange={this.setMessage.bind(this)}
-          />
-        </form>
       </div>
     );
   }

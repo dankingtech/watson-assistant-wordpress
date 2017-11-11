@@ -9,16 +9,16 @@ class Frontend {
         wp_enqueue_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
-        $color = get_option('watsonconv_color', '#23282d');
+        $color_rgb = sscanf(get_option('watsonconv_color', '#23282d'), "#%02x%02x%02x");
         $messages_height = get_option('watsonconv_size', 200);
 
         $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
 
-        $text_color = self::luminance($color) > 0.5 ? 'black' : 'white';
+        $text_color = self::luminance($color_rgb) > 0.5 ? 'black' : 'white';
 
         wp_add_inline_style('watsonconv-chatbox', '
             :root {
-                --chatbot-color: '.$color.';
+                --chatbot-color: ' . vsprintf('rgb(%d, %d, %d)', $color_rgb) . ';
                 --chatbot-text-color: '.$text_color.';
             }
           
@@ -50,8 +50,8 @@ class Frontend {
         ');
     }
 
-    private static function luminance($hex) {
-        $rgb = array_map(function($val) {
+    private static function luminance($srgb) {
+        $lin_rgb = array_map(function($val) {
             $val /= 255;
 
             if ($val <= 0.03928) {
@@ -59,9 +59,9 @@ class Frontend {
             } else {
                 return pow(($val + 0.055) / 1.055, 2.4);
             }
-        }, sscanf($hex, "#%02x%02x%02x"));
+        }, $srgb);
 
-        return 0.2126 * $rgb[0] + 0.7152 * $rgb[1] + 0.0722 * $rgb[2];
+        return 0.2126 * $lin_rgb[0] + 0.7152 * $lin_rgb[1] + 0.0722 * $lin_rgb[2];
     }
 
     public static function render_chat_box() {
@@ -96,6 +96,7 @@ class Frontend {
                 'title' => get_option('watsonconv_title', '')
             );
 
+            wp_enqueue_script('twilio-js', 'http://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
             wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');
             wp_localize_script('chat-app', 'settings', $settings);
         }
