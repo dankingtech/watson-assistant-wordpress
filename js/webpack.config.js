@@ -1,5 +1,6 @@
-webpack = require('webpack')
-fs = require('fs');
+var webpack = require('webpack')
+var fs = require('fs');
+var DashboardPlugin = require('webpack-dashboard/plugin');
 
 const config = {
   context: __dirname,
@@ -28,7 +29,9 @@ const config = {
     }
   },
   cache: false,
-  plugins: []
+  plugins: [
+    new DashboardPlugin()
+  ]
 };
 
 module.exports = config;
