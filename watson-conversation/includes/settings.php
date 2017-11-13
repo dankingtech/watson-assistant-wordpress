@@ -64,7 +64,7 @@ class Settings {
     public static function add_settings_link($links) {
             $settings_link = '<a href="options-general.php?page='.self::SLUG.'">'
                 . esc_html__('Settings', self::SLUG) . '</a>';
-            return [$settings_link] + $links;
+            return array($settings_link) + $links;
     }
 
     private static function render_preview() {

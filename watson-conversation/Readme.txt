@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.8
-Stable tag: 0.2.1
+Stable tag: 0.2.2
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -79,6 +79,10 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.2.2 =
+* Improves backwards compatibility with older PHP versions
+* Improves iOS support.
 
 = 0.2.1 =
 * Fixes bug where settings changes do not take effect.

@@ -193,6 +193,11 @@
 
 @media (max-width:768px)
 {
+  #watson-box .watson-font
+  {
+    font-size: 16px;
+  }
+
   #watson-box
   {
     width: 100%;

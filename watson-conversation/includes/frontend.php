@@ -27,11 +27,11 @@ class Frontend {
                 '.$position[0].': 5vmin;
                 '.$position[1].': 5vmin;
             }
-            #watson-box .watson-font
-            {
-                font-size: '.$font_size.'pt;
-            }
             @media (min-width:769px)  {
+                #watson-box .watson-font
+                {
+                    font-size: '.$font_size.'pt;
+                }
                 #watson-float
                 {
                     '.$position[0].': 5vmin;

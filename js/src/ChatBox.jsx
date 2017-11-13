@@ -3,6 +3,8 @@ import Draggable from 'react-draggable';
 import { TransitionGroup } from 'react-transition-group';
 import Message from './Message.jsx';
 
+import 'whatwg-fetch';
+
 export default class ChatBox extends Component {
   constructor(props) {
     super(props);
@@ -36,13 +38,17 @@ export default class ChatBox extends Component {
       }
       // Ensure that chat box stays scrolled to bottom
       if (typeof(this.messageList) !== 'undefined') {
-        jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
+        this.scrollToBottom()
       }
     }
   }
 
   componentWillLeave(callback) {
     setTimeout(callback, 300);
+  }
+
+  scrollToBottom() {
+    jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
   }
 
   submitMessage(e) {
@@ -122,7 +128,7 @@ export default class ChatBox extends Component {
             )}
           </div>
         </div>
-        <form className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
+        <form action='' className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
           <input
             className='message-input watson-font'
             type='text'
@@ -130,6 +136,7 @@ export default class ChatBox extends Component {
             value={this.state.newMessage}
             onChange={this.setMessage.bind(this)}
           />
+          <input type='submit' style={{display: 'none'}} />
         </form>
       </div>
     );
