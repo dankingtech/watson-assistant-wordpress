@@ -69,12 +69,12 @@
   font-size: 11pt;
 }
 
-#watson-box a
+#watson-box #messages > div:not(.message) > a
 {
   color: var(--chatbot-color);
   cursor: pointer;
 }
-#watson-box a:hover
+#watson-box #messages > div:not(.message) > a:hover
 {
   opacity: 0.75;
 }

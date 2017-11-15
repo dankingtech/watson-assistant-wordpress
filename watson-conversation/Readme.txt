@@ -80,6 +80,9 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 
 == Changelog == 
 
+= 0.2.3 =
+* Fixes bug causing links from chatbot to be same color as background.
+
 = 0.2.2 =
 * Improves backwards compatibility with older PHP versions
 * Improves iOS support.
