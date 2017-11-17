@@ -1,13 +1,14 @@
 {
   "name": "watson-conversation",
-  "version": "0.1.4",
+  "version": "0.2.2",
   "private": true,
   "dependencies": {
     "preact": "^8.1.0",
     "preact-compat": "^3.16.0",
     "react-draggable": "^2.2.6",
     "react-tooltip": "^3.4.0",
-    "react-transition-group": "^1.2.0"
+    "react-transition-group": "^1.2.0",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",

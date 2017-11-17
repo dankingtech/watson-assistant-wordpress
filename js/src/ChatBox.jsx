@@ -6,6 +6,8 @@ import ReactTooltip from 'react-tooltip';
 import Message from './Message.jsx';
 import CallInterface from './CallInterface/index.jsx';
 
+import 'whatwg-fetch';
+
 export default class ChatBox extends Component {
   constructor(props) {
     super(props);
@@ -40,7 +42,7 @@ export default class ChatBox extends Component {
       }
       // Ensure that chat box stays scrolled to bottom
       if (typeof(this.messageList) !== 'undefined') {
-        jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
+        this.scrollToBottom()
       }
     }
   }
@@ -51,6 +53,10 @@ export default class ChatBox extends Component {
 
   toggleCallInterface() {
     this.setState({showCallInterface: !this.state.showCallInterface});
+  }
+
+  scrollToBottom() {
+    jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
   }
 
   submitMessage(e) {
@@ -133,7 +139,7 @@ export default class ChatBox extends Component {
           </TransitionGroup>
           <div id='message-container'>
             <div id='messages' ref={div => {this.messageList = div}}>
-              <div style={{'text-align': 'right', 'margin-top': -5, 'margin-bottom': 5, 'margin-left': 10}} className='watson-font'>
+              <div style={{'text-align': 'right', margin: '-5 0 5 10'}} className='watson-font'>
                 <a style={{'font-size': '0.85em'}} onClick={this.reset.bind(this)}>Clear Messages</a>
               </div>
               {this.state.messages.map(
@@ -141,7 +147,7 @@ export default class ChatBox extends Component {
               )}
             </div>
           </div>
-          <form className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
+          <form action='' className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
             <input
               className='message-input watson-font'
               type='text'
@@ -149,6 +155,7 @@ export default class ChatBox extends Component {
               value={this.state.newMessage}
               onChange={this.setMessage.bind(this)}
             />
+            <input type='submit' style={{display: 'none'}} />
           </form>
         </div>
       </div>
