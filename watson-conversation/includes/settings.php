@@ -224,6 +224,7 @@ class Settings {
     }
 
     public static function render_id() {
+        $credentials = get_option('watsonconv_credentials', array('id' => ''));
     ?>
         <input name="watsonconv_credentials[id]" id="watsonconv_id" type="text"
             value="<?php echo get_option('watsonconv_credentials')['id'] ?>"
@@ -233,27 +234,32 @@ class Settings {
     }
 
     public static function render_username() {
+        $credentials = get_option('watsonconv_credentials', array('username' => ''));
     ?>
         <input name="watsonconv_credentials[username]" id="watsonconv_username" type="text"
-            value="<?php echo get_option('watsonconv_credentials')['username'] ?>"
+            value="<?php echo $credentials['username'] ?>"
             placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
             style="width: 24em"/>
     <?php
     }
 
     public static function render_password() {
+        $credentials = get_option('watsonconv_credentials', array('password' => ''));
     ?>
         <input name="watsonconv_credentials[password]" id="watsonconv_password" type="password"
-            value="<?php echo get_option('watsonconv_credentials')['password'] ?>"
+            value="<?php echo $credentials['password'] ?>"
             style="width: 8em" />
     <?php
     }
 
     public static function render_url() {
+        $credentials = get_option(
+            'watsonconv_credentials', 
+            array('url' => 'https://gateway.watsonplatform.net/conversation/api/v1')
+        );
     ?>
         <input name="watsonconv_credentials[url]" id="watsonconv_url" type="text"
-            value="<?php echo isset($credentials['url']) ? $credentials['url'] : 
-                'https://gateway.watsonplatform.net/conversation/api/v1'?>"
+            value="<?php echo $credentials['url']; ?>"
             placeholder='https://gateway.watsonplatform.net/conversation/api/v1'
             style="width: 30em" />
     <?php
