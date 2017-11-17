@@ -109,11 +109,35 @@ class Settings {
     ?>
       <div class="wrap" style="max-width: 95em">
           <h2><?php esc_html_e('Watson Conversation Settings', self::SLUG); ?></h2>
+
+          <?php
+            if (isset($_GET['tab'])) {
+                $active_tab = $_GET[ 'tab' ];
+            } else {
+                $active_tab = 'workspace';
+            } // end if
+
+            $option_group = self::SLUG . '_' . $active_tab;
+
+            ?>
+
+          <h2 class="nav-tab-wrapper">
+            <a href="?page=watsonconv&tab=workspace" class="nav-tab <?php echo $active_tab == 'workspace' ? 'nav-tab-active' : ''; ?>">Workspace Credentials</a>
+            <a href="?page=watsonconv&tab=voice_call" class="nav-tab <?php echo $active_tab == 'voice_call' ? 'nav-tab-active' : ''; ?>">Voice Calling</a>
+            <a href="?page=watsonconv&tab=usage_management" class="nav-tab <?php echo $active_tab == 'usage_management' ? 'nav-tab-active' : ''; ?>">Usage Management</a>
+            <a href="?page=watsonconv&tab=behaviour" class="nav-tab <?php echo $active_tab == 'behaviour' ? 'nav-tab-active' : ''; ?>">Behaviour</a>
+            <a href="?page=watsonconv&tab=appearance" class="nav-tab <?php echo $active_tab == 'appearance' ? 'nav-tab-active' : ''; ?>">Appearance</a>
+          </h2>
+
           <form action="options.php" method="POST">
-            <?php settings_fields(self::SLUG); ?>
-            <?php do_settings_sections(self::SLUG); ?>
-            <h1 style='text-align: center'>Preview</h3>
-            <?php self::render_preview() ?>
+            <?php settings_fields($option_group); ?>
+            <?php do_settings_sections($option_group); ?>
+            <?php 
+                if ($active_tab == 'appearance') {
+                    echo "<h1 style='text-align: center'>Preview</h3>";
+                    self::render_preview();
+                } 
+            ?>
             <?php submit_button(); ?>
             <p class="update-message notice inline notice-warning notice-alt"
                style="padding-top: 0.5em; padding-bottom: 0.5em">
@@ -139,19 +163,21 @@ class Settings {
     // ------------ Workspace Credentials ---------------
 
     public static function init_workspace_settings() {
+        $option_group = self::SLUG . '_workspace';
+
         add_settings_section('watsonconv_workspace', 'Workspace Credentials',
-            array(__CLASS__, 'workspace_description'), self::SLUG);
+            array(__CLASS__, 'workspace_description'), $option_group);
 
         add_settings_field('watsonconv_id', 'Workspace ID', array(__CLASS__, 'render_id'),
-            self::SLUG, 'watsonconv_workspace');
+            $option_group, 'watsonconv_workspace');
         add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'render_username'),
-            self::SLUG, 'watsonconv_workspace');
+            $option_group, 'watsonconv_workspace');
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'render_password'),
-            self::SLUG, 'watsonconv_workspace');
+            $option_group, 'watsonconv_workspace');
         add_settings_field('watsonconv_url', 'API Gateway URL', array(__CLASS__, 'render_url'),
-            self::SLUG, 'watsonconv_workspace');
+            $option_group, 'watsonconv_workspace');
 
-        register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
+        register_setting($option_group, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
 
     public static function validate_credentials($credentials) {
@@ -268,17 +294,19 @@ class Settings {
     // ---------------- Rate Limiting -------------------
 
     public static function init_rate_limit_settings() {
+        $option_group = self::SLUG . '_usage_management';
+
         add_settings_section('watsonconv_rate_limit', 'Total Usage Management',
-            array(__CLASS__, 'rate_limit_description'), self::SLUG);
+            array(__CLASS__, 'rate_limit_description'), $option_group);
 
         add_settings_field('watsonconv_use_limit', 'Limit Total API Requests',
-            array(__CLASS__, 'render_use_limit'), self::SLUG, 'watsonconv_rate_limit');
+            array(__CLASS__, 'render_use_limit'), $option_group, 'watsonconv_rate_limit');
         add_settings_field('watsonconv_limit', 'Maximum Number of Total Requests',
-            array(__CLASS__, 'render_limit'), self::SLUG, 'watsonconv_rate_limit');
+            array(__CLASS__, 'render_limit'), $option_group, 'watsonconv_rate_limit');
 
-        register_setting(self::SLUG, 'watsonconv_use_limit');
-        register_setting(self::SLUG, 'watsonconv_interval');
-        register_setting(self::SLUG, 'watsonconv_limit');
+        register_setting($option_group, 'watsonconv_use_limit');
+        register_setting($option_group, 'watsonconv_interval');
+        register_setting($option_group, 'watsonconv_limit');
     }
 
     public static function rate_limit_description($args) {
@@ -354,17 +382,19 @@ class Settings {
     // ---------- Rate Limiting Per Client --------------
 
     public static function init_client_rate_limit_settings() {
+        $option_group = self::SLUG . '_usage_management';
+
         add_settings_section('watsonconv_client_rate_limit', 'Usage Per Client',
-            array(__CLASS__, 'client_rate_limit_description'), self::SLUG);
+            array(__CLASS__, 'client_rate_limit_description'), $option_group);
 
         add_settings_field('watsonconv_use_client_limit', 'Limit API Requests Per Client',
-            array(__CLASS__, 'render_use_client_limit'), self::SLUG, 'watsonconv_client_rate_limit');
+            array(__CLASS__, 'render_use_client_limit'), $option_group, 'watsonconv_client_rate_limit');
         add_settings_field('watsonconv_client_limit', 'Maximum Number of Requests Per Client',
-            array(__CLASS__, 'render_client_limit'), self::SLUG, 'watsonconv_client_rate_limit');
+            array(__CLASS__, 'render_client_limit'), $option_group, 'watsonconv_client_rate_limit');
 
-        register_setting(self::SLUG, 'watsonconv_use_client_limit');
-        register_setting(self::SLUG, 'watsonconv_client_interval');
-        register_setting(self::SLUG, 'watsonconv_client_limit');
+        register_setting($option_group, 'watsonconv_use_client_limit');
+        register_setting($option_group, 'watsonconv_client_interval');
+        register_setting($option_group, 'watsonconv_client_limit');
     }
 
     public static function render_use_client_limit() {
@@ -423,30 +453,32 @@ class Settings {
     // ------------- Behaviour Settings ----------------
 
     public static function init_behaviour_settings() {
+        $option_group = self::SLUG . '_behaviour';
+
         add_settings_section('watsonconv_behaviour', 'Behaviour',
-            array(__CLASS__, 'behaviour_description'), self::SLUG);
+            array(__CLASS__, 'behaviour_description'), $option_group);
 
         add_settings_field('watsonconv_delay', esc_html__('Delay Before Pop-Up', self::SLUG),
-            array(__CLASS__, 'render_delay'), self::SLUG, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_delay'), $option_group, 'watsonconv_behaviour');
 
         add_settings_field('watsonconv_show_on', esc_html__('Show Chat Box On', self::SLUG),
-            array(__CLASS__, 'render_show_on'), self::SLUG, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_show_on'), $option_group, 'watsonconv_behaviour');
         add_settings_field('watsonconv_home_page', esc_html__('Front Page', self::SLUG),
-            array(__CLASS__, 'render_home_page'), self::SLUG, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_home_page'), $option_group, 'watsonconv_behaviour');
         add_settings_field('watsonconv_pages', esc_html__('Pages', self::SLUG),
-            array(__CLASS__, 'render_pages'), self::SLUG, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_pages'), $option_group, 'watsonconv_behaviour');
         add_settings_field('watsonconv_posts', esc_html__('Posts', self::SLUG),
-            array(__CLASS__, 'render_posts'), self::SLUG, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_posts'), $option_group, 'watsonconv_behaviour');
         add_settings_field('watsonconv_categories', esc_html__('Categories', self::SLUG),
-            array(__CLASS__, 'render_categories'), self::SLUG, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_categories'), $option_group, 'watsonconv_behaviour');
 
-        register_setting(self::SLUG, 'watsonconv_delay');
+        register_setting($option_group, 'watsonconv_delay');
 
-        register_setting(self::SLUG, 'watsonconv_show_on', array(__CLASS__, 'sanitize_show_on'));
-        register_setting(self::SLUG, 'watsonconv_home_page');
-        register_setting(self::SLUG, 'watsonconv_pages', array(__CLASS__, 'sanitize_array'));
-        register_setting(self::SLUG, 'watsonconv_posts', array(__CLASS__, 'sanitize_array'));
-        register_setting(self::SLUG, 'watsonconv_categories', array(__CLASS__, 'sanitize_array'));
+        register_setting($option_group, 'watsonconv_show_on', array(__CLASS__, 'sanitize_show_on'));
+        register_setting($option_group, 'watsonconv_home_page');
+        register_setting($option_group, 'watsonconv_pages', array(__CLASS__, 'sanitize_array'));
+        register_setting($option_group, 'watsonconv_posts', array(__CLASS__, 'sanitize_array'));
+        register_setting($option_group, 'watsonconv_categories', array(__CLASS__, 'sanitize_array'));
     }
 
     public static function behaviour_description($args) {
@@ -596,28 +628,30 @@ class Settings {
     // ------------- Appearance Settings ----------------
 
     public static function init_appearance_settings() {
+        $option_group = self::SLUG . '_appearance';
+
         add_settings_section('watsonconv_appearance', 'Appearance',
-            array(__CLASS__, 'appearance_description'), self::SLUG);
+            array(__CLASS__, 'appearance_description'), $option_group);
 
         add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
-            array(__CLASS__, 'render_minimized'), self::SLUG, 'watsonconv_appearance');
+            array(__CLASS__, 'render_minimized'), $option_group, 'watsonconv_appearance');
         add_settings_field('watsonconv_position', 'Position',
-            array(__CLASS__, 'render_position'), self::SLUG, 'watsonconv_appearance');
+            array(__CLASS__, 'render_position'), $option_group, 'watsonconv_appearance');
         add_settings_field('watsonconv_title', 'Chat Box Title',
-            array(__CLASS__, 'render_title'), self::SLUG, 'watsonconv_appearance');
+            array(__CLASS__, 'render_title'), $option_group, 'watsonconv_appearance');
         add_settings_field('watsonconv_font_size', 'Font Size',
-            array(__CLASS__, 'render_font_size'), self::SLUG, 'watsonconv_appearance');
+            array(__CLASS__, 'render_font_size'), $option_group, 'watsonconv_appearance');
         add_settings_field('watsonconv_color', 'Color',
-            array(__CLASS__, 'render_color'), self::SLUG, 'watsonconv_appearance');
+            array(__CLASS__, 'render_color'), $option_group, 'watsonconv_appearance');
         add_settings_field('watsonconv_size', 'Window Size',
-            array(__CLASS__, 'render_size'), self::SLUG, 'watsonconv_appearance');
+            array(__CLASS__, 'render_size'), $option_group, 'watsonconv_appearance');
 
-        register_setting(self::SLUG, 'watsonconv_minimized');
-        register_setting(self::SLUG, 'watsonconv_position');
-        register_setting(self::SLUG, 'watsonconv_title');
-        register_setting(self::SLUG, 'watsonconv_font_size');
-        register_setting(self::SLUG, 'watsonconv_color');
-        register_setting(self::SLUG, 'watsonconv_size');
+        register_setting($option_group, 'watsonconv_minimized');
+        register_setting($option_group, 'watsonconv_position');
+        register_setting($option_group, 'watsonconv_title');
+        register_setting($option_group, 'watsonconv_font_size');
+        register_setting($option_group, 'watsonconv_color');
+        register_setting($option_group, 'watsonconv_size');
     }
 
     public static function appearance_description($args) {

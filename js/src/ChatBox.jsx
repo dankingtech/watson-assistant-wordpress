@@ -134,9 +134,7 @@ export default class ChatBox extends Component {
           <div className='overflow-hidden watson-font'>{this.props.title}</div>
         </div>
         <div style={{position: 'relative'}}>
-          <TransitionGroup id='call-interface' class='animated' style={{opacity: showCallInterface ? 1 : 0}}>
-            {showCallInterface && <CallInterface />}
-          </TransitionGroup>
+          {showCallInterface && <CallInterface />}
           <div id='message-container'>
             <div id='messages' ref={div => {this.messageList = div}}>
               <div style={{'text-align': 'right', margin: '-5 0 5 10'}} className='watson-font'>

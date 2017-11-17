@@ -72,20 +72,22 @@ export default class CallInterface extends Component {
   }
 
   render() {
-    return this.state.calling ? 
-      <div id='controls'>
-        <p>{this.state.log}</p>
-        <button onClick={this.disconnect.bind(this)}>Hang Up</button>
-      </div> 
-      :
-      <div id='controls'>
-        <p style={{'line-height': '2.7em'}}>
-          Dial <a href='tel:647-303-4238'>647-303-4238</a> <br/>
-          or
-        </p>
-        <button onClick={this.startCall.bind(this)}>
-          Start Call Here
-        </button>
-      </div>
+    return <span id='call-interface'>
+        {this.state.calling ? 
+        <div id='controls'>
+          <p>{this.state.log}</p>
+          <button onClick={this.disconnect.bind(this)}>Hang Up</button>
+        </div> 
+        :
+        <div id='controls'>
+          <p style={{'line-height': '2.7em'}}>
+            Dial <a href='tel:647-303-4238'>647-303-4238</a> <br/>
+            or
+          </p>
+          <button onClick={this.startCall.bind(this)}>
+            Start Call Here
+          </button>
+        </div>}
+      </span>
   }
 }
