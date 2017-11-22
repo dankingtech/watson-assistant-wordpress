@@ -79,10 +79,10 @@ class Settings {
         <div id='watson-box' class='drop-shadow animated' style='display: block; margin: 10px auto;'>
             <div id='watson-header' class='watson-font' style='cursor: default;'>
                 <span class='dashicons dashicons-arrow-down-alt2 popup-control'></span>
-                <div id='title' class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
+                <div class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
             </div>
             <div id='message-container'>
-                <div id='messages'>
+                <div id='messages' class='watson-font'>
                     <div class='message watson-message'>
                         This is a message from the chatbot.
                     </div>
@@ -719,7 +719,7 @@ class Settings {
     public static function render_show_on() {
         self::render_radio_buttons(
             'watsonconv_show_on',
-            'only',
+            'all_except',
             array(
                 array(
                     'label' => esc_html__('All Pages Except the Following', self::SLUG),
@@ -968,7 +968,7 @@ class Settings {
     public static function render_font_size() {
     ?>
         <input name="watsonconv_font_size" id="watsonconv_font_size"
-            type="number" min=9 max=13 step=0.5 style="width: 4em"
+            type="number" min=9 step=0.5 style="width: 4em"
             value="<?php echo get_option('watsonconv_font_size', 11) ?>" />
         pt
     <?php

@@ -29,35 +29,36 @@ class Frontend {
                 '.$position[0].': 5vmin;
                 '.$position[1].': 5vmin;
             }
-            ' . ($full_screen ? '' : '
-                @media (min-width:769px)  {
-                    #watson-box .watson-font
-                    {
-                        font-size: '.$font_size.'pt;
-                    }
-                    #watson-float
-                    {
-                        '.$position[0].': 5vmin;
-                        '.$position[1].': 5vmin;
-                    }
-                    #watson-box
-                    {
-                        width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
-                        height: auto;
-                    }
-                    #message-container
-                    {
-                        height: '.$messages_height.'pt
-                    }
-                }') . 
+
+            #watson-box .watson-font
+            {
+                font-size: '.$font_size.'pt;
+            }
+
+            #watson-float
+            {
+                '.$position[0].': 5vmin;
+                '.$position[1].': 5vmin;
+            }
+            #watson-box
+            {
+                width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
+                height: auto;
+            }
+            #message-container
+            {
+                height: '.$messages_height.'pt
+            }
+            
+            @media (max-width:768px)  {
+                #watson-box .watson-font
+                {
+                    font-size: 16px;
+                }
+            }' . 
             sprintf(
                 $full_screen ? '%s' : '@media (max-width:768px) { %s }', 
-                '#watson-box .watson-font
-                {
-                  font-size: 16px;
-                }
-              
-                #watson-box
+                '#watson-box
                 {
                   width: 100%;
                   height: 100%;
@@ -70,27 +71,14 @@ class Frontend {
                   bottom: 0;
                   left: 0;
                 }
-              
-                #watson-box #watson-header 
-                {
-                  height: 48px;
-                  line-height: 48px;
-                  padding: 0 16px;
-                }
 
-                #watson-box #watson-header .header-button
+                #message-container
                 {
-                  line-height: 40px;
-                }
-              
-                #watson-box #watson-header .watson-font, #watson-box #watson-header .popup-control
-                {
-                  line-height: 48px;
+                    height: auto;
                 }
               
                 #watson-box .message-form
                 {
-                  height: 48px;
                   width: 100vw;
                 }'
             )
