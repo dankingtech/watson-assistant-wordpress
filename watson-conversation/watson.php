@@ -4,7 +4,7 @@ Plugin Name: Watson Conversation
 Description: This plugin allows you to easily add chatbots powered by IBM Watson Conversation to your website.
 Author: IBM Cognitive Class
 Author URI: https://cognitiveclass.ai
-Version: 0.2.3
+Version: 0.3.0
 Text Domain: watsonconv
 */
 

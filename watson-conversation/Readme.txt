@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.8
-Stable tag: 0.2.2
+Stable tag: 0.3.0
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -79,6 +79,11 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.3.0 =
+* Added voice calling feature using Twilio
+* Improved compatibility with older PHP versions
+* Added setting for full-screen UI on non-mobile devices
 
 = 0.2.3 =
 * Fixes bug causing links from chatbot to be same color as background.
