@@ -550,15 +550,18 @@ class Settings {
     public static function twilio_cred_description($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
-            <?php esc_html_e('Here, you can setup the voice calling feature, so that if the user
+            <?php esc_html_e('Here, you can set up the beta voice calling feature, so that if the user
                 wants to speak to a real person, they can call you directly from their browser using VOIP.') ?> <br><br>
-            <a href="http://cocl.us/try-twilio"><?php esc_html_e('Start by creating your free trial Twilio account here.')?></a>
-            <?php esc_html_e(' You can get your Account SID and Auth Token from your Twilio Dashboard. 
-                For the caller ID, you can use a number that you\'ve either obtained from or') ?>
+            <a href="http://cocl.us/try-twilio"><?php esc_html_e('Start by creating your free trial Twilio account here.')?></a><br>
+            <?php esc_html_e(' You can get your Account SID and Auth Token from your Twilio Dashboard.') ?> <br>
+            <?php esc_html_e('For the caller ID, you can use a number that you\'ve either obtained from or') ?>
             <a href="https://www.twilio.com/console/phone-numbers/verified"><?php esc_html_e('verified with') ?></a>
-            <?php esc_html_e(' Twilio. Then just specify the number you want to answer the user\'s calls on 
-                and you\'re good to go. The Domain Name below is simply the domain name that Twilio will use 
-                to reach your website. For most websites the default will work fine.', self::SLUG) ?>
+            <?php esc_html_e('Twilio.') ?> <br>
+            <?php esc_html_e('Then just specify the phone number you want to answer the user\'s calls on 
+                and you\'re good to go.') ?> <br>
+            <?php esc_html_e('The Domain Name below is simply the domain name that Twilio will use 
+                to reach your website. For most websites the default will work fine.', self::SLUG) ?> <br><br>
+            <?php esc_html_e('Note: Phone numbers must be entered in E.164 format (e.g. +15555555555).') ?>
         </p>
     <?php
     }
