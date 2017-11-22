@@ -18,7 +18,9 @@ function renderApp() {
       title={settings.title}
       minimized={settings.minimized}
       isMobile={window.matchMedia("(max-width:768px)").matches}
+      fullScreen={settings.full_screen}
       position={settings.position}
+      callConfig={settings.call_config}
     />,
     document.getElementById('chat-box')
   );

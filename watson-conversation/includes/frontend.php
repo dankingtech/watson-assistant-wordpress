@@ -1,53 +1,100 @@
 <?php
 namespace WatsonConv;
 
-add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'load_styles'));
+add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'load_styles'), 10, 0);
 add_action('wp_footer', array('WatsonConv\Frontend', 'render_chat_box'));
 
 class Frontend {
-    public static function load_styles() {
+    public static function load_styles($full_screen = null) {
         wp_enqueue_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
         $color_rgb = sscanf(get_option('watsonconv_color', '#23282d'), "#%02x%02x%02x");
         $messages_height = get_option('watsonconv_size', 200);
-
         $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
-
         $text_color = self::luminance($color_rgb) > 0.5 ? 'black' : 'white';
+
+        if (is_null($full_screen)) {
+            $full_screen = get_option('watsonconv_full_screen', 'no') == 'yes';
+        }
 
         wp_add_inline_style('watsonconv-chatbox', '
             :root {
                 --chatbot-color: ' . vsprintf('rgb(%d, %d, %d)', $color_rgb) . ';
                 --chatbot-text-color: '.$text_color.';
             }
-          
+        
             #watson-fab-float
             {
                 '.$position[0].': 5vmin;
                 '.$position[1].': 5vmin;
             }
-            @media (min-width:769px)  {
-                #watson-box .watson-font
+            ' . ($full_screen ? '' : '
+                @media (min-width:769px)  {
+                    #watson-box .watson-font
+                    {
+                        font-size: '.$font_size.'pt;
+                    }
+                    #watson-float
+                    {
+                        '.$position[0].': 5vmin;
+                        '.$position[1].': 5vmin;
+                    }
+                    #watson-box
+                    {
+                        width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
+                        height: auto;
+                    }
+                    #message-container
+                    {
+                        height: '.$messages_height.'pt
+                    }
+                }') . 
+            sprintf(
+                $full_screen ? '%s' : '@media (max-width:768px) { %s }', 
+                '#watson-box .watson-font
                 {
-                    font-size: '.$font_size.'pt;
+                  font-size: 16px;
                 }
-                #watson-float
-                {
-                    '.$position[0].': 5vmin;
-                    '.$position[1].': 5vmin;
-                }
+              
                 #watson-box
                 {
-                    width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
-                    height: auto;
+                  width: 100%;
+                  height: 100%;
                 }
-                #message-container
+              
+                #watson-float
                 {
-                    height: '.$messages_height.'pt
+                  top: 0;
+                  right: 0;
+                  bottom: 0;
+                  left: 0;
                 }
-            }
-        ');
+              
+                #watson-box #watson-header 
+                {
+                  height: 48px;
+                  line-height: 48px;
+                  padding: 0 16px;
+                }
+
+                #watson-box #watson-header .header-button
+                {
+                  line-height: 40px;
+                }
+              
+                #watson-box #watson-header .watson-font, #watson-box #watson-header .popup-control
+                {
+                  line-height: 48px;
+                }
+              
+                #watson-box .message-form
+                {
+                  height: 48px;
+                  width: 100vw;
+                }'
+            )
+        );
     }
 
     private static function luminance($srgb) {
@@ -89,14 +136,33 @@ class Frontend {
         ?>
             <div id="chat-box"></div>
         <?php
+
+            $twilio_config = get_option('watsonconv_twilio');
+
+            $call_configured = boolval(
+                !empty($twilio_config['sid']) && 
+                !empty($twilio_config['auth_token']) && 
+                get_option('watsonconv_twiml_sid') &&
+                get_option('watsonconv_call_id') &&
+                get_option('watsonconv_call_recipient')
+            );
+
             $settings = array(
                 'delay' => (int) get_option('watsonconv_delay', 0),
                 'minimized' => get_option('watsonconv_minimized', 'no') == 'yes',
                 'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
-                'title' => get_option('watsonconv_title', '')
+                'title' => get_option('watsonconv_title', ''),
+                'full_screen' => get_option('watsonconv_full_screen', 'no') == 'yes',
+                'call_config' => array(
+                    'configured' => $call_configured,
+                    'recipient' => get_option('watsonconv_call_recipient'),
+                    'call_tooltip' => get_option('watsonconv_call_tooltip'),
+                    'call_button' => get_option('watsonconv_call_button'),
+                    'calling_text' => get_option('watsonconv_calling_text')
+                )
             );
 
-            wp_enqueue_script('twilio-js', 'http://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
+            wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
             wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');
             wp_localize_script('chat-app', 'settings', $settings);
         }

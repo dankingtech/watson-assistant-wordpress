@@ -20,6 +20,8 @@ class Settings {
         self::init_workspace_settings();
         self::init_rate_limit_settings();
         self::init_client_rate_limit_settings();
+        self::init_twilio_cred_settings();
+        self::init_call_ui_settings();
         self::init_behaviour_settings();
         self::init_appearance_settings();
     }
@@ -38,7 +40,7 @@ class Settings {
             wp_enqueue_script('settings-script', WATSON_CONV_URL.'includes/settings.js',
                 array('wp-color-picker'), false, true );
 
-            Frontend::load_styles();
+            Frontend::load_styles(false);
         }
     }
 
@@ -253,7 +255,7 @@ class Settings {
         $credentials = get_option('watsonconv_credentials', array('id' => ''));
     ?>
         <input name="watsonconv_credentials[id]" id="watsonconv_id" type="text"
-            value="<?php echo get_option('watsonconv_credentials')['id'] ?>"
+            value="<?php echo $credentials['id'] ?>"
             placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
             style="width: 24em" />
     <?php
@@ -449,6 +451,216 @@ class Settings {
         </select>
     <?php
     }
+    
+    // ------------ Twilio Credentials ---------------
+
+    public static function init_twilio_cred_settings() {
+        $option_group = self::SLUG . '_voice_call';
+
+        add_settings_section('watsonconv_twilio_cred', 'Twilio Credentials',
+            array(__CLASS__, 'twilio_cred_description'), $option_group);
+
+        add_settings_field('watsonconv_twilo_sid', 'Account SID', array(__CLASS__, 'render_twilio_sid'),
+            $option_group, 'watsonconv_twilio_cred');
+        add_settings_field('watsonconv_twilio_auth', 'Auth Token', array(__CLASS__, 'render_twilio_auth'),
+            $option_group, 'watsonconv_twilio_cred');
+        add_settings_field('watsonconv_call_id', 'Caller ID (Verified Number with Twilio)',
+            array(__CLASS__, 'render_call_id'), $option_group, 'watsonconv_twilio_cred');
+        add_settings_field('watsonconv_call_recipient', 'Phone Number to Receive Calls from Users',
+            array(__CLASS__, 'render_call_recipient'), $option_group, 'watsonconv_twilio_cred');
+        add_settings_field('watsonconv_twilio_domain', 'Domain Name of this Website (Probably doesn\'t need changing)',
+            array(__CLASS__, 'render_domain_name'), $option_group, 'watsonconv_twilio_cred');
+
+        register_setting($option_group, 'watsonconv_twilio', array(__CLASS__, 'validate_twilio'));
+        register_setting($option_group, 'watsonconv_call_id', array(__CLASS__, 'validate_phone'));
+        register_setting($option_group, 'watsonconv_call_recipient', array(__CLASS__, 'validate_phone'));
+    }
+
+    public static function validate_twilio($new_config) {
+        $old_config = get_option('watsonconv_twilio');
+
+        try {
+            $client = new \Twilio\Rest\Client($new_config['sid'], $new_config['auth_token']);
+            
+            try {
+                $app = $client
+                    ->applications(get_option('watsonconv_twiml_sid'))
+                    ->fetch();
+            } catch (\Twilio\Exceptions\RestException $e) {
+                $app = false;
+                $params = array('FriendlyName' => 'Chatbot for ' . $new_config['domain_name']);
+
+                foreach($client->account->applications->read($params) as $_app) {
+                    $app = $_app;
+                }
+
+                if (!$app) {
+                    $params = array('FriendlyName' => 'Chatbot for ' . $old_config['domain_name']);
+    
+                    foreach($client->account->applications->read($params) as $_app) {
+                        $app = $_app;
+                    }
+
+                    if (!$app) {
+                        $app = $client->applications->create('Chatbot for ' . $new_config['domain_name']);
+                    }
+                }
+            }
+
+            $app->update(
+                array(
+                    'voiceUrl' => $new_config['domain_name'] . '?rest_route=/watsonconv/v1/twilio-call',
+                    'FriendlyName' => 'Chatbot for ' . $new_config['domain_name']
+                )
+            );
+
+            update_option('watsonconv_twiml_sid', $app->sid);
+        } catch (\Exception $e) {
+            add_settings_error(
+                'watsonconv_twilio', 
+                'twilio-invalid', 
+                $e->getMessage() . ' (' . $e->getCode() . ')'
+            );
+            
+            return array(
+                'sid' => '',
+                'auth_token' => '',
+                'domain_name' => $old_config['domain_name']
+            );
+        }
+
+        return $new_config;
+    }
+
+    public static function validate_phone($number) {
+        if (!preg_match('/^\+?[1-9]\d{1,14}$/', $number)) {
+            add_settings_error(
+                'watsonconv_twilio', 
+                'invalid-phone-number', 
+                'Please use valid E.164 format for phone numbers (e.g. +15555555555).'
+            );
+
+            return '';
+        }
+
+        return $number;
+    }
+
+    public static function twilio_cred_description($args) {
+    ?>
+        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+            <?php esc_html_e('Here, you can setup the voice calling feature, so that if the user
+                wants to speak to a real person, they can call you directly from their browser using VOIP.') ?> <br><br>
+            <a href="http://cocl.us/try-twilio"><?php esc_html_e('Start by creating your free trial Twilio account here.')?></a>
+            <?php esc_html_e(' You can get your Account SID and Auth Token from your Twilio Dashboard. 
+                For the caller ID, you can use a number that you\'ve either obtained from or') ?>
+            <a href="https://www.twilio.com/console/phone-numbers/verified"><?php esc_html_e('verified with') ?></a>
+            <?php esc_html_e(' Twilio. Then just specify the number you want to answer the user\'s calls on 
+                and you\'re good to go. The Domain Name below is simply the domain name that Twilio will use 
+                to reach your website. For most websites the default will work fine.', self::SLUG) ?>
+        </p>
+    <?php
+    }
+
+    public static function render_twilio_sid() {
+        $config = get_option('watsonconv_twilio', array('sid' => ''));
+    ?>
+        <input name="watsonconv_twilio[sid]" id="watsonconv_twilio_sid" type="text"
+            value="<?php echo $config['sid'] ?>"
+            placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            style="width: 24em" />
+    <?php
+    }
+
+    public static function render_twilio_auth() {
+        $config = get_option('watsonconv_twilio', array('auth_token' => ''));
+    ?>
+        <input name="watsonconv_twilio[auth_token]" id="watsonconv_twilio_auth" type="password"
+            value="<?php echo $config['auth_token'] ?>"
+            style="width: 24em"/>
+    <?php
+    }
+    
+    public static function render_call_id() {
+    ?>
+        <input name="watsonconv_call_id" id="watsonconv_call_id" type="text"
+            value="<?php echo get_option('watsonconv_call_id') ?>"
+            placeholder="+15555555555"
+            style="width: 24em" />
+    <?php
+    }
+    
+    public static function render_call_recipient() {
+    ?>
+        <input name="watsonconv_call_recipient" id="watsonconv_call_recipient" type="text"
+            value="<?php echo get_option('watsonconv_call_recipient') ?>"
+            placeholder="+15555555555"
+            style="width: 24em" />
+    <?php
+    }
+    
+    public static function render_domain_name() {
+        $config = get_option('watsonconv_twilio', array('domain_name' => get_site_url()));
+    ?>
+        <input name="watsonconv_twilio[domain_name]" id="watsonconv_twilio_domain" type="text"
+            value="<?php echo $config['domain_name'] ?>"
+            placeholder="<?php echo get_site_url() ?>"
+            style="width: 24em" />
+    <?php
+    }
+    
+    // ------------ Voice Call UI Text ---------------
+
+    public static function init_call_ui_settings() {
+        $option_group = self::SLUG . '_voice_call';
+
+        add_settings_section('watsonconv_call_ui', 'Voice Call UI Text',
+            array(__CLASS__, 'twilio_call_ui_description'), $option_group);
+
+        add_settings_field('watsonconv_call_tooltip', 'This message will display when the user hovers over the phone button.', 
+            array(__CLASS__, 'render_call_tooltip'), $option_group, 'watsonconv_call_ui');
+        add_settings_field('watsonconv_call_button', 'This is the text for the button to call using Twilio.',
+            array(__CLASS__, 'render_call_button'), $option_group, 'watsonconv_call_ui');
+        add_settings_field('watsonconv_calling_text', 'This text is displayed when calling.',
+            array(__CLASS__, 'render_calling_text'), $option_group, 'watsonconv_call_ui');
+
+        register_setting($option_group, 'watsonconv_call_tooltip');
+        register_setting($option_group, 'watsonconv_twilio_auth');
+        register_setting($option_group, 'watsonconv_calling_text');
+    }
+
+    public static function twilio_call_ui_description($args) {
+    ?>
+        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+            <?php esc_html_e('Here, you can customize the text to be used in the voice calling 
+                user interface.', self::SLUG) ?>
+        </p>
+    <?php
+    }
+
+    public static function render_call_tooltip() {
+    ?>
+        <input name="watsonconv_call_tooltip" id="watsonconv_call_tooltip" type="text"
+            value="<?php echo get_option('watsonconv_call_tooltip') ?: 'Talk to a Live Agent' ?>"
+            style="width: 24em" />
+    <?php
+    }
+
+    public static function render_call_button() {
+    ?>
+        <input name="watsonconv_call_button" id="watsonconv_call_button" type="text"
+            value="<?php echo get_option('watsonconv_call_button') ?: 'Start Toll-Free Call Here' ?>"
+            style="width: 24em"/>
+    <?php
+    }
+    
+    public static function render_calling_text() {
+    ?>
+        <input name="watsonconv_calling_text" id="watsonconv_calling_text" type="text"
+            value="<?php echo get_option('watsonconv_call_button') ?: 'Calling Agent...' ?>"
+            style="width: 24em"/>
+    <?php
+    }
 
     // ------------- Behaviour Settings ----------------
 
@@ -635,6 +847,8 @@ class Settings {
 
         add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
             array(__CLASS__, 'render_minimized'), $option_group, 'watsonconv_appearance');
+        add_settings_field('watsonconv_full_screen', 'Full Screen',
+            array(__CLASS__, 'render_full_screen'), $option_group, 'watsonconv_appearance');
         add_settings_field('watsonconv_position', 'Position',
             array(__CLASS__, 'render_position'), $option_group, 'watsonconv_appearance');
         add_settings_field('watsonconv_title', 'Chat Box Title',
@@ -647,6 +861,7 @@ class Settings {
             array(__CLASS__, 'render_size'), $option_group, 'watsonconv_appearance');
 
         register_setting($option_group, 'watsonconv_minimized');
+        register_setting($option_group, 'watsonconv_full_screen');
         register_setting($option_group, 'watsonconv_position');
         register_setting($option_group, 'watsonconv_title');
         register_setting($option_group, 'watsonconv_font_size');
@@ -666,6 +881,22 @@ class Settings {
     public static function render_minimized() {
         self::render_radio_buttons(
             'watsonconv_minimized',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
+    }
+    
+    public static function render_full_screen() {
+        self::render_radio_buttons(
+            'watsonconv_full_screen',
             'no',
             array(
                 array(

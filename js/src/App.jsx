@@ -57,28 +57,30 @@ export default class App extends Component {
   }
 
   render() {
+    let { isMobile, fullScreen } = this.props;
+
     return (
       <div>
         <Draggable
           handle='#watson-header'
           cancel='#watson-header .header-button'
-          bounds={this.props.isMobile && {left: 0, top: 0, right: 0, bottom: 0}}
+          bounds={(fullScreen || isMobile) && {left: 0, top: 0, right: 0, bottom: 0}}
           onStart={this.startDragging.bind(this)}
           onStop={this.savePosition.bind(this)}
-          position={(this.state.minimized || this.props.isMobile) ? {x: 0, y: 0} : this.state.position}
+          position={(this.state.minimized || fullScreen || isMobile) ? {x: 0, y: 0} : this.state.position}
         >
           <TransitionGroup
             id='watson-float'
             class={!this.state.dragging && 'animated'}
             style={this.state.minimized && {opacity: 0 , visibility: 'hidden'}}
           >
-            {!this.state.minimized &&
               <ChatBox
                   minimize={this.toggleMinimize.bind(this)}
                   position={this.props.position}
                   title={this.props.title}
+                  callConfig={this.props.callConfig}
+                  style={!this.state.minimized && {display: 'none'}}
               />
-            }
           </TransitionGroup>
         </Draggable>
         <TransitionGroup

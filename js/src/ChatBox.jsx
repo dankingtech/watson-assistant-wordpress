@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
 import { TransitionGroup } from 'react-transition-group';
-import ReactTooltip from 'react-tooltip';
+import ReactTooltip from 'react-tooltip-currenttarget';
+import webrtc from 'webrtcsupport';
 
 import Message from './Message.jsx';
-import CallInterface from './CallInterface/index.jsx';
+import CallInterface from './CallInterface.jsx';
 
 import 'whatwg-fetch';
 
@@ -21,7 +22,8 @@ export default class ChatBox extends Component {
         messages: [],
         newMessage: '',
         context: null,
-        showCallInterface: false
+        showCallInterface: false,
+        mediaSecure: true
       };
     }
   }
@@ -32,6 +34,27 @@ export default class ChatBox extends Component {
       this.sendMessage();
     } else if (typeof(this.messageList) !== 'undefined') {
       this.messageList.scrollTop = this.messageList.scrollHeight;
+    }
+    
+    if ('https:' !== document.location.protocol) {
+      navigator.mediaDevices.getUserMedia({video: {width: {min: 2, max: 1}}})
+      .then(stream => {
+        log("getUserMedia detection failed");
+        stream.getTracks().forEach(t => t.stop());
+      })
+      .catch(e => {
+        switch (e.name) {
+          case "NotSupportedError":
+          case "NotAllowedError":
+          case "SecurityError":
+            console.log("Can't access microphone in http");
+            this.setState({mediaSecure: false});
+            break;
+          case "OverconstrainedError":
+          default:
+            break;
+        }
+      });
     }
   }
 
@@ -116,6 +139,10 @@ export default class ChatBox extends Component {
     var position = this.props.position || ['bottom', 'right'];
     var showCallInterface = this.state.showCallInterface;
 
+    var allowCalling = this.props.callConfig.configured
+                    && webrtc.support 
+                    && this.state.mediaSecure;
+
     return (
       <div id='watson-box' className='drop-shadow animated'>
         <div
@@ -125,16 +152,18 @@ export default class ChatBox extends Component {
           <span className={`dashicons dashicons-arrow-${
               position[0] == 'bottom' ? 'down' : 'up'
             }-alt2 popup-control`}></span>
-          <span
-            onClick={this.toggleCallInterface.bind(this)} 
-            className={`dashicons dashicons-phone header-button`}
-            data-tip='Talk to a Live Agent'>
-          </span>
+          {allowCalling &&
+            <span
+              onClick={this.toggleCallInterface.bind(this)} 
+              className={`dashicons dashicons-phone header-button`}
+              data-tip={this.props.callConfig.call_tooltip || 'Talk to a Live Agent'}>
+            </span>
+          }
           <ReactTooltip />
           <div className='overflow-hidden watson-font'>{this.props.title}</div>
         </div>
-        <div style={{position: 'relative'}}>
-          {showCallInterface && <CallInterface />}
+        <div style={{position: 'relative', height: '100%', 'display': 'flex', 'flex-direction': 'column'}}>
+          {allowCalling && showCallInterface && <CallInterface callConfig={this.props.callConfig} />}
           <div id='message-container'>
             <div id='messages' ref={div => {this.messageList = div}}>
               <div style={{'text-align': 'right', margin: '-5 0 5 10'}} className='watson-font'>

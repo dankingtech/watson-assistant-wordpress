@@ -25,7 +25,14 @@ class API {
             );
         }
 
-        // if (get_option('watsonconv_twilio')) {
+        $twilio_config = get_option('watsonconv_twilio');
+
+        if (!empty($twilio_config['sid']) && 
+            !empty($twilio_config['auth_token']) && 
+            get_option('watsonconv_twiml_sid') &&
+            get_option('watsonconv_call_id') &&
+            get_option('watsonconv_call_recipient'))
+        {
             register_rest_route('watsonconv/v1', '/twilio-token',
                 array(
                     'methods' => 'get',
@@ -39,23 +46,18 @@ class API {
                     'callback' => array(__CLASS__, 'twilio_call')
                 )
             );
-        // }
+        }
     }
 
     public static function twilio_get_token(\WP_REST_Request $request) {
-        // An identifier for your app - can be anything you'd like
-        $appName = 'TwilioDemo';
-     
-        // choose a random username for the connecting user
-        $identity = self::randomUsername();
-
-        $TWILIO_ACCOUNT_SID = 'AC26d890d7f1dc774acfa97ea07e00b979';
-        $TWILIO_AUTH_TOKEN = '52b375cec934f14be9f0e964ba8795bf';
-        $TWILIO_TWIML_APP_SID = 'AP67050e3650b432fcd669d36eafab3f84';
+        $twilio_config = get_option('watsonconv_twilio');
+        
+        $TWILIO_ACCOUNT_SID = $twilio_config['sid'];
+        $TWILIO_AUTH_TOKEN = $twilio_config['auth_token'];
+        $TWILIO_TWIML_APP_SID = get_option('watsonconv_twiml_sid');
 
         $capability = new \Twilio\Jwt\ClientToken($TWILIO_ACCOUNT_SID, $TWILIO_AUTH_TOKEN);
         $capability->allowClientOutgoing($TWILIO_TWIML_APP_SID);
-        $capability->allowClientIncoming($identity);
         $token = $capability->generateToken();
         return array(
             'identity' => $identity,
@@ -65,10 +67,9 @@ class API {
 
     public static function twilio_call(\WP_REST_Request $request) {
         $response = new \Twilio\Twiml;
-        $body = $request->get_json_params();
         
-        $number = '+16473034238';
-        $dial = $response->dial(array('callerId' => '+14387937544'));
+        $number = get_option('watsonconv_call_recipient');
+        $dial = $response->dial(array('callerId' => get_option('watsonconv_call_id')));
         
         // wrap the phone number or client name in the appropriate TwiML verb
         // by checking if the number given has only digits and format symbols
@@ -236,36 +237,5 @@ class API {
             $ip_addr = $_SERVER['REMOTE_ADDR'];
 
         return $ip_addr;
-    }
-
-    public static function randomUsername() {
-        $ADJECTIVES = array(
-            'Abrasive', 'Brash', 'Callous', 'Daft', 'Eccentric', 'Fiesty', 'Golden',
-            'Holy', 'Ignominious', 'Joltin', 'Killer', 'Luscious', 'Mushy', 'Nasty',
-            'OldSchool', 'Pompous', 'Quiet', 'Rowdy', 'Sneaky', 'Tawdry',
-            'Unique', 'Vivacious', 'Wicked', 'Xenophobic', 'Yawning', 'Zesty',
-        );
-    
-        $FIRST_NAMES = array(
-            'Anna', 'Bobby', 'Cameron', 'Danny', 'Emmett', 'Frida', 'Gracie', 'Hannah',
-            'Isaac', 'Jenova', 'Kendra', 'Lando', 'Mufasa', 'Nate', 'Owen', 'Penny',
-            'Quincy', 'Roddy', 'Samantha', 'Tammy', 'Ulysses', 'Victoria', 'Wendy',
-            'Xander', 'Yolanda', 'Zelda',
-        );
-    
-        $LAST_NAMES = array(
-            'Anchorage', 'Berlin', 'Cucamonga', 'Davenport', 'Essex', 'Fresno',
-            'Gunsight', 'Hanover', 'Indianapolis', 'Jamestown', 'Kane', 'Liberty',
-            'Minneapolis', 'Nevis', 'Oakland', 'Portland', 'Quantico', 'Raleigh',
-            'SaintPaul', 'Tulsa', 'Utica', 'Vail', 'Warsaw', 'XiaoJin', 'Yale',
-            'Zimmerman',
-        );
-    
-        // Choose random components of username and return it
-        $adj = $ADJECTIVES[array_rand($ADJECTIVES)];
-        $fn = $FIRST_NAMES[array_rand($FIRST_NAMES)];
-        $ln = $LAST_NAMES[array_rand($LAST_NAMES)];
-        
-        return $adj . $fn . $ln;
     }
 }

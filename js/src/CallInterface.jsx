@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 
-import Call from './Call.jsx';
-
 export default class CallInterface extends Component {
   constructor(props) {
     super(props);
     this.state = {
       calling: false,
-      log: 'Connecting you to an agent...',
+      log: 'Connecting...',
       hasToken: false
     };
   }
@@ -18,8 +16,8 @@ export default class CallInterface extends Component {
       onPhone: true
     })
 
-    Twilio.Device.connect({ number: '+16473034238' });
-    this.setState({log: 'Calling Agent...'})
+    Twilio.Device.connect();
+    this.setState({log: this.props.callConfig.calling_text || 'Calling Agent...'})
   }
 
   disconnect() {
@@ -48,6 +46,7 @@ export default class CallInterface extends Component {
       }).catch(error => {
         console.log(error);
         this.setState({log: 'Call failed.'});
+        setTimeout(this.endCall.bind(this), 1000);
       });
 
       Twilio.Device.disconnect(() =>{
@@ -72,22 +71,25 @@ export default class CallInterface extends Component {
   }
 
   render() {
+    var { button_text, recipient } = this.props.callConfig;
+
     return <span id='call-interface'>
         {this.state.calling ? 
-        <div id='controls'>
-          <p>{this.state.log}</p>
-          <button onClick={this.disconnect.bind(this)}>Hang Up</button>
-        </div> 
-        :
-        <div id='controls'>
-          <p style={{'line-height': '2.7em'}}>
-            Dial <a href='tel:647-303-4238'>647-303-4238</a> <br/>
-            or
-          </p>
-          <button onClick={this.startCall.bind(this)}>
-            Start Call Here
-          </button>
-        </div>}
+          <div id='controls'>
+            <p>{this.state.log}</p>
+            <button onClick={this.disconnect.bind(this)}>Hang Up</button>
+          </div> 
+          :
+          <div id='controls'>
+            <p style={{'line-height': '2.7em'}}>
+              Dial <a href={`tel:${recipient}`}>{recipient}</a> <br/>
+              or
+            </p>
+            <button onClick={this.startCall.bind(this)}>
+              {button_text || 'Start Toll-Free Call Here'}
+            </button>
+          </div>
+        }
       </span>
   }
 }

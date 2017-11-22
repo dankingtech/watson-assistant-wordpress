@@ -131,13 +131,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: 
-    linear-gradient(
-      to top,
-      rgba(245, 245, 245, 0.9),
-      rgba(245, 245, 245, 0.9)
-    )
-    var(--chatbot-color);
+  background:rgb(235, 235, 235);
   padding: 15%;
 }
 
@@ -153,11 +147,6 @@
   width: 100%;
   border: none;
 }
-
-/* #call-interface button
-{
-  margin-bottom: 10px;
-} */
 
 #call-interface #controls
 {
@@ -249,44 +238,4 @@
   float: right;
   background-color: white;
   color: rgb(35, 40, 45);
-}
-
-@media (max-width:768px)
-{
-  #watson-box .watson-font
-  {
-    font-size: 16px;
-  }
-
-  #watson-box
-  {
-    width: 100%;
-    height: 100%;
-  }
-
-  #watson-float
-  {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
-
-  #watson-box #watson-header 
-  {
-    height: 48px;
-    line-height: 48px;
-    padding: 0 16px;
-  }
-
-  #watson-box #watson-header .watson-font, #watson-box #watson-header .popup-control
-  {
-    line-height: 48px;
-  }
-
-  #watson-box .message-form
-  {
-    height: 48px;
-    width: 100vw;
-  }
 }
