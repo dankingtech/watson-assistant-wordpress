@@ -50,7 +50,7 @@ If your WordPress site is hosted by WordPress (with a URL like `websitename.word
 
 = Configuring the Plugin =
 
-1. From the Deploy tab, you can obtain your username and password credentials in addition to the Workspace ID of your new workspace. Enter these in the Workspace Credentials section of the settings page for your Watson Conversation plugin on Wordpress.
+1. From the Deploy tab, you can obtain your username and password credentials in addition to the Workspace URL of your new workspace. Enter these in the Workspace Credentials section of the settings page for your Watson Conversation plugin on Wordpress.
 
 1. In your plugin settings, you can choose which pages to show the chat bot on. Your chat bot should now pop up on the pages you chose.
 

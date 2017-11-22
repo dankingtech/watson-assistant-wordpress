@@ -126,13 +126,9 @@ class API {
             $auth_token = 'Basic ' . base64_encode(
                 $credentials['username'].':'.
                 $credentials['password']);
-            $workspace_id = $credentials['id'];
-
-            $base_url = isset($credentials['url']) ? $credentials['url'] : 
-                'https://gateway.watsonplatform.net/conversation/api/v1';
 
             $response = wp_remote_post(
-                "$base_url/workspaces/$workspace_id/message?version=".self::API_VERSION,
+                $credentials['workspace_url'].'?version='.self::API_VERSION,
                 array(
                     'headers' => array(
                         'Authorization' => $auth_token,

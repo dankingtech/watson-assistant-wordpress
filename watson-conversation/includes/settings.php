@@ -8,6 +8,8 @@ add_action('admin_enqueue_scripts', array('WatsonConv\Settings', 'init_scripts')
 add_action('after_plugin_row_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'render_notice'), 10, 3);
 add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'add_settings_link'));
 
+add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_credentials'));
+
 class Settings {
     const SLUG = 'watsonconv';
 
@@ -164,27 +166,39 @@ class Settings {
 
     // ------------ Workspace Credentials ---------------
 
+    // If an installation of this plugin has a credentials format from the versions before 0.3.0,
+    // migrate them to the new format.
+    public static function migrate_old_credentials() {
+        $credentials = get_option('watsonconv_credentials');
+
+        if (!isset($credentials['workspace_url']) && isset($credentials['url']) && isset($credentials['id'])) {
+            $credentials['workspace_url'] = 
+                rtrim($credentials['url'], '/').'/workspaces/'.$credentials['id'].'/message/';
+        }
+
+        unset($credentials['url']);
+        update_option('watsonconv_credentials', $credentials);
+    }
+
     public static function init_workspace_settings() {
         $option_group = self::SLUG . '_workspace';
 
         add_settings_section('watsonconv_workspace', 'Workspace Credentials',
             array(__CLASS__, 'workspace_description'), $option_group);
 
-        add_settings_field('watsonconv_id', 'Workspace ID', array(__CLASS__, 'render_id'),
-            $option_group, 'watsonconv_workspace');
         add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'render_username'),
             $option_group, 'watsonconv_workspace');
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'render_password'),
             $option_group, 'watsonconv_workspace');
-        add_settings_field('watsonconv_url', 'API Gateway URL', array(__CLASS__, 'render_url'),
+        add_settings_field('watsonconv_workspace_url', 'Workspace URL', array(__CLASS__, 'render_url'),
             $option_group, 'watsonconv_workspace');
 
         register_setting($option_group, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
 
     public static function validate_credentials($credentials) {
-        if (empty($credentials['id'])) {
-            add_settings_error('watsonconv_credentials', 'invalid-id', 'Please enter a workspace ID.');
+        if (empty($credentials['workspace_url'])) {
+            add_settings_error('watsonconv_credentials', 'invalid-id', 'Please enter a Workspace URL.');
             $empty = true;
         }
         if (empty($credentials['username'])) {
@@ -203,17 +217,17 @@ class Settings {
         $auth_token = 'Basic ' . base64_encode(
             $credentials['username'].':'.
             $credentials['password']);
-        $workspace_id = $credentials['id'];
 
-        $base_url = isset($credentials['url']) ? $credentials['url'] : 
-            'https://gateway.watsonplatform.net/conversation/api/v1';
-
-        $response = wp_remote_get(
-            "$base_url/workspaces/$workspace_id/?version=".API::API_VERSION,
+        $response = wp_remote_post(
+            $credentials['workspace_url'].'?version='.API::API_VERSION,
             array(
                 'headers' => array(
-                    'Authorization' => $auth_token
-                )
+                    'Authorization' => $auth_token,
+                    'Content-Type' => 'application/json'
+                ), 'body' => json_encode(array(
+                    'input' => new \stdClass, 
+                    'context' => new \stdClass()
+                ))
             )
         );
 
@@ -225,11 +239,11 @@ class Settings {
             return get_option('watsonconv_credentials');
         } else if ($response_code == 404 || $response_code == 400) {
             add_settings_error('watsonconv_credentials', 'invalid-id', 
-                'Please ensure you entered a valid URL and that you have a workspace with that Workspace ID.');
+                'Please ensure you entered a valid workspace URL.');
             return get_option('watsonconv_credentials');
         } else if ($response_code != 200) {
             add_settings_error('watsonconv_credentials', 'invalid-url',
-                'Please ensure you entered a valid Watson Conversation gateway URL.');
+                'Please ensure you entered a valid workspace URL.');
             return get_option('watsonconv_credentials');
         }
 
@@ -248,16 +262,6 @@ class Settings {
             <?php esc_html_e('If the URL specified in your Service Credentials page is different 
                 from the default, you will need to change it below.', self::SLUG) ?>
         </p>
-    <?php
-    }
-
-    public static function render_id() {
-        $credentials = get_option('watsonconv_credentials', array('id' => ''));
-    ?>
-        <input name="watsonconv_credentials[id]" id="watsonconv_id" type="text"
-            value="<?php echo $credentials['id'] ?>"
-            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-            style="width: 24em" />
     <?php
     }
 
@@ -281,15 +285,12 @@ class Settings {
     }
 
     public static function render_url() {
-        $credentials = get_option(
-            'watsonconv_credentials', 
-            array('url' => 'https://gateway.watsonplatform.net/conversation/api/v1')
-        );
+        $credentials = get_option('watsonconv_credentials', array('workpsace_url' => ''));
     ?>
-        <input name="watsonconv_credentials[url]" id="watsonconv_url" type="text"
-            value="<?php echo $credentials['url']; ?>"
-            placeholder='https://gateway.watsonplatform.net/conversation/api/v1'
-            style="width: 30em" />
+        <input name="watsonconv_credentials[workspace_url]" id="watsonconv_workspace_url" type="text"
+            value="<?php echo $credentials['workspace_url']; ?>"
+            placeholder='https://gateway.watsonplatform.net/conversation/api/v1/workspaces/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/message/'
+            style="width: 60em" />
     <?php
     }
 
