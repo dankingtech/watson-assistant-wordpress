@@ -115,7 +115,7 @@ class Frontend {
 
         $credentials = get_option('watsonconv_credentials');
 
-        if ($page_selected == (get_option('watsonconv_show_on', 'only') == 'only') &&
+        if ($page_selected == (get_option('watsonconv_show_on', 'all_except') == 'only') &&
             (get_option('watsonconv_use_limit', 'no') == 'no' ||
                 $total_requests < get_option('watsonconv_limit', 10000)) &&
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
@@ -137,10 +137,10 @@ class Frontend {
 
             $settings = array(
                 'delay' => (int) get_option('watsonconv_delay', 0),
-                'minimized' => get_option('watsonconv_minimized', 'no') == 'yes',
+                'minimized' => get_option('watsonconv_minimized', 'no'),
                 'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
                 'title' => get_option('watsonconv_title', ''),
-                'full_screen' => get_option('watsonconv_full_screen', 'no') == 'yes',
+                'full_screen' => get_option('watsonconv_full_screen', 'no'),
                 'call_config' => array(
                     'configured' => $call_configured,
                     'recipient' => get_option('watsonconv_call_recipient'),

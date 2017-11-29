@@ -23,16 +23,15 @@ export default class ChatBox extends Component {
         newMessage: '',
         context: null,
         showCallInterface: false,
-        mediaSecure: true
+        mediaSecure: true,
+        convStarted: false
       };
     }
   }
 
   componentDidMount(props) {
     // If conversation already exists, scroll to bottom, otherwise start conversation.
-    if (this.state.messages.length === 0) {
-      this.sendMessage();
-    } else if (typeof(this.messageList) !== 'undefined') {
+    if (typeof(this.messageList) !== 'undefined') {
       this.messageList.scrollTop = this.messageList.scrollHeight;
     }
     
@@ -59,6 +58,10 @@ export default class ChatBox extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (!this.state.convStarted && !this.props.isMinimized) {
+      this.sendMessage();
+    }
+
     if (prevState.messages.length !== this.state.messages.length) {
       if (typeof(sessionStorage) !== 'undefined') {
         sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
@@ -97,6 +100,10 @@ export default class ChatBox extends Component {
   }
 
   sendMessage() {
+    if (!this.state.convStarted) {
+      this.setState({convStarted: true});
+    }
+
     fetch('?rest_route=/watsonconv/v1/message', {
       headers: {
         'Content-Type': 'application/json'

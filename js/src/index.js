@@ -16,9 +16,9 @@ function renderApp() {
   ReactDOM.render(
     <App
       title={settings.title}
-      minimized={settings.minimized}
+      minimized={settings.minimized === 'yes'}
       isMobile={window.matchMedia("(max-width:768px)").matches}
-      fullScreen={settings.full_screen}
+      fullScreen={settings.full_screen === 'yes'}
       position={settings.position}
       callConfig={settings.call_config}
     />,
