@@ -629,7 +629,7 @@ class Settings {
             array(__CLASS__, 'render_calling_text'), $option_group, 'watsonconv_call_ui');
 
         register_setting($option_group, 'watsonconv_call_tooltip');
-        register_setting($option_group, 'watsonconv_twilio_auth');
+        register_setting($option_group, 'watsonconv_call_button');
         register_setting($option_group, 'watsonconv_calling_text');
     }
 
@@ -661,7 +661,7 @@ class Settings {
     public static function render_calling_text() {
     ?>
         <input name="watsonconv_calling_text" id="watsonconv_calling_text" type="text"
-            value="<?php echo get_option('watsonconv_call_button') ?: 'Calling Agent...' ?>"
+            value="<?php echo get_option('watsonconv_calling_text') ?: 'Calling Agent...' ?>"
             style="width: 24em"/>
     <?php
     }

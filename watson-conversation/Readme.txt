@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.8
-Stable tag: 0.3.1
+Stable tag: 0.3.2
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -15,6 +15,8 @@ Watson Conversation is a chatbot service, one of many AI services offered by IBM
 
 Currently supported features:
 
+* **All New:** Easy VOIP calling powered by Twilio for users to contact a real person if they wish
+* Simple plugin setup to get your Watson Conversation chatbot available to users as soon as possible
 * Control usage of the Watson Conversation service directly from the plugin settings page
 * Choose the pages and posts you want the visitors to see the chat bot on
 * Customize the appearance of the chat box to your preference
@@ -79,6 +81,12 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.3.2 =
+* Fixed bug in Voice Call UI customization
+
+= 0.3.1 =
+* Removed font size cap, fixed font size issues for full screen
 
 = 0.3.0 =
 * Added voice calling feature using Twilio

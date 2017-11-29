@@ -71,7 +71,7 @@ export default class CallInterface extends Component {
   }
 
   render() {
-    var { button_text, recipient } = this.props.callConfig;
+    var { call_button, recipient } = this.props.callConfig;
 
     return <span id='call-interface'>
         {this.state.calling ? 
@@ -86,7 +86,7 @@ export default class CallInterface extends Component {
               or
             </p>
             <button onClick={this.startCall.bind(this)}>
-              {button_text || 'Start Toll-Free Call Here'}
+              {call_button || 'Start Toll-Free Call Here'}
             </button>
           </div>
         }
