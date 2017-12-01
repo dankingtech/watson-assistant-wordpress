@@ -9,6 +9,7 @@ add_action('after_plugin_row_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings'
 add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'add_settings_link'));
 
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_credentials'));
+add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_show_on'));
 
 class Settings {
     const SLUG = 'watsonconv';
@@ -152,16 +153,6 @@ class Settings {
           </form>
       </div>
     <?php
-    }
-
-    // ------------- Sanitization Functions -------------
-
-    public static function sanitize_array($val) {
-        return empty($val) ? -1 : $val;
-    }
-
-    public static function sanitize_show_on($val) {
-        return ($val == 'all_except') ? 'all_except' : 'only';
     }
 
     // ------------ Workspace Credentials ---------------
@@ -690,11 +681,15 @@ class Settings {
 
         register_setting($option_group, 'watsonconv_delay');
 
-        register_setting($option_group, 'watsonconv_show_on', array(__CLASS__, 'sanitize_show_on'));
+        register_setting($option_group, 'watsonconv_show_on');
         register_setting($option_group, 'watsonconv_home_page');
         register_setting($option_group, 'watsonconv_pages', array(__CLASS__, 'sanitize_array'));
         register_setting($option_group, 'watsonconv_posts', array(__CLASS__, 'sanitize_array'));
         register_setting($option_group, 'watsonconv_categories', array(__CLASS__, 'sanitize_array'));
+    }
+    
+    public static function sanitize_array($val) {
+        return empty($val) ? array(-1) : $val;
     }
 
     public static function behaviour_description($args) {
@@ -719,36 +714,80 @@ class Settings {
     public static function render_show_on() {
         self::render_radio_buttons(
             'watsonconv_show_on',
-            'all_except',
+            'all',
             array(
                 array(
-                    'label' => esc_html__('All Pages Except the Following', self::SLUG),
-                    'value' => 'all_except'
+                    'label' => esc_html__('All Pages', self::SLUG),
+                    'value' => 'all'
                 ), array(
-                    'label' => esc_html__('Only the Following Pages', self::SLUG),
+                    'label' => esc_html__('Only Certain Pages', self::SLUG),
                     'value' => 'only'
                 )
             )
         );
+
+    ?>
+        <span class="show_on_only">
+            <br>
+            Please select which pages you want to display the chat box on from the options below:
+        </span>
+    <?php
+    }
+
+    public static function migrate_old_show_on() {
+        $show_on = get_option('watsonconv_show_on');
+        $home_page = get_option('watsonconv_home_page', 'false') == true;
+        $pages = get_option('watsonconv_pages', array(-1));
+        $posts = get_option('watsonconv_posts', array(-1));
+        $cats = get_option('watsonconv_categories', array(-1));
+
+        if ($show_on == 'all_except') {
+            if (!$home_page && $pages == array(-1) && $posts == array(-1) && $cats == array(-1)) {
+                update_option('watsonconv_show_on', 'all');
+            } else {
+                update_option('watsonconv_show_on', 'only');
+                update_option('watsonconv_home_page', $home_page ? 'false' : 'true');
+
+                update_option('watsonconv_pages', array_diff(
+                        array_map(function($page) {return $page->ID;}, get_pages()),
+                        $pages
+                ));
+
+                update_option('watsonconv_posts', array_diff(
+                        array_map(function($post) {return $post->ID;}, get_posts()),
+                        $posts
+                ));
+
+                update_option('watsonconv_categories', array_diff(
+                        array_map(function($cat) {return $cat->cat_ID;}, get_categories(array('hide_empty' => 0))),
+                        $cats
+                ));
+            }
+        }
     }
 
     public static function render_home_page() {
     ?>
-        <input
-            type="checkbox" id="watsonconv_home_page"
-            name="watsonconv_home_page" value="true"
-            <?php checked('true', get_option('watsonconv_home_page', 'false')) ?>
-        />
-        <label for="watsonconv_home_page">
-            Front Page
-        </label>
+        <fieldset class="show_on_only">
+            <input
+                type="checkbox" id="watsonconv_home_page"
+                name="watsonconv_home_page" value="true"
+                <?php checked('true', get_option('watsonconv_home_page', 'false')) ?>
+            />
+            <label for="watsonconv_home_page">
+                Front Page
+            </label>
+        </fieldset>
     <?php
     }
 
     public static function render_pages() {
     ?>
-        <fieldset style="border: 1px solid black; padding: 1em">
-            <legend>Select Pages:</legend>
+        <fieldset class="show_on_only" style="border: 1px solid black; padding: 1em">
+            <legend>
+                <input id="select_all_pages" type="checkbox"/>
+                <label for="select_all_pages">Select All Pages</label>
+            </legend>
             <?php
                 $pages = get_pages(array(
                     'sort_column' => 'post_date',
@@ -781,8 +820,11 @@ class Settings {
 
     public static function render_posts() {
     ?>
-        <fieldset style="border: 1px solid black; padding: 1em">
-            <legend>Select Posts:</legend>
+        <fieldset class="show_on_only" style="border: 1px solid black; padding: 1em">
+            <legend>
+                <input id="select_all_posts" type="checkbox"/>
+                <label for="select_all_posts">Select All Posts</label>
+            </legend>
             <?php
                 $posts = get_posts(array('order_by' => 'date'));
                 $checked_posts = get_option('watsonconv_posts');
@@ -812,8 +854,11 @@ class Settings {
 
     public static function render_categories() {
     ?>
-        <fieldset style="border: 1px solid black; padding: 1em">
-            <legend>Select Categories:</legend>
+        <fieldset class="show_on_only" style="border: 1px solid black; padding: 1em">
+            <legend>
+                <input id="select_all_cats" type="checkbox"/>
+                <label for="select_all_cats">Select All Categories</label>
+            </legend>
             <?php
                 $cats = get_categories(array('hide_empty' => 0));
                 $checked_cats = get_option('watsonconv_categories');

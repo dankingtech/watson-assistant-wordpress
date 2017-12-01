@@ -103,10 +103,11 @@ class Frontend {
         $ip_addr = API::get_client_ip();
 
         $page_selected =
+            get_option('watsonconv_show_on', 'all') == 'all' ||
             (is_front_page() && get_option('watsonconv_home_page', 'false') == 'true') ||
-            is_page(get_option('watsonconv_pages', -1)) ||
-            is_single(get_option('watsonconv_posts', -1)) ||
-            in_category(get_option('watsonconv_categories', -1));
+            is_page(get_option('watsonconv_pages', array(-1))) ||
+            is_single(get_option('watsonconv_posts', array(-1))) ||
+            in_category(get_option('watsonconv_categories', array(-1)));
 
         $total_requests = get_option('watsonconv_total_requests', 0) +
             get_transient('watsonconv_total_requests') ?: 0;
@@ -115,7 +116,7 @@ class Frontend {
 
         $credentials = get_option('watsonconv_credentials');
 
-        if ($page_selected == (get_option('watsonconv_show_on', 'all_except') == 'only') &&
+        if ($page_selected &&
             (get_option('watsonconv_use_limit', 'no') == 'no' ||
                 $total_requests < get_option('watsonconv_limit', 10000)) &&
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
