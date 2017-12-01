@@ -19,83 +19,83 @@ if (typeof jQuery.fn.prop != 'function') {
 }
 
 jQuery(document).ready(function($) {
+  // ---- Rate Limiting Section ----
+  $('input[name="watsonconv_use_limit"]')
+    .on('change', function() {
+      $('#watsonconv_limit, #watsonconv_interval').attr('disabled', this.value == 'no');
+    })
+    .filter('input:checked')
+    .trigger('change');
 
-    // ------ Behaviour section ------
+  $('input[name="watsonconv_use_client_limit"]')
+    .on('change', function() {
+      $('#watsonconv_client_limit, #watsonconv_client_interval').attr('disabled', this.value == 'no');
+    })
+    .filter('input:checked')
+    .trigger('change');
 
-    $('input[name="watsonconv_show_on"]')
-      .on('change', function() {
-        if (this.value === 'only') {
-          $('span.show_on_only').show();
-          $('fieldset.show_on_only').parent().parent().show();
-        } else {
-          $('span.show_on_only').css('display', 'none');
-          $('fieldset.show_on_only').parent().parent().css('display', 'none');
-        }
-      })
-      .filter('input:checked')
-      .trigger('change');
+  // ------ Behaviour section ------
 
-    $('input[id="select_all_pages"]')
-      .on('change', function() {
-        $('input[name="watsonconv_pages[]"]').prop('checked', this.checked);
-      })
+  $('input[name="watsonconv_show_on"]')
+    .on('change', function() {
+      if (this.value === 'only') {
+        $('span.show_on_only').show();
+        $('fieldset.show_on_only').parent().parent().show();
+      } else {
+        $('span.show_on_only').css('display', 'none');
+        $('fieldset.show_on_only').parent().parent().css('display', 'none');
+      }
+    })
+    .filter('input:checked')
+    .trigger('change');
 
-    $('input[id="select_all_posts"]')
-      .on('change', function() {
-        $('input[name="watsonconv_posts[]"]').prop('checked', this.checked);
-      })
+  $('input[id="select_all_pages"]')
+    .on('change', function() {
+      $('input[name="watsonconv_pages[]"]').prop('checked', this.checked);
+    })
 
-    $('input[id="select_all_cats"]')
-      .on('change', function() {
-        $('input[name="watsonconv_categories[]"]').prop('checked', this.checked);
-      })
-  
-    // ------ Appearance Section ------
+  $('input[id="select_all_posts"]')
+    .on('change', function() {
+      $('input[name="watsonconv_posts[]"]').prop('checked', this.checked);
+    })
 
-    $('#watsonconv_color')
-      .wpColorPicker({
-        palettes: true,
-        change: function() {
-          $('#watson-box #watson-header, #message-container #messages .watson-message, #watson-fab')
-            .css({
-              'background-color': this.value,
-              'color': luminance(this.value) > 0.5 ? 'black' : 'white'
-            });
-        }
-      });
+  $('input[id="select_all_cats"]')
+    .on('change', function() {
+      $('input[name="watsonconv_categories[]"]').prop('checked', this.checked);
+    })
 
-    $('input[name="watsonconv_use_limit"]')
-      .on('change', function() {
-        $('#watsonconv_limit, #watsonconv_interval').attr('disabled', this.value == 'no');
-      })
-      .filter('input:checked')
-      .trigger('change');
+  // ------ Appearance Section ------
 
-    $('input[name="watsonconv_use_client_limit"]')
-      .on('change', function() {
-        $('#watsonconv_client_limit, #watsonconv_client_interval').attr('disabled', this.value == 'no');
-      })
-      .filter('input:checked')
-      .trigger('change');
+  $('#watsonconv_color')
+    .wpColorPicker({
+      palettes: true,
+      change: function() {
+        $('#watson-box #watson-header, #message-container #messages .watson-message, #watson-fab')
+          .css({
+            'background-color': this.value,
+            'color': luminance(this.value) > 0.5 ? 'black' : 'white'
+          });
+      }
+    });
 
-    $('#watsonconv_font_size')
-      .on('change', function() {
-        var size = $('input[name="watsonconv_size"]:checked').val();
+  $('#watsonconv_font_size')
+    .on('change', function() {
+      var size = $('input[name="watsonconv_size"]:checked').val();
 
-        $('#watson-box .watson-font').css('font-size', this.value + 'pt');
-        $('#watson-box').css('width', (0.825 * size + 4.2 * this.value) + 'pt');
-      });
+      $('#watson-box .watson-font').css('font-size', this.value + 'pt');
+      $('#watson-box').css('width', (0.825 * size + 4.2 * this.value) + 'pt');
+    });
 
-    $('input[name="watsonconv_size"]')
-      .on('change', function() {
-        var fontSize = $('#watsonconv_font_size').val();
+  $('input[name="watsonconv_size"]')
+    .on('change', function() {
+      var fontSize = $('#watsonconv_font_size').val();
 
-        $('#watson-box').css('width', (0.825 * this.value + 4.2 * fontSize) + 'pt');
-        $('#message-container').css('height', this.value + 'pt');
-      });
+      $('#watson-box').css('width', (0.825 * this.value + 4.2 * fontSize) + 'pt');
+      $('#message-container').css('height', this.value + 'pt');
+    });
 
-    $('#watsonconv_title')
-      .on('input', function() {
-        $('#title').text(this.value)
-      });
+  $('#watsonconv_title')
+    .on('input', function() {
+      $('#title').text(this.value)
+    });
 });
