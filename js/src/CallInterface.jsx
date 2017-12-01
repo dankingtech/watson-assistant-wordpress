@@ -82,12 +82,17 @@ export default class CallInterface extends Component {
           :
           <div id='controls'>
             <p style={{'line-height': '2.7em'}}>
-              Dial <a href={`tel:${recipient}`}>{recipient}</a> <br/>
-              or
+              Dial <a href={`tel:${recipient}`}>{recipient}</a>
             </p>
-            <button onClick={this.startCall.bind(this)}>
-              {call_button || 'Start Toll-Free Call Here'}
-            </button>
+            
+            {this.props.allowTwilio && <div>
+              <p>
+                or
+              </p>
+              <button onClick={this.startCall.bind(this)}>
+                {call_button || 'Start Toll-Free Call Here'}
+              </button>
+            </div>}
           </div>
         }
       </span>

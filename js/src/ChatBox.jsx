@@ -146,9 +146,12 @@ export default class ChatBox extends Component {
     var position = this.props.position || ['bottom', 'right'];
     var showCallInterface = this.state.showCallInterface;
 
-    var allowCalling = this.props.callConfig.configured
+    var allowTwilio = this.props.callConfig.use_twilio == 'yes'
+                    && this.props.callConfig.configured
                     && webrtc.support 
                     && this.state.mediaSecure;
+    
+    var hasNumber = Boolean(this.props.callConfig.recipient);
 
     return (
       <div id='watson-box' className='drop-shadow animated'>
@@ -159,7 +162,7 @@ export default class ChatBox extends Component {
           <span className={`dashicons dashicons-arrow-${
               position[0] == 'bottom' ? 'down' : 'up'
             }-alt2 popup-control`}></span>
-          {allowCalling &&
+          {hasNumber &&
             <span
               onClick={this.toggleCallInterface.bind(this)} 
               className={`dashicons dashicons-phone header-button`}
@@ -170,7 +173,8 @@ export default class ChatBox extends Component {
           <div className='overflow-hidden watson-font'>{this.props.title}</div>
         </div>
         <div style={{position: 'relative', height: '100%', 'display': 'flex', 'flex-direction': 'column'}}>
-          {allowCalling && showCallInterface && <CallInterface callConfig={this.props.callConfig} />}
+          {hasNumber && showCallInterface && 
+            <CallInterface allowTwilio={allowTwilio} callConfig={this.props.callConfig} />}
           <div id='message-container'>
             <div id='messages' ref={div => {this.messageList = div}}>
               <div style={{'text-align': 'right', margin: '-5 0 5 10'}} className='watson-font'>

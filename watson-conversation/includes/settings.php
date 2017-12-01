@@ -23,6 +23,7 @@ class Settings {
         self::init_workspace_settings();
         self::init_rate_limit_settings();
         self::init_client_rate_limit_settings();
+        self::init_voice_call_intro();
         self::init_twilio_cred_settings();
         self::init_call_ui_settings();
         self::init_behaviour_settings();
@@ -443,13 +444,71 @@ class Settings {
         </select>
     <?php
     }
+
+    // ------------- Voice Calling -------------------
+
+    public static function init_voice_call_intro() {
+        $option_group = self::SLUG . '_voice_call';
+
+        add_settings_section('watsonconv_voice_call_intro', 'What is Voice Calling?',
+            array(__CLASS__, 'voice_call_description'), $option_group);
+        
+        add_settings_field('watsonconv_call_recipient', 'Phone Number to Receive Calls from Users',
+            array(__CLASS__, 'render_call_recipient'), $option_group, 'watsonconv_voice_call_intro');
+        add_settings_field('watsonconv_use_twilio', 'Use Twilio?',
+            array(__CLASS__, 'render_use_twilio'), $option_group, 'watsonconv_voice_call_intro');
+
+        register_setting($option_group, 'watsonconv_call_recipient', array(__CLASS__, 'validate_phone'));
+        register_setting($option_group, 'watsonconv_use_twilio');
+
+    }
+
+    public static function voice_call_description() {
+    ?>
+        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+            <?php esc_html_e('The Voice Calling feature essentially allows users to get in 
+                touch with a real person on your team if they get tired of speaking with a chatbot.') ?> <br><br>
+            <?php esc_html_e('If you input your phone number below, the user will have the option to call you.
+                They can either do this by simply dialing
+                your number on their phone, or you can enable the VOIP feature which allows the user to call
+                you directly from their browser through their internet connection, with no toll. This is powered
+                by a service called ') ?>
+            <a href="http://cocl.us/what-is-twilio">Twilio</a>.
+        </p>
+    <?php
+    }
+    
+    public static function render_call_recipient() {
+    ?>
+        <input name="watsonconv_call_recipient" id="watsonconv_call_recipient" type="text"
+            value="<?php echo get_option('watsonconv_call_recipient') ?>"
+            placeholder="+15555555555"
+            style="width: 24em" />
+    <?php
+    }
+
+    public static function render_use_twilio() {
+        self::render_radio_buttons(
+            'watsonconv_use_twilio',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
+    }
     
     // ------------ Twilio Credentials ---------------
 
     public static function init_twilio_cred_settings() {
         $option_group = self::SLUG . '_voice_call';
 
-        add_settings_section('watsonconv_twilio_cred', 'Twilio Credentials',
+        add_settings_section('watsonconv_twilio_cred', '<span class="twilio_settings">Twilio Credentials</span>',
             array(__CLASS__, 'twilio_cred_description'), $option_group);
 
         add_settings_field('watsonconv_twilo_sid', 'Account SID', array(__CLASS__, 'render_twilio_sid'),
@@ -458,14 +517,11 @@ class Settings {
             $option_group, 'watsonconv_twilio_cred');
         add_settings_field('watsonconv_call_id', 'Caller ID (Verified Number with Twilio)',
             array(__CLASS__, 'render_call_id'), $option_group, 'watsonconv_twilio_cred');
-        add_settings_field('watsonconv_call_recipient', 'Phone Number to Receive Calls from Users',
-            array(__CLASS__, 'render_call_recipient'), $option_group, 'watsonconv_twilio_cred');
         add_settings_field('watsonconv_twilio_domain', 'Domain Name of this Website (Probably doesn\'t need changing)',
             array(__CLASS__, 'render_domain_name'), $option_group, 'watsonconv_twilio_cred');
 
         register_setting($option_group, 'watsonconv_twilio', array(__CLASS__, 'validate_twilio'));
         register_setting($option_group, 'watsonconv_call_id', array(__CLASS__, 'validate_phone'));
-        register_setting($option_group, 'watsonconv_call_recipient', array(__CLASS__, 'validate_phone'));
     }
 
     public static function validate_twilio($new_config) {
@@ -525,7 +581,7 @@ class Settings {
     }
 
     public static function validate_phone($number) {
-        if (!preg_match('/^\+?[1-9]\d{1,14}$/', $number)) {
+        if (!empty($number) && !preg_match('/^\+?[1-9]\d{1,14}$/', $number)) {
             add_settings_error(
                 'watsonconv_twilio', 
                 'invalid-phone-number', 
@@ -540,9 +596,7 @@ class Settings {
 
     public static function twilio_cred_description($args) {
     ?>
-        <p id="<?php echo esc_attr( $args['id'] ); ?>">
-            <?php esc_html_e('Here, you can set up the beta voice calling feature, so that if the user
-                wants to speak to a real person, they can call you directly from their browser using VOIP.') ?> <br><br>
+        <p id="<?php echo esc_attr( $args['id'] ); ?>" class="twilio_settings">
             <a href="http://cocl.us/try-twilio"><?php esc_html_e('Start by creating your free trial Twilio account here.')?></a><br>
             <?php esc_html_e(' You can get your Account SID and Auth Token from your Twilio Dashboard.') ?> <br>
             <?php esc_html_e('For the caller ID, you can use a number that you\'ve either obtained from or') ?>
@@ -585,15 +639,6 @@ class Settings {
     <?php
     }
     
-    public static function render_call_recipient() {
-    ?>
-        <input name="watsonconv_call_recipient" id="watsonconv_call_recipient" type="text"
-            value="<?php echo get_option('watsonconv_call_recipient') ?>"
-            placeholder="+15555555555"
-            style="width: 24em" />
-    <?php
-    }
-    
     public static function render_domain_name() {
         $config = get_option('watsonconv_twilio', array('domain_name' => get_site_url()));
     ?>
@@ -609,7 +654,7 @@ class Settings {
     public static function init_call_ui_settings() {
         $option_group = self::SLUG . '_voice_call';
 
-        add_settings_section('watsonconv_call_ui', 'Voice Call UI Text',
+        add_settings_section('watsonconv_call_ui', '<span class="twilio_settings">Voice Call UI Text</span>',
             array(__CLASS__, 'twilio_call_ui_description'), $option_group);
 
         add_settings_field('watsonconv_call_tooltip', 'This message will display when the user hovers over the phone button.', 
@@ -626,7 +671,7 @@ class Settings {
 
     public static function twilio_call_ui_description($args) {
     ?>
-        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+        <p id="<?php echo esc_attr( $args['id'] ); ?>" class="twilio_settings">
             <?php esc_html_e('Here, you can customize the text to be used in the voice calling 
                 user interface.', self::SLUG) ?>
         </p>

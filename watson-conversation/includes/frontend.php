@@ -143,6 +143,7 @@ class Frontend {
                 'title' => get_option('watsonconv_title', ''),
                 'full_screen' => get_option('watsonconv_full_screen', 'no'),
                 'call_config' => array(
+                    'use_twilio' => get_option('watsonconv_use_twilio', 'no'),
                     'configured' => $call_configured,
                     'recipient' => get_option('watsonconv_call_recipient'),
                     'call_tooltip' => get_option('watsonconv_call_tooltip'),

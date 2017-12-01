@@ -19,17 +19,39 @@ if (typeof jQuery.fn.prop != 'function') {
 }
 
 jQuery(document).ready(function($) {
+
+  // ---- Voice Calling Section ----
+
+  $('input[name="watsonconv_use_twilio"]')
+    .on('change', function() {
+      if (this.value == 'yes') {
+        $('span.twilio_settings').parent().show();
+        $('p.twilio_settings').show();
+        $('input[id="watsonconv_twilio_sid"]').closest('table').show();
+        $('input[id="watsonconv_call_tooltip"]').closest('table').show();
+      } else {
+        $('span.twilio_settings').parent().css('display', 'none');
+        $('p.twilio_settings').css('display', 'none');
+        $('input[id="watsonconv_twilio_sid"]').closest('table').css('display', 'none');
+        $('input[id="watsonconv_call_tooltip"]').closest('table').css('display', 'none');
+      }
+    })
+    .filter('input:checked')
+    .trigger('change');
+
+
   // ---- Rate Limiting Section ----
+
   $('input[name="watsonconv_use_limit"]')
     .on('change', function() {
-      $('#watsonconv_limit, #watsonconv_interval').attr('disabled', this.value == 'no');
+      $('#watsonconv_limit, #watsonconv_interval').prop('disabled', this.value == 'no');
     })
     .filter('input:checked')
     .trigger('change');
 
   $('input[name="watsonconv_use_client_limit"]')
     .on('change', function() {
-      $('#watsonconv_client_limit, #watsonconv_client_interval').attr('disabled', this.value == 'no');
+      $('#watsonconv_client_limit, #watsonconv_client_interval').prop('disabled', this.value == 'no');
     })
     .filter('input:checked')
     .trigger('change');
@@ -40,10 +62,10 @@ jQuery(document).ready(function($) {
     .on('change', function() {
       if (this.value === 'only') {
         $('span.show_on_only').show();
-        $('fieldset.show_on_only').parent().parent().show();
+        $('fieldset.show_on_only').closest('tr').show();
       } else {
         $('span.show_on_only').css('display', 'none');
-        $('fieldset.show_on_only').parent().parent().css('display', 'none');
+        $('fieldset.show_on_only').closest('tr').css('display', 'none');
       }
     })
     .filter('input:checked')
