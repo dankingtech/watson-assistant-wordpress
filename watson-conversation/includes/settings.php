@@ -124,7 +124,7 @@ class Settings {
             if (isset($_GET['tab'])) {
                 $active_tab = $_GET[ 'tab' ];
             } else {
-                $active_tab = 'workspace';
+                $active_tab = 'intro';
             } // end if
 
             $option_group = self::SLUG . '_' . $active_tab;
@@ -132,6 +132,7 @@ class Settings {
             ?>
 
           <h2 class="nav-tab-wrapper">
+            <a href="?page=watsonconv&tab=intro" class="nav-tab <?php echo $active_tab == 'intro' ? 'nav-tab-active' : ''; ?>">Introduction</a>
             <a href="?page=watsonconv&tab=workspace" class="nav-tab <?php echo $active_tab == 'workspace' ? 'nav-tab-active' : ''; ?>">Main Setup</a>
             <a href="?page=watsonconv&tab=voice_call" class="nav-tab <?php echo $active_tab == 'voice_call' ? 'nav-tab-active' : ''; ?>">Voice Calling</a>
             <a href="?page=watsonconv&tab=usage_management" class="nav-tab <?php echo $active_tab == 'usage_management' ? 'nav-tab-active' : ''; ?>">Usage Management</a>
@@ -140,9 +141,14 @@ class Settings {
           </h2>
 
           <form action="options.php" method="POST">
-            <?php settings_fields($option_group); ?>
-            <?php do_settings_sections($option_group); ?>
-            <?php 
+            <?php
+                if ($active_tab == 'intro') {
+                    self::render_intro();
+                } else {
+                    settings_fields($option_group);
+                    do_settings_sections($option_group); 
+                }
+
                 if ($active_tab == 'appearance') {
                     echo "<h1 style='text-align: center'>Preview</h3>";
                     self::render_preview();
@@ -157,6 +163,46 @@ class Settings {
             <p>
           </form>
       </div>
+    <?php
+    }
+
+    public static function render_intro() {
+    ?>
+        <p>
+            Watson Conversation is a chatbot service, one of many AI services offered by IBM to
+            integrate cognitive computing into your applications. With the use of this plugin, you can 
+            easily add chatbots to your website created using the Watson Conversation service. The
+            instructions below will help you get started:
+
+            <h4>Building Your Chatbot</h4>
+            <ol>
+                <li>
+                    <p>Sign up for a free IBM Cloud Light account 
+                        <a href="https://cocl.us/bluemix-registration" rel="nofollow">here</a>.</p>
+                </li>
+                <li>
+                    <p>Learn how to set up your Watson Conversation chatbot with 
+                        <a href="https://cocl.us/build-a-chatbot" rel="nofollow">this free course</a>.</p>
+                </li>
+                <li>
+                    <p>You can see <a href="https://cocl.us/watson-conversation-help" rel="nofollow">this page</a>
+                        for more information.</p>
+                </li>
+            </ol>
+            <h4>Configuring the Plugin</h4>
+            <ol>
+                <li><p>
+                    From the Deploy tab, you can obtain your username and password credentials 
+                        in addition to the Workspace URL of your new workspace. Enter these in the 
+                        Workspace Credentials section of the settings page for your Watson 
+                        Conversation plugin on WordPress.
+                </p></li>
+                <li><p>
+                    In your plugin settings, you can choose which pages to show the chat bot on. 
+                    Your chat bot should now pop up on the pages you chose.
+                </p></li>
+            </ol>
+        </p>
     <?php
     }
 
