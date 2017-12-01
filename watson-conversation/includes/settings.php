@@ -6,7 +6,7 @@ add_action('admin_menu', array('WatsonConv\Settings', 'init_page'));
 add_action('admin_init', array('WatsonConv\Settings', 'init_settings'));
 add_action('admin_enqueue_scripts', array('WatsonConv\Settings', 'init_scripts'));
 add_action('after_plugin_row_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'render_notice'), 10, 3);
-add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'add_settings_link'));
+add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'add_links'));
 
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_credentials'));
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_show_on'));
@@ -67,10 +67,14 @@ class Settings {
         }
     }
 
-    public static function add_settings_link($links) {
+    public static function add_links($links) {
             $settings_link = '<a href="options-general.php?page='.self::SLUG.'">'
                 . esc_html__('Settings', self::SLUG) . '</a>';
-            return array($settings_link) + $links;
+
+            $learn_link = '<a href="https://cocl.us/build-a-chatbot" target="_blank">'
+                . esc_html__('Learn', self::SLUG) . '</a>';
+
+            return array($learn_link, $settings_link) + $links;
     }
 
     private static function render_preview() {
@@ -128,7 +132,7 @@ class Settings {
             ?>
 
           <h2 class="nav-tab-wrapper">
-            <a href="?page=watsonconv&tab=workspace" class="nav-tab <?php echo $active_tab == 'workspace' ? 'nav-tab-active' : ''; ?>">Workspace Credentials</a>
+            <a href="?page=watsonconv&tab=workspace" class="nav-tab <?php echo $active_tab == 'workspace' ? 'nav-tab-active' : ''; ?>">Main Setup</a>
             <a href="?page=watsonconv&tab=voice_call" class="nav-tab <?php echo $active_tab == 'voice_call' ? 'nav-tab-active' : ''; ?>">Voice Calling</a>
             <a href="?page=watsonconv&tab=usage_management" class="nav-tab <?php echo $active_tab == 'usage_management' ? 'nav-tab-active' : ''; ?>">Usage Management</a>
             <a href="?page=watsonconv&tab=behaviour" class="nav-tab <?php echo $active_tab == 'behaviour' ? 'nav-tab-active' : ''; ?>">Behaviour</a>
@@ -707,7 +711,7 @@ class Settings {
     public static function init_behaviour_settings() {
         $option_group = self::SLUG . '_behaviour';
 
-        add_settings_section('watsonconv_behaviour', 'Behaviour',
+        add_settings_section('watsonconv_behaviour', '',
             array(__CLASS__, 'behaviour_description'), $option_group);
 
         add_settings_field('watsonconv_delay', esc_html__('Delay Before Pop-Up', self::SLUG),
@@ -936,7 +940,7 @@ class Settings {
     public static function init_appearance_settings() {
         $option_group = self::SLUG . '_appearance';
 
-        add_settings_section('watsonconv_appearance', 'Appearance',
+        add_settings_section('watsonconv_appearance', '',
             array(__CLASS__, 'appearance_description'), $option_group);
 
         add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
