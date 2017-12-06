@@ -2,7 +2,7 @@
 Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
-Tested up to: 4.8
+Tested up to: 4.9
 Stable tag: 0.3.3
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
@@ -50,11 +50,15 @@ If your WordPress site is hosted by WordPress (with a URL like `websitename.word
 
 1. You can see [this page](https://cocl.us/watson-conversation-help) for more information.
 
-= Configuring the Plugin =
+Once you've created your workspace using the course or the link above, you must connect it to your Wordpress site.
 
-1. From the Deploy tab, you can obtain your username and password credentials in addition to the Workspace URL of your new workspace. Enter these in the Workspace Credentials section of the settings page for your Watson Conversation plugin on Wordpress.
+= Setting up the Plugin =
 
-1. In your plugin settings, you can choose which pages to show the chat bot on. Your chat bot should now pop up on the pages you chose.
+1.  From the Deploy tab of your workspace, you must obtain your username and password credentials in addition to the Workspace URL of your new workspace.
+
+1. Enter these on the "Main Setup" tab of your settings page. Once you click "Save Changes", the plugin will verify if the credentials are valid and notify you of whether or not the configuration was successful. 
+
+1. (Optional) By default, the chatbot shows up on all pages of your website. In the Behaviour tab of your settings page, you can choose which pages to show the chat bot on.
 
 **Note:**
 If you have a server-side caching plugin installed such as WP Super Cache, you may need to clear your cache after changing settings or deactivating the plugin. Otherwise, your action may not take effect.

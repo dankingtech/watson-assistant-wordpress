@@ -1,3 +1,17 @@
+if (typeof jQuery.fn.prop != 'function') {
+  jQuery.fn.prop = jQuery.fn.attr;
+}
+
+if (typeof localStorage !== 'undefined') {
+  try {
+      localStorage.setItem('localStorage', 1);
+      localStorage.removeItem('localStorage');
+  } catch (e) {
+      Storage.prototype._setItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function() {};
+  }
+}
+
 function luminance(hex) {
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
@@ -14,11 +28,20 @@ function luminance(hex) {
   return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
 } 
 
-if (typeof jQuery.fn.prop != 'function') {
-  jQuery.fn.prop = jQuery.fn.attr;
+function switch_tab(tab_name) {
+  jQuery('.tab-page').hide();
+  jQuery(`.tab-page.${tab_name}_page`).show();
+  jQuery('.nav-tab-wrapper .nav-tab-active').removeClass('nav-tab-active');
+  jQuery(`.nav-tab-wrapper .${tab_name}_tab`).addClass('nav-tab-active');
+
+  sessionStorage.setItem('watsonconv_active_tab', tab_name);
 }
 
 jQuery(document).ready(function($) {
+  
+  if (sessionStorage.getItem('watsonconv_active_tab')) {
+    switch_tab(sessionStorage.getItem('watsonconv_active_tab'));
+  }
 
   // ---- Voice Calling Section ----
 

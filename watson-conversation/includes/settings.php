@@ -20,6 +20,7 @@ class Settings {
     }
 
     public static function init_settings() {
+        self::init_main_setup_intro();
         self::init_workspace_settings();
         self::init_rate_limit_settings();
         self::init_client_rate_limit_settings();
@@ -42,7 +43,7 @@ class Settings {
             wp_enqueue_style('watsonconv-settings', WATSON_CONV_URL.'css/settings.css');
             wp_enqueue_style('wp-color-picker');
             wp_enqueue_script('settings-script', WATSON_CONV_URL.'includes/settings.js',
-                array('wp-color-picker'), false, true );
+                array('wp-color-picker'));
 
             Frontend::load_styles(false);
         }
@@ -120,40 +121,36 @@ class Settings {
       <div class="wrap" style="max-width: 95em">
           <h2><?php esc_html_e('Watson Conversation Settings', self::SLUG); ?></h2>
 
-          <?php
-            if (isset($_GET['tab'])) {
-                $active_tab = $_GET[ 'tab' ];
-            } else {
-                $active_tab = 'intro';
-            } // end if
-
-            $option_group = self::SLUG . '_' . $active_tab;
-
-            ?>
-
           <h2 class="nav-tab-wrapper">
-            <a href="?page=watsonconv&tab=intro" class="nav-tab <?php echo $active_tab == 'intro' ? 'nav-tab-active' : ''; ?>">Introduction</a>
-            <a href="?page=watsonconv&tab=workspace" class="nav-tab <?php echo $active_tab == 'workspace' ? 'nav-tab-active' : ''; ?>">Main Setup</a>
-            <a href="?page=watsonconv&tab=voice_call" class="nav-tab <?php echo $active_tab == 'voice_call' ? 'nav-tab-active' : ''; ?>">Voice Calling</a>
-            <a href="?page=watsonconv&tab=usage_management" class="nav-tab <?php echo $active_tab == 'usage_management' ? 'nav-tab-active' : ''; ?>">Usage Management</a>
-            <a href="?page=watsonconv&tab=behaviour" class="nav-tab <?php echo $active_tab == 'behaviour' ? 'nav-tab-active' : ''; ?>">Behaviour</a>
-            <a href="?page=watsonconv&tab=appearance" class="nav-tab <?php echo $active_tab == 'appearance' ? 'nav-tab-active' : ''; ?>">Appearance</a>
+            <a onClick="switch_tab('intro')" class="nav-tab nav-tab-active intro_tab">Introduction</a>
+            <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">Main Setup</a>
+            <a onClick="switch_tab('voice_call')" class="nav-tab voice_call_tab">Voice Calling</a>
+            <a onClick="switch_tab('usage_management')" class="nav-tab usage_management_tab">Usage Management</a>
+            <a onClick="switch_tab('behaviour')" class="nav-tab behaviour_tab">Behaviour</a>
+            <a onClick="switch_tab('appearance')" class="nav-tab appearance_tab">Appearance</a>
           </h2>
 
           <form action="options.php" method="POST">
+            <div class="tab-page intro_page"><?php self::render_intro(); ?></div>
             <?php
-                if ($active_tab == 'intro') {
-                    self::render_intro();
-                } else {
-                    settings_fields($option_group);
-                    do_settings_sections($option_group); 
-                }
+                settings_fields(self::SLUG); 
 
-                if ($active_tab == 'appearance') {
-                    echo "<h1 style='text-align: center'>Preview</h3>";
-                    self::render_preview();
-                } 
+                $tabs = array('workspace', 'voice_call', 'usage_management', 'behaviour', 'appearance');
+
+                foreach ($tabs as $tab_name) {
+                ?> 
+                    <div class="tab-page <?php echo $tab_name ?>_page" style="display: none">
+                        <?php do_settings_sections(self::SLUG.'_'.$tab_name) ?>
+                    </div>
+                <?php
+                }
             ?>
+
+            <div class="tab-page appearance_page" style="display:none">
+                <h1 style='text-align: center'>Preview</h3>
+                <?php self::render_preview(); ?>
+            </div>
+
             <?php submit_button(); ?>
             <p class="update-message notice inline notice-warning notice-alt"
                style="padding-top: 0.5em; padding-bottom: 0.5em">
@@ -169,7 +166,7 @@ class Settings {
     public static function render_intro() {
     ?>
         <p>
-            Watson Conversation is a chatbot service, one of many AI services offered by IBM to
+            Watson Conversation is a chatbot service, one of many AI services offered by IBM to help
             integrate cognitive computing into your applications. With the use of this plugin, you can 
             easily add chatbots to your website created using the Watson Conversation service. The
             instructions below will help you get started:
@@ -189,22 +186,49 @@ class Settings {
                         for more information.</p>
                 </li>
             </ol>
+            <p>
+                Once you've created your workspace using the course or the link above, 
+                you must connect it to your Wordpress site.
+            </p>
             <h4>Configuring the Plugin</h4>
             <ol>
                 <li><p>
-                    From the Deploy tab, you can obtain your username and password credentials 
-                        in addition to the Workspace URL of your new workspace. Enter these in the 
-                        Workspace Credentials section of the settings page for your Watson 
-                        Conversation plugin on WordPress.
+                    From the Deploy tab of your workspace, you must obtain your username and password
+                    credentials in addition to the Workspace URL of your new workspace.
                 </p></li>
                 <li><p>
-                    In your plugin settings, you can choose which pages to show the chat bot on. 
-                    Your chat bot should now pop up on the pages you chose.
+                    Enter these  on the "Main Setup" tab of this settings page. Once you click 
+                    "Save Changes", the plugin will verify if the credentials are valid and notify 
+                    you of whether or not the configuration was successful. 
+                </p></li>
+                <li><p>
+                    (Optional) By default, the chatbot shows up on all pages of your website.
+                    In the Behaviour tab, you can choose which pages to show the chat bot on.
                 </p></li>
             </ol>
         </p>
     <?php
     }
+
+    // ----------------- Main Setup ---------------------
+
+    public static function init_main_setup_intro() {
+        $settings_page = self::SLUG . '_workspace';
+        
+        add_settings_section('watsonconv_main_setup_intro', '',
+            array(__CLASS__, 'main_setup_description'), $settings_page);
+    }
+
+    public static function main_setup_description() {
+    ?>
+        <p>
+            This page contains all the configuration you need to get your chatbot working.<br>
+            Before you get these credentials, you need to set up a chatbot on your 
+            <a href="https://cocl.us/bluemix-registration" rel="nofollow">free IBM Cloud account</a>.
+            See the Introduction tab for details.
+        </p>
+    <?php
+    } 
 
     // ------------ Workspace Credentials ---------------
 
@@ -223,19 +247,19 @@ class Settings {
     }
 
     public static function init_workspace_settings() {
-        $option_group = self::SLUG . '_workspace';
+        $settings_page = self::SLUG . '_workspace';
 
         add_settings_section('watsonconv_workspace', 'Workspace Credentials',
-            array(__CLASS__, 'workspace_description'), $option_group);
+            array(__CLASS__, 'workspace_description'), $settings_page);
 
         add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'render_username'),
-            $option_group, 'watsonconv_workspace');
+            $settings_page, 'watsonconv_workspace');
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'render_password'),
-            $option_group, 'watsonconv_workspace');
+            $settings_page, 'watsonconv_workspace');
         add_settings_field('watsonconv_workspace_url', 'Workspace URL', array(__CLASS__, 'render_url'),
-            $option_group, 'watsonconv_workspace');
+            $settings_page, 'watsonconv_workspace');
 
-        register_setting($option_group, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
+        register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
 
     public static function validate_credentials($credentials) {
@@ -289,6 +313,14 @@ class Settings {
             return get_option('watsonconv_credentials');
         }
 
+        add_settings_error(
+            'watsonconv_credentials', 
+            'valid-credentials', 
+            'Your chatbot has been successfully connected to your Wordpress site. <a href="'
+                .get_site_url().'">Browse your website</a> to see it in action.', 
+            'updated'
+        );
+
         return $credentials;
     }
 
@@ -297,12 +329,7 @@ class Settings {
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
             <?php esc_html_e('Here, you can specify the Workspace ID for your Watson
                 Conversation Workspace in addition to the required credentials.', self::SLUG) ?> <br />
-            <?php esc_html_e('Note: These are not the same as your Bluemix Login Credentials.', self::SLUG) ?>
-            <a href='https://cocl.us/watson-credentials-help' target="_blank">
-                <?php esc_html_e('Click here for details.', self::SLUG) ?>
-            </a> <br /><br />
-            <?php esc_html_e('If the URL specified in your Service Credentials page is different 
-                from the default, you will need to change it below.', self::SLUG) ?>
+            <?php esc_html_e('Note: These are not the same as your IBM Cloud Login Credentials.', self::SLUG) ?>
         </p>
     <?php
     }
@@ -339,19 +366,19 @@ class Settings {
     // ---------------- Rate Limiting -------------------
 
     public static function init_rate_limit_settings() {
-        $option_group = self::SLUG . '_usage_management';
+        $settings_page = self::SLUG . '_usage_management';
 
         add_settings_section('watsonconv_rate_limit', 'Total Usage Management',
-            array(__CLASS__, 'rate_limit_description'), $option_group);
+            array(__CLASS__, 'rate_limit_description'), $settings_page);
 
         add_settings_field('watsonconv_use_limit', 'Limit Total API Requests',
-            array(__CLASS__, 'render_use_limit'), $option_group, 'watsonconv_rate_limit');
+            array(__CLASS__, 'render_use_limit'), $settings_page, 'watsonconv_rate_limit');
         add_settings_field('watsonconv_limit', 'Maximum Number of Total Requests',
-            array(__CLASS__, 'render_limit'), $option_group, 'watsonconv_rate_limit');
+            array(__CLASS__, 'render_limit'), $settings_page, 'watsonconv_rate_limit');
 
-        register_setting($option_group, 'watsonconv_use_limit');
-        register_setting($option_group, 'watsonconv_interval');
-        register_setting($option_group, 'watsonconv_limit');
+        register_setting(self::SLUG, 'watsonconv_use_limit');
+        register_setting(self::SLUG, 'watsonconv_interval');
+        register_setting(self::SLUG, 'watsonconv_limit');
     }
 
     public static function rate_limit_description($args) {
@@ -427,19 +454,19 @@ class Settings {
     // ---------- Rate Limiting Per Client --------------
 
     public static function init_client_rate_limit_settings() {
-        $option_group = self::SLUG . '_usage_management';
+        $settings_page = self::SLUG . '_usage_management';
 
         add_settings_section('watsonconv_client_rate_limit', 'Usage Per Client',
-            array(__CLASS__, 'client_rate_limit_description'), $option_group);
+            array(__CLASS__, 'client_rate_limit_description'), $settings_page);
 
         add_settings_field('watsonconv_use_client_limit', 'Limit API Requests Per Client',
-            array(__CLASS__, 'render_use_client_limit'), $option_group, 'watsonconv_client_rate_limit');
+            array(__CLASS__, 'render_use_client_limit'), $settings_page, 'watsonconv_client_rate_limit');
         add_settings_field('watsonconv_client_limit', 'Maximum Number of Requests Per Client',
-            array(__CLASS__, 'render_client_limit'), $option_group, 'watsonconv_client_rate_limit');
+            array(__CLASS__, 'render_client_limit'), $settings_page, 'watsonconv_client_rate_limit');
 
-        register_setting($option_group, 'watsonconv_use_client_limit');
-        register_setting($option_group, 'watsonconv_client_interval');
-        register_setting($option_group, 'watsonconv_client_limit');
+        register_setting(self::SLUG, 'watsonconv_use_client_limit');
+        register_setting(self::SLUG, 'watsonconv_client_interval');
+        register_setting(self::SLUG, 'watsonconv_client_limit');
     }
 
     public static function render_use_client_limit() {
@@ -498,22 +525,22 @@ class Settings {
     // ------------- Voice Calling -------------------
 
     public static function init_voice_call_intro() {
-        $option_group = self::SLUG . '_voice_call';
+        $settings_page = self::SLUG . '_voice_call';
 
         add_settings_section('watsonconv_voice_call_intro', 'What is Voice Calling?',
-            array(__CLASS__, 'voice_call_description'), $option_group);
+            array(__CLASS__, 'voice_call_description'), $settings_page);
         
         add_settings_field('watsonconv_call_recipient', 'Phone Number to Receive Calls from Users',
-            array(__CLASS__, 'render_call_recipient'), $option_group, 'watsonconv_voice_call_intro');
-        add_settings_field('watsonconv_use_twilio', 'Use Twilio?',
-            array(__CLASS__, 'render_use_twilio'), $option_group, 'watsonconv_voice_call_intro');
+            array(__CLASS__, 'render_call_recipient'), $settings_page, 'watsonconv_voice_call_intro');
+        add_settings_field('watsonconv_use_twilio', 'Use Voice Calling?',
+            array(__CLASS__, 'render_use_twilio'), $settings_page, 'watsonconv_voice_call_intro');
 
-        register_setting($option_group, 'watsonconv_call_recipient', array(__CLASS__, 'validate_phone'));
-        register_setting($option_group, 'watsonconv_use_twilio');
+        register_setting(self::SLUG, 'watsonconv_call_recipient', array(__CLASS__, 'validate_phone'));
+        register_setting(self::SLUG, 'watsonconv_use_twilio');
 
     }
 
-    public static function voice_call_description() {
+    public static function voice_call_description($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
             <?php esc_html_e('The Voice Calling feature essentially allows users to get in 
@@ -556,22 +583,22 @@ class Settings {
     // ------------ Twilio Credentials ---------------
 
     public static function init_twilio_cred_settings() {
-        $option_group = self::SLUG . '_voice_call';
+        $settings_page = self::SLUG . '_voice_call';
 
         add_settings_section('watsonconv_twilio_cred', '<span class="twilio_settings">Twilio Credentials</span>',
-            array(__CLASS__, 'twilio_cred_description'), $option_group);
+            array(__CLASS__, 'twilio_cred_description'), $settings_page);
 
         add_settings_field('watsonconv_twilo_sid', 'Account SID', array(__CLASS__, 'render_twilio_sid'),
-            $option_group, 'watsonconv_twilio_cred');
+            $settings_page, 'watsonconv_twilio_cred');
         add_settings_field('watsonconv_twilio_auth', 'Auth Token', array(__CLASS__, 'render_twilio_auth'),
-            $option_group, 'watsonconv_twilio_cred');
+            $settings_page, 'watsonconv_twilio_cred');
         add_settings_field('watsonconv_call_id', 'Caller ID (Verified Number with Twilio)',
-            array(__CLASS__, 'render_call_id'), $option_group, 'watsonconv_twilio_cred');
+            array(__CLASS__, 'render_call_id'), $settings_page, 'watsonconv_twilio_cred');
         add_settings_field('watsonconv_twilio_domain', 'Domain Name of this Website (Probably doesn\'t need changing)',
-            array(__CLASS__, 'render_domain_name'), $option_group, 'watsonconv_twilio_cred');
+            array(__CLASS__, 'render_domain_name'), $settings_page, 'watsonconv_twilio_cred');
 
-        register_setting($option_group, 'watsonconv_twilio', array(__CLASS__, 'validate_twilio'));
-        register_setting($option_group, 'watsonconv_call_id', array(__CLASS__, 'validate_phone'));
+        register_setting(self::SLUG, 'watsonconv_twilio', array(__CLASS__, 'validate_twilio'));
+        register_setting(self::SLUG, 'watsonconv_call_id', array(__CLASS__, 'validate_phone'));
     }
 
     public static function validate_twilio($new_config) {
@@ -702,21 +729,21 @@ class Settings {
     // ------------ Voice Call UI Text ---------------
 
     public static function init_call_ui_settings() {
-        $option_group = self::SLUG . '_voice_call';
+        $settings_page = self::SLUG . '_voice_call';
 
         add_settings_section('watsonconv_call_ui', '<span class="twilio_settings">Voice Call UI Text</span>',
-            array(__CLASS__, 'twilio_call_ui_description'), $option_group);
+            array(__CLASS__, 'twilio_call_ui_description'), $settings_page);
 
         add_settings_field('watsonconv_call_tooltip', 'This message will display when the user hovers over the phone button.', 
-            array(__CLASS__, 'render_call_tooltip'), $option_group, 'watsonconv_call_ui');
+            array(__CLASS__, 'render_call_tooltip'), $settings_page, 'watsonconv_call_ui');
         add_settings_field('watsonconv_call_button', 'This is the text for the button to call using Twilio.',
-            array(__CLASS__, 'render_call_button'), $option_group, 'watsonconv_call_ui');
+            array(__CLASS__, 'render_call_button'), $settings_page, 'watsonconv_call_ui');
         add_settings_field('watsonconv_calling_text', 'This text is displayed when calling.',
-            array(__CLASS__, 'render_calling_text'), $option_group, 'watsonconv_call_ui');
+            array(__CLASS__, 'render_calling_text'), $settings_page, 'watsonconv_call_ui');
 
-        register_setting($option_group, 'watsonconv_call_tooltip');
-        register_setting($option_group, 'watsonconv_call_button');
-        register_setting($option_group, 'watsonconv_calling_text');
+        register_setting(self::SLUG, 'watsonconv_call_tooltip');
+        register_setting(self::SLUG, 'watsonconv_call_button');
+        register_setting(self::SLUG, 'watsonconv_calling_text');
     }
 
     public static function twilio_call_ui_description($args) {
@@ -755,32 +782,32 @@ class Settings {
     // ------------- Behaviour Settings ----------------
 
     public static function init_behaviour_settings() {
-        $option_group = self::SLUG . '_behaviour';
+        $settings_page = self::SLUG . '_behaviour';
 
         add_settings_section('watsonconv_behaviour', '',
-            array(__CLASS__, 'behaviour_description'), $option_group);
+            array(__CLASS__, 'behaviour_description'), $settings_page);
 
         add_settings_field('watsonconv_delay', esc_html__('Delay Before Pop-Up', self::SLUG),
-            array(__CLASS__, 'render_delay'), $option_group, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_delay'), $settings_page, 'watsonconv_behaviour');
 
         add_settings_field('watsonconv_show_on', esc_html__('Show Chat Box On', self::SLUG),
-            array(__CLASS__, 'render_show_on'), $option_group, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_show_on'), $settings_page, 'watsonconv_behaviour');
         add_settings_field('watsonconv_home_page', esc_html__('Front Page', self::SLUG),
-            array(__CLASS__, 'render_home_page'), $option_group, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_home_page'), $settings_page, 'watsonconv_behaviour');
         add_settings_field('watsonconv_pages', esc_html__('Pages', self::SLUG),
-            array(__CLASS__, 'render_pages'), $option_group, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_pages'), $settings_page, 'watsonconv_behaviour');
         add_settings_field('watsonconv_posts', esc_html__('Posts', self::SLUG),
-            array(__CLASS__, 'render_posts'), $option_group, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_posts'), $settings_page, 'watsonconv_behaviour');
         add_settings_field('watsonconv_categories', esc_html__('Categories', self::SLUG),
-            array(__CLASS__, 'render_categories'), $option_group, 'watsonconv_behaviour');
+            array(__CLASS__, 'render_categories'), $settings_page, 'watsonconv_behaviour');
 
-        register_setting($option_group, 'watsonconv_delay');
+        register_setting(self::SLUG, 'watsonconv_delay');
 
-        register_setting($option_group, 'watsonconv_show_on');
-        register_setting($option_group, 'watsonconv_home_page');
-        register_setting($option_group, 'watsonconv_pages', array(__CLASS__, 'sanitize_array'));
-        register_setting($option_group, 'watsonconv_posts', array(__CLASS__, 'sanitize_array'));
-        register_setting($option_group, 'watsonconv_categories', array(__CLASS__, 'sanitize_array'));
+        register_setting(self::SLUG, 'watsonconv_show_on');
+        register_setting(self::SLUG, 'watsonconv_home_page');
+        register_setting(self::SLUG, 'watsonconv_pages', array(__CLASS__, 'sanitize_array'));
+        register_setting(self::SLUG, 'watsonconv_posts', array(__CLASS__, 'sanitize_array'));
+        register_setting(self::SLUG, 'watsonconv_categories', array(__CLASS__, 'sanitize_array'));
     }
     
     public static function sanitize_array($val) {
@@ -984,33 +1011,33 @@ class Settings {
     // ------------- Appearance Settings ----------------
 
     public static function init_appearance_settings() {
-        $option_group = self::SLUG . '_appearance';
+        $settings_page = self::SLUG . '_appearance';
 
         add_settings_section('watsonconv_appearance', '',
-            array(__CLASS__, 'appearance_description'), $option_group);
+            array(__CLASS__, 'appearance_description'), $settings_page);
 
         add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
-            array(__CLASS__, 'render_minimized'), $option_group, 'watsonconv_appearance');
+            array(__CLASS__, 'render_minimized'), $settings_page, 'watsonconv_appearance');
         add_settings_field('watsonconv_full_screen', 'Full Screen',
-            array(__CLASS__, 'render_full_screen'), $option_group, 'watsonconv_appearance');
+            array(__CLASS__, 'render_full_screen'), $settings_page, 'watsonconv_appearance');
         add_settings_field('watsonconv_position', 'Position',
-            array(__CLASS__, 'render_position'), $option_group, 'watsonconv_appearance');
+            array(__CLASS__, 'render_position'), $settings_page, 'watsonconv_appearance');
         add_settings_field('watsonconv_title', 'Chat Box Title',
-            array(__CLASS__, 'render_title'), $option_group, 'watsonconv_appearance');
+            array(__CLASS__, 'render_title'), $settings_page, 'watsonconv_appearance');
         add_settings_field('watsonconv_font_size', 'Font Size',
-            array(__CLASS__, 'render_font_size'), $option_group, 'watsonconv_appearance');
+            array(__CLASS__, 'render_font_size'), $settings_page, 'watsonconv_appearance');
         add_settings_field('watsonconv_color', 'Color',
-            array(__CLASS__, 'render_color'), $option_group, 'watsonconv_appearance');
+            array(__CLASS__, 'render_color'), $settings_page, 'watsonconv_appearance');
         add_settings_field('watsonconv_size', 'Window Size',
-            array(__CLASS__, 'render_size'), $option_group, 'watsonconv_appearance');
+            array(__CLASS__, 'render_size'), $settings_page, 'watsonconv_appearance');
 
-        register_setting($option_group, 'watsonconv_minimized');
-        register_setting($option_group, 'watsonconv_full_screen');
-        register_setting($option_group, 'watsonconv_position');
-        register_setting($option_group, 'watsonconv_title');
-        register_setting($option_group, 'watsonconv_font_size');
-        register_setting($option_group, 'watsonconv_color');
-        register_setting($option_group, 'watsonconv_size');
+        register_setting(self::SLUG, 'watsonconv_minimized');
+        register_setting(self::SLUG, 'watsonconv_full_screen');
+        register_setting(self::SLUG, 'watsonconv_position');
+        register_setting(self::SLUG, 'watsonconv_title');
+        register_setting(self::SLUG, 'watsonconv_font_size');
+        register_setting(self::SLUG, 'watsonconv_color');
+        register_setting(self::SLUG, 'watsonconv_size');
     }
 
     public static function appearance_description($args) {
