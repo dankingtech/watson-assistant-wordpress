@@ -50,13 +50,21 @@ jQuery(document).ready(function($) {
       if (this.value == 'yes') {
         $('span.twilio_settings').parent().show();
         $('p.twilio_settings').show();
+
         $('input[id="watsonconv_twilio_sid"]').closest('table').show();
         $('input[id="watsonconv_call_tooltip"]').closest('table').show();
+
+        $('input[id="watsonconv_twilio_sid"]').closest('table').find(':input').prop('disabled', false);
+        $('input[id="watsonconv_twilio_sid"]').closest('table').find(':input').prop('disabled', false);
       } else {
         $('span.twilio_settings').parent().css('display', 'none');
         $('p.twilio_settings').css('display', 'none');
+
         $('input[id="watsonconv_twilio_sid"]').closest('table').css('display', 'none');
         $('input[id="watsonconv_call_tooltip"]').closest('table').css('display', 'none');
+
+        $('input[id="watsonconv_twilio_sid"]').closest('table').find(':input').prop('disabled', true);
+        $('input[id="watsonconv_twilio_sid"]').closest('table').find(':input').prop('disabled', true);
       }
     })
     .filter('input:checked')

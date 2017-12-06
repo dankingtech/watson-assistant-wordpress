@@ -602,56 +602,58 @@ class Settings {
     }
 
     public static function validate_twilio($new_config) {
-        $old_config = get_option('watsonconv_twilio');
+        if (!empty($new_config['sid']) || !empty($new_config['auth_token'])) {
+            $old_config = get_option('watsonconv_twilio');
 
-        try {
-            $client = new \Twilio\Rest\Client($new_config['sid'], $new_config['auth_token']);
-            
             try {
-                $app = $client
-                    ->applications(get_option('watsonconv_twiml_sid'))
-                    ->fetch();
-            } catch (\Twilio\Exceptions\RestException $e) {
-                $app = false;
-                $params = array('FriendlyName' => 'Chatbot for ' . $new_config['domain_name']);
+                $client = new \Twilio\Rest\Client($new_config['sid'], $new_config['auth_token']);
+                
+                try {
+                    $app = $client
+                        ->applications(get_option('watsonconv_twiml_sid'))
+                        ->fetch();
+                } catch (\Twilio\Exceptions\RestException $e) {
+                    $app = false;
+                    $params = array('FriendlyName' => 'Chatbot for ' . $new_config['domain_name']);
 
-                foreach($client->account->applications->read($params) as $_app) {
-                    $app = $_app;
-                }
-
-                if (!$app) {
-                    $params = array('FriendlyName' => 'Chatbot for ' . $old_config['domain_name']);
-    
                     foreach($client->account->applications->read($params) as $_app) {
                         $app = $_app;
                     }
 
                     if (!$app) {
-                        $app = $client->applications->create('Chatbot for ' . $new_config['domain_name']);
+                        $params = array('FriendlyName' => 'Chatbot for ' . $old_config['domain_name']);
+        
+                        foreach($client->account->applications->read($params) as $_app) {
+                            $app = $_app;
+                        }
+
+                        if (!$app) {
+                            $app = $client->applications->create('Chatbot for ' . $new_config['domain_name']);
+                        }
                     }
                 }
+
+                $app->update(
+                    array(
+                        'voiceUrl' => $new_config['domain_name'] . '?rest_route=/watsonconv/v1/twilio-call',
+                        'FriendlyName' => 'Chatbot for ' . $new_config['domain_name']
+                    )
+                );
+
+                update_option('watsonconv_twiml_sid', $app->sid);
+            } catch (\Exception $e) {
+                add_settings_error(
+                    'watsonconv_twilio', 
+                    'twilio-invalid', 
+                    $e->getMessage() . ' (' . $e->getCode() . ')'
+                );
+                
+                return array(
+                    'sid' => '',
+                    'auth_token' => '',
+                    'domain_name' => $old_config['domain_name']
+                );
             }
-
-            $app->update(
-                array(
-                    'voiceUrl' => $new_config['domain_name'] . '?rest_route=/watsonconv/v1/twilio-call',
-                    'FriendlyName' => 'Chatbot for ' . $new_config['domain_name']
-                )
-            );
-
-            update_option('watsonconv_twiml_sid', $app->sid);
-        } catch (\Exception $e) {
-            add_settings_error(
-                'watsonconv_twilio', 
-                'twilio-invalid', 
-                $e->getMessage() . ' (' . $e->getCode() . ')'
-            );
-            
-            return array(
-                'sid' => '',
-                'auth_token' => '',
-                'domain_name' => $old_config['domain_name']
-            );
         }
 
         return $new_config;
