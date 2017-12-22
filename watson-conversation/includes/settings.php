@@ -173,18 +173,20 @@ class Settings {
 
             <h4>Building Your Chatbot</h4>
             <ol>
-                <li>
-                    <p>Sign up for a free IBM Cloud Light account 
-                        <a href="https://cocl.us/bluemix-registration" rel="nofollow">here</a>.</p>
-                </li>
-                <li>
-                    <p>Learn how to set up your Watson Conversation chatbot with 
-                        <a href="https://cocl.us/build-a-chatbot" rel="nofollow">this free course</a>.</p>
-                </li>
-                <li>
-                    <p>You can see <a href="https://cocl.us/watson-conversation-help" rel="nofollow">this page</a>
-                        for more information.</p>
-                </li>
+                <li><p>
+                    Learn how to set up your Watson Conversation chatbot with 
+                    <a href="https://cocl.us/build-a-chatbot" rel="nofollow">this quick free course</a>.
+                </p></li>
+                <li><p>
+                    <a href="https://cocl.us/bluemix-registration" rel="nofollow">
+                        Sign up for a free IBM Cloud Lite account.</a>
+                </p></li>
+                <li><p>
+                    You can see 
+                    <a href="https://cocl.us/watson-conversation-help" rel="nofollow">
+                        the Watson Conversation documentation</a>
+                    for more information.
+                </p></li>
             </ol>
             <p>
                 Once you've created your workspace using the course or the link above, 
