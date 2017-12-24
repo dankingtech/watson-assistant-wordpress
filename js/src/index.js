@@ -1,3 +1,8 @@
+import 'core-js/fn/symbol';
+import 'core-js/fn/promise';
+import 'core-js/fn/object';
+import 'core-js/es6/map';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App.jsx';
