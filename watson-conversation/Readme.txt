@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.9
-Stable tag: 0.4.1
+Stable tag: 0.4.2
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -86,6 +86,11 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 
 == Changelog == 
 
+= 0.4.2 =
+* Added compatiblity with Internet Explorer
+* Fixed chat box rendering for some Wordpress installations
+* Fixed visual bug with long words in messages
+
 = 0.4.1 =
 * Fixed issue with voice call settings validation
 
@@ -137,6 +142,9 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 * Added setting allowing admin to specify API base URL.
 
 == Upgrade Notice ==
+
+= 0.4.2 =
+This version adds compatiblity with Internet Explorer and fixes chat box rendering issues for some Wordpress installations.
 
 = 0.2.1 =
 This verison fixes a bug from 0.2.0 where settings changes do not take effect.
