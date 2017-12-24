@@ -1,10 +1,10 @@
 {
   "name": "watson-conversation",
-  "version": "0.3.0",
+  "version": "0.4.2",
   "private": true,
   "dependencies": {
     "preact": "^8.1.0",
-    "preact-compat": "^3.16.0",
+    "preact-compat": "developit/preact-compat#1a88d10",
     "react-draggable": "^2.2.6",
     "react-tooltip-currenttarget": "^3.3.5",
     "react-transition-group": "^1.2.0",
@@ -20,6 +20,7 @@
     "webpack-dashboard": "^1.0.2"
   },
   "scripts": {
+    "postinstall": "cd node_modules/preact-compat && npm install --only=dev --ignore-scripts && npm run build",
     "watch": "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --watch",
     "build": "node ./node_modules/webpack/bin/webpack.js",
     "prod": "node ./node_modules/webpack/bin/webpack.js -p"
