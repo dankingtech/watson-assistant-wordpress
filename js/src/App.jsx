@@ -45,14 +45,15 @@ export default class App extends Component {
   }
 
   savePosition(e, data) {
-    this.setState({
-      dragging: false
-    });
-
     if (Math.sqrt(Math.pow(data.x - this.state.position.x, 2) +  Math.pow(data.y - this.state.position.y, 2)) < 3) {
       this.toggleMinimize(e);
     } else {
-      this.setState({position: {x: data.x, y: data.y}});
+      this.setState(
+        {position: {x: data.x, y: data.y}},
+        () => { 
+          this.setState({dragging: false}); 
+        }
+      );
     }
   }
 

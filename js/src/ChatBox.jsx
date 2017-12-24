@@ -34,8 +34,12 @@ export default class ChatBox extends Component {
     if (typeof(this.messageList) !== 'undefined') {
       this.messageList.scrollTop = this.messageList.scrollHeight;
     }
+
+    if (!this.state.convStarted && !this.props.isMinimized) {
+      this.sendMessage();
+    }
     
-    if ('https:' !== document.location.protocol) {
+    if (webrtc.support && 'https:' !== document.location.protocol) {
       navigator.mediaDevices.getUserMedia({video: {width: {min: 2, max: 1}}})
       .then(stream => {
         log("getUserMedia detection failed");
@@ -193,7 +197,7 @@ export default class ChatBox extends Component {
               value={this.state.newMessage}
               onChange={this.setMessage.bind(this)}
             />
-            <input type='submit' style={{display: 'none'}} />
+            <input type='submit' style={{width: 0, height: 0, opacity: 0}} />
           </form>
         </div>
       </div>
