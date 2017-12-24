@@ -22,7 +22,7 @@ function renderApp() {
       position={settings.position}
       callConfig={settings.call_config}
     />,
-    document.getElementById('chat-box')
+    document.getElementById('watsonconv-chat-box')
   );
 }
 

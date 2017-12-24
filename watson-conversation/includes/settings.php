@@ -45,7 +45,7 @@ class Settings {
             wp_enqueue_script('settings-script', WATSON_CONV_URL.'includes/settings.js',
                 array('wp-color-picker'));
 
-            Frontend::load_styles(false);
+            Frontend::enqueue_styles(false);
         }
     }
 

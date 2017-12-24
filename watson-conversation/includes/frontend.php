@@ -1,11 +1,11 @@
 <?php
 namespace WatsonConv;
 
-add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'load_styles'), 10, 0);
-add_action('wp_footer', array('WatsonConv\Frontend', 'render_chat_box'));
+add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'render_chat_box'));
+add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 
 class Frontend {
-    public static function load_styles($full_screen = null) {
+    public static function enqueue_styles($full_screen = null) {
         wp_enqueue_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
@@ -122,9 +122,8 @@ class Frontend {
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
                 $client_requests < get_option('watsonconv_client_limit', 100)) &&
             !empty($credentials)) {
-        ?>
-            <div id="chat-box"></div>
-        <?php
+
+            Frontend::enqueue_styles();
 
             $twilio_config = get_option('watsonconv_twilio');
 
@@ -152,9 +151,18 @@ class Frontend {
                 )
             );
 
-            wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
-            wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js');
+            if ($settings['call_config']['use_twilio'] == 'yes' && $call_configured) {
+                wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
+            }
+
+            wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js', array(), false, true);
             wp_localize_script('chat-app', 'settings', $settings);
         }
+    }
+
+    public static function render_div() {
+        ?>
+            <div id="watsonconv-chat-box"></div>
+        <?php
     }
 }
