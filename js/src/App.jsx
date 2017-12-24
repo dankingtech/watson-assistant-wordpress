@@ -40,19 +40,17 @@ export default class App extends Component {
     e.preventDefault();
 
     this.setState({
-      dragging: true
+      animated: true
     })
   }
 
   savePosition(e, data) {
     if (Math.sqrt(Math.pow(data.x - this.state.position.x, 2) +  Math.pow(data.y - this.state.position.y, 2)) < 3) {
+      this.setState({animated: false});
       this.toggleMinimize(e);
     } else {
       this.setState(
-        {position: {x: data.x, y: data.y}},
-        () => { 
-          this.setState({dragging: false}); 
-        }
+        {position: {x: data.x, y: data.y}}
       );
     }
   }
@@ -72,7 +70,7 @@ export default class App extends Component {
         >
           <TransitionGroup
             id='watson-float'
-            class={!this.state.dragging && 'animated'}
+            class={!this.state.animated && 'animated'}
             style={this.state.minimized && {opacity: 0 , visibility: 'hidden'}}
           >
               <ChatBox
