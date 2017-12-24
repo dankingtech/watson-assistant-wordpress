@@ -39,8 +39,8 @@
   height: 4em;
   border-radius: 2em;
   text-align: left;
-  background-color: var(--chatbot-color);
-  color: var(--chatbot-text-color);
+  background-color: rgb(35, 40, 45);
+  color: white;
 }
 
 #watson-fab .dashicons
@@ -71,7 +71,7 @@
 
 #watson-box #messages > div:not(.message) > a
 {
-  color: var(--chatbot-color);
+  color: rgb(35, 40, 45);
   cursor: pointer;
 }
 #watson-box #messages > div:not(.message) > a:hover
@@ -84,8 +84,8 @@
   padding: 0.5em 0.6em;
   height: 2.5em;
   font-weight: 600;
-  color: var(--chatbot-text-color);
-  background-color: var(--chatbot-color);
+  color: white;
+  background-color: rgb(35, 40, 45);
   cursor: pointer;
 
   box-sizing: border-box;
@@ -196,6 +196,11 @@
   border: none;
 }
 
+#message-container > *:last-child
+{
+  margin-bottom: 10px;
+}
+
 #watson-box .message-form
 {
   height: 2.75em;
@@ -237,8 +242,8 @@
 #message-container #messages .watson-message
 {
   float: left;
-  background-color: var(--chatbot-color);
-  color: var(--chatbot-text-color);
+  background-color: rgb(35, 40, 45);
+  color: white;
 }
 
 #message-container #messages .user-message

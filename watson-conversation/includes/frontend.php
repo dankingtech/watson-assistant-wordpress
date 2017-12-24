@@ -12,6 +12,8 @@ class Frontend {
         $color_rgb = sscanf(get_option('watsonconv_color', '#23282d'), "#%02x%02x%02x");
         $messages_height = get_option('watsonconv_size', 200);
         $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
+
+        $main_color = vsprintf('rgb(%d, %d, %d)', $color_rgb);
         $text_color = self::luminance($color_rgb) > 0.5 ? 'black' : 'white';
 
         if (is_null($full_screen)) {
@@ -19,9 +21,17 @@ class Frontend {
         }
 
         wp_add_inline_style('watsonconv-chatbox', '
-            :root {
-                --chatbot-color: ' . vsprintf('rgb(%d, %d, %d)', $color_rgb) . ';
-                --chatbot-text-color: '.$text_color.';
+            #message-container #messages .watson-message,
+                #watson-box #watson-header,
+                #watson-fab
+            {
+                background-color: '.$main_color.';
+                color: '.$text_color.';
+            }
+
+            #watson-box #messages > div:not(.message) > a
+            {
+                color: '.$main_color.';
             }
         
             #watson-fab-float
