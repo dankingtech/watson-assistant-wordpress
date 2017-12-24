@@ -5,10 +5,10 @@
   "dependencies": {
     "core-js": "^2.5.3",
     "preact": "^8.1.0",
-    "react-draggable": "^2.2.6",
+    "react-draggable": "^3.0.4",
     "preact-compat": "^3.17.0",
     "react-tooltip-currenttarget": "^3.3.5",
-    "react-transition-group": "^1.2.0",
+    "react-transition-group": "^2.2.1",
     "webrtcsupport": "^2.2.0",
     "whatwg-fetch": "^2.0.3"
   },
