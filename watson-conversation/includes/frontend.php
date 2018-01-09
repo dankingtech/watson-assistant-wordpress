@@ -16,7 +16,6 @@ class Frontend {
         $main_color = vsprintf('rgb(%d, %d, %d)', $color_rgb);
         $main_color_light = vsprintf('rgba(%d, %d, %d, 0.7)', $color_rgb);
         $text_color = self::luminance($color_rgb) > 0.5 ? 'black' : 'white';
-        $text_color_light = $text_color == 'black' ? 'rgba(0, 0, 0, 0.7)' : 'white';
 
         if (is_null($full_screen)) {
             $full_screen = get_option('watsonconv_full_screen', 'no') == 'yes';
