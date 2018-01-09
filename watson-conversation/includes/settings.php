@@ -90,17 +90,25 @@ class Settings {
             </div>
             <div id='message-container'>
                 <div id='messages' class='watson-font'>
-                    <div class='message watson-message'>
-                        This is a message from the chatbot.
+                    <div>
+                        <div class='message watson-message'>
+                            This is a message from the chatbot.
+                        </div>
                     </div>
-                    <div class='message user-message'>
-                        This is a message from the user.
+                    <div>
+                        <div class='message user-message'>
+                            This is a message from the user.
+                        </div>
                     </div>
-                    <div class='message watson-message'>
-                        This message is a slightly longer message than the previous one from the chatbot.
+                    <div>
+                        <div class='message watson-message'>
+                            This message is a slightly longer message than the previous one from the chatbot.
+                        </div>
                     </div>
-                    <div class='message user-message'>
-                        This message is a slightly longer message than the previous one from the user.
+                    <div>
+                        <div class='message user-message'>
+                            This message is a slightly longer message than the previous one from the user.
+                        </div>
                     </div>
                 </div>
             </div>

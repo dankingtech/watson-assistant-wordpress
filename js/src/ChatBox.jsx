@@ -96,14 +96,10 @@ export default class ChatBox extends Component {
       return false;
     }
 
-    this.sendMessage();
-    this.setState({
-      newMessage: '',
-      messages: this.state.messages.concat({from: 'user', text: this.state.newMessage})
-    });
+    this.sendMessage(this.state.newMessage);
   }
 
-  sendMessage() {
+  sendMessage(message) {
     if (!this.state.convStarted) {
       this.setState({convStarted: true});
     }
@@ -114,7 +110,7 @@ export default class ChatBox extends Component {
       },
       method: 'POST',
       body: JSON.stringify({
-        input: {text: this.state.newMessage},
+        input: {text: message},
         context: this.state.context
       })
     }).then(response => {
@@ -125,11 +121,22 @@ export default class ChatBox extends Component {
     }).then(body => {
       this.setState({
         context: body.context,
-        messages: this.state.messages.concat({from: 'watson', text: body.output.text})
+        messages: this.state.messages.concat({
+          from: 'watson',
+          text: body.output.text, 
+          options: body.output.options
+        })
       });
     }).catch(error => {
       console.log(error);
     });
+
+    if (message) {
+      this.setState({
+        newMessage: '',
+        messages: this.state.messages.concat({from: 'user', text: message})
+      });
+    }
   }
 
   setMessage(e) {
@@ -185,7 +192,7 @@ export default class ChatBox extends Component {
                 <a style={{'font-size': '0.85em'}} onClick={this.reset.bind(this)}>Clear Messages</a>
               </div>
               {this.state.messages.map(
-                (message, index) => <Message message={message} key={index} />
+                (message, index) => <Message message={message} key={index} sendMessage={this.sendMessage.bind(this)} />
               )}
             </div>
           </div>

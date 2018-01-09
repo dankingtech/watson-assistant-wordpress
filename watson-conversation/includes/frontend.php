@@ -14,7 +14,9 @@ class Frontend {
         $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
 
         $main_color = vsprintf('rgb(%d, %d, %d)', $color_rgb);
+        $main_color_light = vsprintf('rgba(%d, %d, %d, 0.7)', $color_rgb);
         $text_color = self::luminance($color_rgb) > 0.5 ? 'black' : 'white';
+        $text_color_light = $text_color == 'black' ? 'rgba(0, 0, 0, 0.7)' : 'white';
 
         if (is_null($full_screen)) {
             $full_screen = get_option('watsonconv_full_screen', 'no') == 'yes';
@@ -29,9 +31,22 @@ class Frontend {
                 color: '.$text_color.';
             }
 
+            #message-container #messages .message-option
+            {
+                border-color: '. ($text_color == 'white' ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
+                background-color: '. ($text_color == 'white' ? $text_color : 'white') .';
+                color: '. ($text_color == 'white' ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
+            }
+
+            #message-container #messages .message-option:hover
+            {
+                border-color: '. ($text_color == 'white' ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
+                color: '. ($text_color == 'white' ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
+            }
+
             #watson-box #messages > div:not(.message) > a
             {
-                color: '.$main_color.';
+                color: '. ($text_color == 'white' ? $main_color : $text_color) .';
             }
         
             #watson-fab-float
