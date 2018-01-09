@@ -5,6 +5,7 @@ import ReactTooltip from 'react-tooltip-currenttarget';
 import webrtc from 'webrtcsupport';
 
 import Message from './Message.jsx';
+import InputBox from './InputBox.jsx';
 import CallInterface from './CallInterface.jsx';
 
 import 'whatwg-fetch';
@@ -20,7 +21,6 @@ export default class ChatBox extends Component {
     } else {
       this.state = {
         messages: [],
-        newMessage: '',
         context: null,
         showCallInterface: false,
         mediaSecure: true,
@@ -89,16 +89,6 @@ export default class ChatBox extends Component {
     jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
   }
 
-  submitMessage(e) {
-    e.preventDefault();
-
-    if (this.state.newMessage === '') {
-      return false;
-    }
-
-    this.sendMessage(this.state.newMessage);
-  }
-
   sendMessage(message) {
     if (!this.state.convStarted) {
       this.setState({convStarted: true});
@@ -133,20 +123,14 @@ export default class ChatBox extends Component {
 
     if (message) {
       this.setState({
-        newMessage: '',
         messages: this.state.messages.concat({from: 'user', text: message})
       });
     }
   }
 
-  setMessage(e) {
-    this.setState({newMessage: e.target.value});
-  }
-
   reset() {
     this.setState({
       messages: [],
-      newMessage: '',
       context: null
     });
     
@@ -196,16 +180,7 @@ export default class ChatBox extends Component {
               )}
             </div>
           </div>
-          <form action='' className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
-            <input
-              className='message-input watson-font'
-              type='text'
-              placeholder='Type a message'
-              value={this.state.newMessage}
-              onChange={this.setMessage.bind(this)}
-            />
-            <input type='submit' style={{width: 0, height: 0, opacity: 0}} />
-          </form>
+          <InputBox sendMessage={this.sendMessage.bind(this)} />
         </div>
       </div>
     );

@@ -131,7 +131,7 @@ class Settings {
 
           <h2 class="nav-tab-wrapper">
             <a onClick="switch_tab('intro')" class="nav-tab nav-tab-active intro_tab">Introduction</a>
-            <a onClick="switch_tab('advanced')" class="nav-tab nav-tab-active advanced_tab">Advanced</a>
+            <a onClick="switch_tab('advanced')" class="nav-tab advanced_tab">Advanced</a>
             <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">Main Setup</a>
             <a onClick="switch_tab('voice_call')" class="nav-tab voice_call_tab">Voice Calling</a>
             <a onClick="switch_tab('usage_management')" class="nav-tab usage_management_tab">Usage Management</a>
