@@ -131,6 +131,7 @@ class Settings {
 
           <h2 class="nav-tab-wrapper">
             <a onClick="switch_tab('intro')" class="nav-tab nav-tab-active intro_tab">Introduction</a>
+            <a onClick="switch_tab('advanced')" class="nav-tab nav-tab-active advanced_tab">Advanced</a>
             <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">Main Setup</a>
             <a onClick="switch_tab('voice_call')" class="nav-tab voice_call_tab">Voice Calling</a>
             <a onClick="switch_tab('usage_management')" class="nav-tab usage_management_tab">Usage Management</a>
@@ -140,6 +141,7 @@ class Settings {
 
           <form action="options.php" method="POST">
             <div class="tab-page intro_page"><?php self::render_intro(); ?></div>
+            <div class="tab-page advanced_page"><?php self::render_advanced(); ?></div>
             <?php
                 settings_fields(self::SLUG); 
 
@@ -217,6 +219,43 @@ class Settings {
                 </p></li>
             </ol>
         </p>
+    <?php
+    }
+
+    public static function render_advanced() {
+    ?>
+    <div class="wrap" style="max-width: 60em; ">
+        <p><?php esc_html_e('This page contains information on advanced features supported by this plugin.
+            If you have not yet created your chatbot, you should see the Introduction tab first.'); ?></p>
+        <h2> <?php esc_html_e('Preset Response Options'); ?></h2>
+        <p><?php esc_html_e('Using this feature, you can create predefined message buttons that users can use to
+            quickly and easily respond to messages from your chatbot as shown here.'); ?></p>
+        <img class="drop-shadow" style="height: 24em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/result.png">
+        <p><?php esc_html_e('The following instructions will guide you through the process of using this feature.') ?></p>
+
+        <h4><?php esc_html_e('1. Open your chatbot workspace in Watson Conversation and go to the Dialog tab.') ?>
+        <h4><?php esc_html_e('2. Select the node you want to create predefined messages for.') ?></h4>
+        <img class="drop-shadow" style="width: 60em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/2_full_page_highlighted.jpg">
+        <h4><?php esc_html_e('3. Click the 3 dots at the top-right of this section to get the following dropdown.
+            Click the "Open JSON Editor" button.') ?></h4>
+        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/4_json_dropdown.png">
+        <h4><?php esc_html_e('A box should open up containing text resembling the picture below.') ?></h4>
+        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/5_json_initial.png">
+        <h4><?php esc_html_e('4. Find the line containing "text". In this case it\'s line 3. You will
+             notice this line has an opening curly bracket at the end.') ?></h4>
+        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/6_json_text_open.png">
+        <h4><?php esc_html_e('5. Look below the word "text" to find the matching closing bracket.') ?></h4>
+        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/7_json_text_close.png">
+        <h4><?php esc_html_e('6. Add the following text after this closing bracket. The empty line 
+            under "options" is where you\'ll put your predefined messages.') ?></h4>
+        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/8_json_options_added.png">
+        <h4><?php esc_html_e('7. Write your message options in the space below "options", with one message per line.
+            Surround each message with double quotes and put a comma at the end of each line except for the last,
+            as shown in the picture below.  ') ?></h4>
+        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/9_json_options_filled.png">
+        <h4><?php esc_html_e('If done correctly, the chatbox on your Wordpress site should now show
+            these response options as buttons like in the picture at the top of this page.') ?></h4>
+    </div>
     <?php
     }
 
