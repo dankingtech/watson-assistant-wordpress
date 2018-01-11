@@ -131,8 +131,8 @@ class Settings {
 
           <h2 class="nav-tab-wrapper">
             <a onClick="switch_tab('intro')" class="nav-tab nav-tab-active intro_tab">Introduction</a>
-            <a onClick="switch_tab('advanced')" class="nav-tab advanced_tab">Advanced</a>
             <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">Main Setup</a>
+            <a onClick="switch_tab('advanced')" class="nav-tab advanced_tab">Advanced</a>
             <a onClick="switch_tab('voice_call')" class="nav-tab voice_call_tab">Voice Calling</a>
             <a onClick="switch_tab('usage_management')" class="nav-tab usage_management_tab">Usage Management</a>
             <a onClick="switch_tab('behaviour')" class="nav-tab behaviour_tab">Behaviour</a>
@@ -141,7 +141,7 @@ class Settings {
 
           <form action="options.php" method="POST">
             <div class="tab-page intro_page"><?php self::render_intro(); ?></div>
-            <div class="tab-page advanced_page"><?php self::render_advanced(); ?></div>
+            <div class="tab-page advanced_page" style="display: none"><?php self::render_advanced(); ?></div>
             <?php
                 settings_fields(self::SLUG); 
 
