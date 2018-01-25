@@ -127,21 +127,31 @@ class API {
                 $credentials['username'].':'.
                 $credentials['password']);
 
+            $send_body = apply_filters(
+                'watsonconv_message_send',
+                array(
+                    'input' => empty($body['input']) ? new \stdClass() : $body['input'], 
+                    'context' => empty($body['context']) ? new \stdClass() : $body['context']
+                )
+            );
+
             $response = wp_remote_post(
                 $credentials['workspace_url'].'?version='.self::API_VERSION,
                 array(
                     'headers' => array(
                         'Authorization' => $auth_token,
                         'Content-Type' => 'application/json'
-                    ), 'body' => json_encode(array(
-                        'input' => empty($body['input']) ? new \stdClass : $body['input'], 
-                        'context' => empty($body['context']) ? new \stdClass() : $body['context']
-                    ))
+                    ),
+                    'body' => json_encode($send_body)
                 )
             );
 
+            do_action('watsonconv_message_received', $response);
+
             $response_body = json_decode(wp_remote_retrieve_body($response), true);
             $response_code = wp_remote_retrieve_response_code($response);
+            
+            $response_body = apply_filters('watsonconv_message_parsed', $response_body);
 
             if ($response_code !== 200) {
                 return new \WP_Error(
