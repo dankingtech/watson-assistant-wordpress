@@ -164,18 +164,18 @@ class Frontend {
                 'minimized' => get_option('watsonconv_minimized', 'no'),
                 'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
                 'title' => get_option('watsonconv_title', ''),
-                'full_screen' => get_option('watsonconv_full_screen', 'no'),
-                'call_config' => array(
-                    'use_twilio' => get_option('watsonconv_use_twilio', 'no'),
+                'fullScreen' => get_option('watsonconv_full_screen', 'no'),
+                'callConfig' => array(
+                    'useTwilio' => get_option('watsonconv_use_twilio', 'no'),
                     'configured' => $call_configured,
                     'recipient' => get_option('watsonconv_call_recipient'),
-                    'call_tooltip' => get_option('watsonconv_call_tooltip'),
-                    'call_button' => get_option('watsonconv_call_button'),
-                    'calling_text' => get_option('watsonconv_calling_text')
+                    'callTooltip' => get_option('watsonconv_call_tooltip'),
+                    'callButton' => get_option('watsonconv_call_button'),
+                    'callingText' => get_option('watsonconv_calling_text')
                 )
             );
 
-            if ($settings['call_config']['use_twilio'] == 'yes' && $call_configured) {
+            if ($settings['callConfig']['useTwilio'] == 'yes' && $call_configured) {
                 wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
             }
 

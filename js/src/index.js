@@ -23,9 +23,9 @@ function renderApp() {
       title={settings.title}
       minimized={settings.minimized === 'yes'}
       isMobile={window.matchMedia("(max-width:768px)").matches}
-      fullScreen={settings.full_screen === 'yes'}
+      fullScreen={settings.fullScreen === 'yes'}
       position={settings.position}
-      callConfig={settings.call_config}
+      callConfig={settings.callConfig}
     />,
     document.getElementById('watsonconv-chat-box')
   );

@@ -141,7 +141,7 @@ export default class ChatBox extends Component {
     var position = this.props.position || ['bottom', 'right'];
     var showCallInterface = this.state.showCallInterface;
 
-    var allowTwilio = this.props.callConfig.use_twilio == 'yes'
+    var allowTwilio = this.props.callConfig.useTwilio == 'yes'
                     && this.props.callConfig.configured
                     && webrtc.support 
                     && this.state.mediaSecure;
@@ -161,7 +161,7 @@ export default class ChatBox extends Component {
             <span
               onClick={this.toggleCallInterface.bind(this)} 
               className={`dashicons dashicons-phone header-button`}
-              data-tip={this.props.callConfig.call_tooltip || 'Talk to a Live Agent'}>
+              data-tip={this.props.callConfig.callTooltip || 'Talk to a Live Agent'}>
             </span>
           }
           <ReactTooltip />

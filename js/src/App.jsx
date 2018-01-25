@@ -56,7 +56,8 @@ export default class App extends Component {
   }
 
   render() {
-    let { isMobile, fullScreen } = this.props;
+    let { isMobile, fullScreen, title, callConfig, fabConfig } = this.props;
+    let { minimized, animated } = this.state;
 
     return (
       <div>
@@ -66,29 +67,29 @@ export default class App extends Component {
           bounds={(fullScreen || isMobile) && {left: 0, top: 0, right: 0, bottom: 0}}
           onStart={this.startDragging.bind(this)}
           onStop={this.savePosition.bind(this)}
-          position={(this.state.minimized || fullScreen || isMobile) ? {x: 0, y: 0} : this.state.position}
+          position={(minimized || fullScreen || isMobile) ? {x: 0, y: 0} : this.state.position}
         >
           <TransitionGroup
             id='watson-float'
-            class={!this.state.animated && 'animated'}
-            style={this.state.minimized && {opacity: 0 , visibility: 'hidden'}}
+            class={!animated && 'animated'}
+            style={minimized && {opacity: 0 , visibility: 'hidden'}}
           >
               <ChatBox
                   minimize={this.toggleMinimize.bind(this)}
-                  isMinimized={this.state.minimized}
+                  isMinimized={minimized}
                   position={this.props.position}
-                  title={this.props.title}
-                  callConfig={this.props.callConfig}
-                  style={!this.state.minimized && {display: 'none'}}
+                  title={title}
+                  callConfig={callConfig}
+                  style={!minimized && {display: 'none'}}
               />
           </TransitionGroup>
         </Draggable>
         <TransitionGroup
           id='watson-fab-float'
           class='animated'
-          style={{opacity: this.state.minimized ? 1 : 0}}
+          style={{opacity: minimized ? 1 : 0}}
         >
-          {this.state.minimized && <Fab openChat={this.toggleMinimize.bind(this)} />}
+          {minimized && <Fab openChat={this.toggleMinimize.bind(this)} />}
         </TransitionGroup>
       </div>
     );

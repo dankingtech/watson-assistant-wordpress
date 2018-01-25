@@ -17,7 +17,7 @@ export default class CallInterface extends Component {
     })
 
     Twilio.Device.connect();
-    this.setState({log: this.props.callConfig.calling_text || 'Calling Agent...'})
+    this.setState({log: this.props.callConfig.callingText || 'Calling Agent...'})
   }
 
   disconnect() {
@@ -71,7 +71,7 @@ export default class CallInterface extends Component {
   }
 
   render() {
-    var { call_button, recipient } = this.props.callConfig;
+    var { callButton, recipient } = this.props.callConfig;
 
     return <span id='call-interface'>
         {this.state.calling ? 
@@ -90,7 +90,7 @@ export default class CallInterface extends Component {
                 or
               </p>
               <button onClick={this.startCall.bind(this)}>
-                {call_button || 'Start Toll-Free Call Here'}
+                {callButton || 'Start Toll-Free Call Here'}
               </button>
             </div>}
           </div>

@@ -20,8 +20,6 @@ export default class InputBox extends Component {
       return false;
     }
 
-    console.log('lol');
-
     this.props.sendMessage(this.state.message);
 
     this.setState({
