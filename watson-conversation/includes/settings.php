@@ -296,18 +296,40 @@ class Settings {
         );
 
         $response_code = wp_remote_retrieve_response_code($response);
+        $response_body = wp_remote_retrieve_body($response);
+
+        $json_data = @json_decode($response_body);
+
+        if (!is_null($json_data) && json_last_error() === JSON_ERROR_NONE) {
+            $response_string = json_encode($json_data, JSON_PRETTY_PRINT);
+        } else if (is_array($response_body)) {
+            $response_string = json_encode($response_body, JSON_PRETTY_PRINT);
+        } else if (is_string($response_body)) {
+            $response_string = $response_body;
+        } else {
+            $response_string = var_export($response_body, true);
+        }
+
+        $response_string = str_replace('\\/', '/', $response_string);
+
+        $debug_info = empty($response_body) ? '' : '<a id="error_expand">Click here for debug information.</a>
+            <pre id="error_response" style="display: none;">'.$response_string.'</pre>';
 
         if ($response_code == 401) {
             add_settings_error('watsonconv_credentials', 'invalid-credentials', 
-                wp_remote_retrieve_response_message($response).': Please ensure you entered a valid username/password and URL');
+                'Please ensure you entered a valid username/password and URL. ' . $debug_info);
             return get_option('watsonconv_credentials');
         } else if ($response_code == 404 || $response_code == 400) {
             add_settings_error('watsonconv_credentials', 'invalid-id', 
-                'Please ensure you entered a valid workspace URL.');
+                'Please ensure you entered a valid workspace URL. ' . $debug_info);
             return get_option('watsonconv_credentials');
         } else if ($response_code != 200) {
             add_settings_error('watsonconv_credentials', 'invalid-url',
-                'Please ensure you entered a valid workspace URL.');
+                'Please ensure you entered a valid workspace URL. ' . $debug_info);
+            return get_option('watsonconv_credentials');
+        } else {
+            add_settings_error('watsonconv_credentials', 'unknown-error', 
+                'An error occurred during credentials validation. ' . $debug_info);
             return get_option('watsonconv_credentials');
         }
 

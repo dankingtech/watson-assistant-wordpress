@@ -43,6 +43,13 @@ jQuery(document).ready(function($) {
     switch_tab(sessionStorage.getItem('watsonconv_active_tab'));
   }
 
+  $('#error_expand')
+    .on('click', function(e) {
+      e.preventDefault();
+
+      $('#error_response').toggle(200);
+    })
+
   // ---- Voice Calling Section ----
 
   $('input[name="watsonconv_use_twilio"]')
