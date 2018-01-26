@@ -327,10 +327,6 @@ class Settings {
             add_settings_error('watsonconv_credentials', 'invalid-url',
                 'Please ensure you entered a valid workspace URL. ' . $debug_info);
             return get_option('watsonconv_credentials');
-        } else {
-            add_settings_error('watsonconv_credentials', 'unknown-error', 
-                'An error occurred during credentials validation. ' . $debug_info);
-            return get_option('watsonconv_credentials');
         }
 
         add_settings_error(
