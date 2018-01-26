@@ -711,20 +711,22 @@ class Settings {
     }
 
     public static function render_twilio_sid() {
-        $config = get_option('watsonconv_twilio', array('sid' => ''));
+        $config = get_option('watsonconv_twilio');
+        $sid = (empty($config) || empty($config['sid'])) ? '' : $config['sid'];
     ?>
         <input name="watsonconv_twilio[sid]" id="watsonconv_twilio_sid" type="text"
-            value="<?php echo $config['sid'] ?>"
+            value="<?php echo $sid ?>"
             placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             style="width: 24em" />
     <?php
     }
 
     public static function render_twilio_auth() {
-        $config = get_option('watsonconv_twilio', array('auth_token' => ''));
+        $config = get_option('watsonconv_twilio');
+        $token = (empty($config) || empty($config['auth_token'])) ? '' : $config['auth_token'];
     ?>
         <input name="watsonconv_twilio[auth_token]" id="watsonconv_twilio_auth" type="password"
-            value="<?php echo $config['auth_token'] ?>"
+            value="<?php echo $token ?>"
             style="width: 24em"/>
     <?php
     }
@@ -739,10 +741,12 @@ class Settings {
     }
     
     public static function render_domain_name() {
-        $config = get_option('watsonconv_twilio', array('domain_name' => get_site_url()));
+        $config = get_option('watsonconv_twilio');
+        $domain_name = (empty($config) || empty($config['domain_name']))
+            ? get_site_url() : $config['domain_name'];
     ?>
         <input name="watsonconv_twilio[domain_name]" id="watsonconv_twilio_domain" type="text"
-            value="<?php echo $config['domain_name'] ?>"
+            value="<?php echo $domain_name ?>"
             placeholder="<?php echo get_site_url() ?>"
             style="width: 24em" />
     <?php
