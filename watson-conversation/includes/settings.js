@@ -149,7 +149,7 @@ jQuery(document).ready(function($) {
 
   $('#watsonconv_title')
     .on('input', function() {
-      $('#title').text(this.value)
+      $('#watson-title').text(this.value)
     });
   
   $('input[name="watsonconv_fab_icon_pos"]')

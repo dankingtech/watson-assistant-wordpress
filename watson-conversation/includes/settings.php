@@ -1187,7 +1187,7 @@ class Settings {
             <div id='watson-box' class='drop-shadow animated' style='display: block;'>
                 <div id='watson-header' class='watson-font' style='cursor: default;'>
                     <span class='dashicons dashicons-arrow-down-alt2 popup-control'></span>
-                    <div class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
+                    <div id='watson-title' class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
                 </div>
                 <div id='message-container'>
                     <div id='messages' class='watson-font'>
