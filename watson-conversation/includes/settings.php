@@ -261,6 +261,8 @@ class Settings {
     }
 
     public static function validate_credentials($credentials) {
+        $old_credentials = get_option('watsonconv_credentials');
+
         if (empty($credentials['workspace_url'])) {
             add_settings_error('watsonconv_credentials', 'invalid-id', 'Please enter a Workspace URL.');
             $empty = true;
@@ -275,7 +277,11 @@ class Settings {
         }
 
         if (isset($empty)) {
-            return get_option('watsonconv_credentials');
+            return $old_credentials;
+        }
+
+        if ($credentials == $old_credentials) {
+            return $credentials;
         }
 
         $auth_token = 'Basic ' . base64_encode(

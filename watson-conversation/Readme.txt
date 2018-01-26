@@ -86,7 +86,10 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 
 == Changelog == 
 
-= 0.5.2 =
+= 0.5.4 =
+* Modified Wordpress hooks
+
+= 0.5.3 =
 * Fixed bug with credentials validation
 
 = 0.5.2 =

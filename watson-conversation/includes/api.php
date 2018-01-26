@@ -128,12 +128,14 @@ class API {
                 $credentials['password']);
 
             $send_body = apply_filters(
-                'watsonconv_message_send',
+                'watsonconv_user_message',
                 array(
                     'input' => empty($body['input']) ? new \stdClass() : $body['input'], 
                     'context' => empty($body['context']) ? new \stdClass() : $body['context']
                 )
             );
+            
+            do_action('watsonconv_message_pre_send', $response_body);
 
             $response = wp_remote_post(
                 $credentials['workspace_url'].'?version='.self::API_VERSION,
@@ -151,7 +153,9 @@ class API {
             $response_body = json_decode(wp_remote_retrieve_body($response), true);
             $response_code = wp_remote_retrieve_response_code($response);
             
-            $response_body = apply_filters('watsonconv_message_parsed', $response_body);
+            do_action('watsonconv_message_parsed', $response_body);
+
+            $response_body = apply_filters('watsonconv_bot_message', $response_body);
 
             if ($response_code !== 200) {
                 return new \WP_Error(
