@@ -25,6 +25,7 @@ function renderApp() {
       isMobile={window.matchMedia("(max-width:768px)").matches}
       fullScreen={settings.fullScreen === 'yes'}
       position={settings.position}
+      fabConfig={settings.fabConfig}
       callConfig={settings.callConfig}
     />,
     document.getElementById('watsonconv-chat-box')

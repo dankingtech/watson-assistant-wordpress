@@ -35,19 +35,47 @@
 #watson-fab
 {
   cursor: pointer;
-  width: 4em;
+  min-width: 4em;
   height: 4em;
   border-radius: 2em;
   text-align: left;
   background-color: rgb(35, 40, 45);
   color: white;
+
+  display: table;
+  line-height: 1.7em;
+  vertical-align: middle;
+  border-spacing: 0.8em 0em;
+  border-collapse: separate;
 }
 
-#watson-fab .dashicons
+#watson-fab > span:first-child
 {
-  margin-left: 0.34em;
+  padding-left: 0.1em;
+}
+
+#watson-fab > span:last-child
+{
+  padding-right: 0.4em;
+}
+
+#watson-fab > span:only-child
+{
+  padding: 0em;
+}
+
+#watson-fab-icon
+{
+  display: table-cell;
   font-size: 2.4em;
   line-height: 1.7em;
+}
+
+#watson-fab-text
+{
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 1.25em;
 }
 
 #watson-float

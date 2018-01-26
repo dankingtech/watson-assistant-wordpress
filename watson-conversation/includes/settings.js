@@ -151,4 +151,30 @@ jQuery(document).ready(function($) {
     .on('input', function() {
       $('#title').text(this.value)
     });
+  
+  $('input[name="watsonconv_fab_icon_pos"]')
+    .on('change', function() {
+      if (this.value == 'left') {
+        $('.fab-icon-left').show();
+        $('.fab-icon-right').hide();
+      } else if (this.value == 'right') {
+        $('.fab-icon-left').hide();
+        $('.fab-icon-right').show();
+      } else {
+        $('.fab-icon-left').hide();
+        $('.fab-icon-right').hide();
+      }
+    })
+    .filter('input:checked')
+    .trigger('change');
+
+  $('#watsonconv_fab_text')
+    .on('input', function() {
+      if (this.value) {
+        $('#watson-fab-text').show().text(this.value)
+      } else {
+        $('#watson-fab-text').hide().text(this.value);
+      }
+    })
+    .trigger('input');
 });

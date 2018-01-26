@@ -89,7 +89,13 @@ export default class App extends Component {
           class='animated'
           style={{opacity: minimized ? 1 : 0}}
         >
-          {minimized && <Fab openChat={this.toggleMinimize.bind(this)} />}
+          {minimized && 
+            <Fab 
+              openChat={this.toggleMinimize.bind(this)} 
+              iconPos={fabConfig.iconPos} 
+              text={fabConfig.text} 
+            />
+          }
         </TransitionGroup>
       </div>
     );

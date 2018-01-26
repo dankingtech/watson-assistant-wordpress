@@ -165,6 +165,10 @@ class Frontend {
                 'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
                 'title' => get_option('watsonconv_title', ''),
                 'fullScreen' => get_option('watsonconv_full_screen', 'no'),
+                'fabConfig' => array(
+                    'iconPos' => get_option('watsonconv_fab_icon_pos', 'left'),
+                    'text' => get_option('watsonconv_fab_text', '')
+                ),
                 'callConfig' => array(
                     'useTwilio' => get_option('watsonconv_use_twilio', 'no'),
                     'configured' => $call_configured,
