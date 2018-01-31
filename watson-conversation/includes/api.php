@@ -129,7 +129,7 @@ class API {
 
             $send_body = apply_filters(
                 'watsonconv_user_message',
-                array(
+                array( 
                     'input' => empty($body['input']) ? new \stdClass() : $body['input'], 
                     'context' => empty($body['context']) ? new \stdClass() : $body['context']
                 )
