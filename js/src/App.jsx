@@ -80,14 +80,13 @@ export default class App extends Component {
                   position={this.props.position}
                   title={title}
                   callConfig={callConfig}
-                  style={!minimized && {display: 'none'}}
               />
           </TransitionGroup>
         </Draggable>
         <TransitionGroup
           id='watson-fab-float'
           class='animated'
-          style={{opacity: minimized ? 1 : 0}}
+          style={!minimized && {opacity: 0 , visibility: 'hidden'}}
         >
           {minimized && 
             <Fab 

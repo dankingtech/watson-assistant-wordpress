@@ -87,7 +87,7 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 == Changelog == 
 
 = 0.5.5 =
-* Fixed caching issue preventing chatbox from appearing initially after updates
+* Fixed browser caching issue preventing chatbox from appearing initially after updates
 
 = 0.5.4 =
 * Modified Wordpress hooks
