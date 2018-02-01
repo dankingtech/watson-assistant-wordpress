@@ -1,8 +1,3 @@
-:root {
-  --chatbot-color: rgb(35, 40, 45);
-  --chatbot-text-color: white;
-}
-
 .drop-shadow
 {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
@@ -49,21 +44,6 @@
   border-collapse: separate;
 }
 
-#watson-fab > span:first-child
-{
-  padding-left: 0.1em;
-}
-
-#watson-fab > span:last-child
-{
-  padding-right: 0.4em;
-}
-
-#watson-fab > #watson-fab-icon:only-child
-{
-  padding: 0em;
-}
-
 #watson-fab-icon
 {
   display: table-cell;
@@ -76,6 +56,31 @@
   display: table-cell;
   vertical-align: middle;
   font-size: 1.25em;
+}
+
+#watson-fab-icon:first-child
+{
+  padding-left: 0.1em;
+}
+
+#watson-fab-icon:last-child
+{
+  padding-right: 0.1em;
+}
+
+#watson-fab-icon:only-child
+{
+  padding: 0em;
+}
+
+#watson-fab-text:first-child
+{
+  padding-left: 0.4em;
+}
+
+#watson-fab-text:last-child
+{
+  padding-right: 0.4em;
 }
 
 #watson-float
@@ -235,7 +240,7 @@
   margin: 0;
 }
 
-.message-form .message-input
+#watson-box .message-form .message-input
 {
   height: 100%;
   width: 100%;
@@ -248,7 +253,7 @@
   -webkit-box-sizing: border-box;
 }
 
-.message-form .message-input:focus
+#watson-box .message-form .message-input:focus
 {
   background-color: #fff;
 }

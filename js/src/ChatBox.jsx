@@ -42,7 +42,7 @@ export default class ChatBox extends Component {
     if (webrtc.support && 'https:' !== document.location.protocol) {
       navigator.mediaDevices.getUserMedia({video: {width: {min: 2, max: 1}}})
       .then(stream => {
-        log("getUserMedia detection failed");
+        console.log("getUserMedia detection failed");
         stream.getTracks().forEach(t => t.stop());
       })
       .catch(e => {
@@ -75,10 +75,6 @@ export default class ChatBox extends Component {
         this.scrollToBottom()
       }
     }
-  }
-
-  componentWillLeave(callback) {
-    setTimeout(callback, 300);
   }
 
   toggleCallInterface() {
