@@ -59,7 +59,7 @@
   padding-right: 0.4em;
 }
 
-#watson-fab > span:only-child
+#watson-fab > #watson-fab-icon:only-child
 {
   padding: 0em;
 }
