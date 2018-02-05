@@ -81,7 +81,7 @@ class Frontend {
                 }
             }' . 
             sprintf(
-                $full_screen ? '%s' : '@media (max-width:768px) { %s }', 
+                $full_screen ? '%s' : '@media screen and (max-width:768px), screen and (max-height:768px) { %s }', 
                 '#watson-box
                 {
                   width: 100%;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
 import { TransitionGroup } from 'react-transition-group';
+import qs from 'querystringify';
 
 import ChatBox from './ChatBox.jsx';
 import Fab from './Fab.jsx';
@@ -15,9 +16,19 @@ export default class App extends Component {
       this.state = JSON.parse(sessionStorage.getItem('watson_bot_window_state'));
     } else {
       this.state = {
-        minimized: props.isMobile ? true : props.minimized,
+        minimized: props.isMobile || props.minimized,
         position: {x: 0, y: 0}
       };
+    }
+
+    let params = qs.parse(window.location.search);
+
+    if (params.hasOwnProperty('chat_min')) {
+      if (params.chat_min == 'true') {
+        this.state.minimized = true;
+      } else if (params.chat_min == 'false') {
+        this.state.minimized = false;
+      }
     }
   }
 
