@@ -105,11 +105,17 @@ export default class ChatBox extends Component {
       }
       return response.json();
     }).then(body => {
+      let { text } = body.output;
+
+      if (Array.isArray(text)) {
+        text = text.map(message => message.trim()).join(' ');
+      }
+
       this.setState({
         context: body.context,
         messages: this.state.messages.concat({
           from: 'watson',
-          text: body.output.text, 
+          text: text, 
           options: body.output.options
         })
       });
