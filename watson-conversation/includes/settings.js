@@ -130,11 +130,16 @@ jQuery(document).ready(function($) {
     .wpColorPicker({
       palettes: true,
       change: function() {
-        $('#watson-box #watson-header, #message-container #messages .watson-message, #watson-fab')
+        $('#watson-box #watson-header, #message-container #messages .watson-message, #watson-fab, #message-send')
           .css({
             'background-color': this.value,
             'color': luminance(this.value) > 0.5 ? 'black' : 'white'
           });
+
+        $('#message-send svg')
+        .css({
+          'fill': luminance(this.value) > 0.5 ? 'black' : 'white'
+        })
       }
     });
 

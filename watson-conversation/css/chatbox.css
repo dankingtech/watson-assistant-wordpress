@@ -236,6 +236,7 @@
 
 #watson-box .message-form
 {
+  display: flex;
   height: 2.75em;
   margin: 0;
 }
@@ -247,6 +248,9 @@
   border: 0;
   padding: 0 0.75em;
   background-color: #fff;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
   
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -256,6 +260,26 @@
 #watson-box .message-form .message-input:focus
 {
   background-color: #fff;
+}
+
+#watson-box #message-send
+{
+  display: flex;
+  align-items: center;
+  padding: 0 0.5em;
+  background-color: rgb(35, 40, 45);
+  
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+#watson-box #message-send svg
+{
+  height: 1.8em;
+  fill: white;
+  stroke-width: 0;
+  margin-left: 0.1em;
 }
 
 #message-container #messages .message

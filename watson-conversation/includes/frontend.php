@@ -5,20 +5,32 @@ add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'render_chat_box')
 add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 
 class Frontend {
-    public static function enqueue_styles($full_screen = null) {
+    public static function enqueue_styles($force_full_screen = null) {
         wp_enqueue_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'));
 
         $font_size = get_option('watsonconv_font_size', 11);
         $color_rgb = sscanf(get_option('watsonconv_color', '#23282d'), "#%02x%02x%02x");
         $messages_height = get_option('watsonconv_size', 200);
         $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
+        
+
+        $is_dark = self::luminance($color_rgb) <= 0.5;
+        $text_color = $is_dark ? 'white' : 'black';
 
         $main_color = vsprintf('rgb(%d, %d, %d)', $color_rgb);
         $main_color_light = vsprintf('rgba(%d, %d, %d, 0.7)', $color_rgb);
-        $text_color = self::luminance($color_rgb) > 0.5 ? 'black' : 'white';
 
-        if (is_null($full_screen)) {
-            $full_screen = get_option('watsonconv_full_screen', 'no') == 'yes';
+        foreach ($color_rgb as $index => $channel) {
+            $color_rgb[$index] = $channel * 0.9;
+        }
+
+        $main_color_dark = vsprintf('rgb(%d, %d, %d)', $color_rgb);
+
+        if (is_null($force_full_screen)) {
+            $full_screen_css = (get_option('watsonconv_full_screen', 'no') == 'yes') ? 
+                '%s' : '@media screen and (max-width:768px), screen and (max-height:768px) { %s }';
+        } else {
+            $full_screen_css = $force_full_screen ? '%s' : '';
         }
 
         wp_add_inline_style('watsonconv-chatbox', '
@@ -30,22 +42,36 @@ class Frontend {
                 color: '.$text_color.';
             }
 
+            #watson-box #message-send
+            {
+                background-color: '. $main_color .';
+            }
+
+            #watson-box #message-send:hover
+            {
+                background-color: '. ($is_dark ? $main_color_light : $main_color_dark) .';
+            }
+            
+            #watson-box #message-send svg
+            {
+              fill: '. ($is_dark ? $text_color : 'rgba(0, 0, 0, 0.9)') .';
+            }
+
             #message-container #messages .message-option
             {
-                border-color: '. ($text_color == 'white' ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
-                background-color: '. ($text_color == 'white' ? $text_color : 'white') .';
-                color: '. ($text_color == 'white' ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
+                border-color: '. ($is_dark ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
+                color: '. ($is_dark ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
             }
 
             #message-container #messages .message-option:hover
             {
-                border-color: '. ($text_color == 'white' ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
-                color: '. ($text_color == 'white' ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
+                border-color: '. ($is_dark ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
+                color: '. ($is_dark ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
             }
 
             #watson-box #messages > div:not(.message) > a
             {
-                color: '. ($text_color == 'white' ? $main_color : $text_color) .';
+                color: '. ($is_dark ? $main_color : $text_color) .';
             }
         
             #watson-fab-float
@@ -81,7 +107,7 @@ class Frontend {
                 }
             }' . 
             sprintf(
-                $full_screen ? '%s' : '@media screen and (max-width:768px), screen and (max-height:768px) { %s }', 
+                $full_screen_css, 
                 '#watson-box
                 {
                   width: 100%;
@@ -94,6 +120,7 @@ class Frontend {
                   right: 0;
                   bottom: 0;
                   left: 0;
+                  transform: translate(0, 0) !important;
                 }
 
                 #message-container
