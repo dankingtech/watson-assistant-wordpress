@@ -37,14 +37,16 @@ export default class InputBox extends Component {
           value={this.state.message}
           onChange={this.setMessage.bind(this)}
         />
-        <button type='submit' id='message-send'>
-          <svg xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 48 48" 
-            fill="white"
-          >
-            <path d="M4.02 42L46 24 4.02 6 4 20l30 4-30 4z"/>
-          </svg>
-        </button>
+        {this.props.showSendBtn && 
+          <button type='submit' id='message-send'>
+            <svg xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 48 48" 
+              fill="white"
+            >
+              <path d="M4.02 42L46 24 4.02 6 4 20l30 4-30 4z"/>
+            </svg>
+          </button>
+        }
       </form>
     );
   }

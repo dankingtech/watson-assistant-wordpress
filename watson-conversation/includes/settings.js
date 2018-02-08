@@ -159,6 +159,17 @@ jQuery(document).ready(function($) {
       $('#message-container').css('height', this.value + 'pt');
     });
 
+  $('input[name="watsonconv_send_btn"]')
+    .on('change', function() {
+      if (this.value == 'no') {
+        $('#message-send').hide();
+      } else { 
+        $('#message-send').show();
+      }
+    })
+    .filter('input:checked')
+    .trigger('change');
+
   $('#watsonconv_title')
     .on('input', function() {
       $('#watson-title').text(this.value)

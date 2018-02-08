@@ -192,6 +192,7 @@ class Frontend {
                 'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
                 'title' => get_option('watsonconv_title', ''),
                 'fullScreen' => get_option('watsonconv_full_screen', 'no'),
+                'showSendBtn' => get_option('watsonconv_send_btn', 'no'),
                 'fabConfig' => array(
                     'iconPos' => get_option('watsonconv_fab_icon_pos', 'left'),
                     'text' => get_option('watsonconv_fab_text', '')

@@ -239,6 +239,7 @@
   display: flex;
   height: 2.75em;
   margin: 0;
+  background-color: white;
 }
 
 #watson-box .message-form .message-input

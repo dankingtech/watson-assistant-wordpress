@@ -67,7 +67,7 @@ export default class App extends Component {
   }
 
   render() {
-    let { isMobile, fullScreen, title, callConfig, fabConfig } = this.props;
+    let { isMobile, fullScreen, title, callConfig, fabConfig, showSendBtn } = this.props;
     let { minimized, animated } = this.state;
 
     return (
@@ -91,6 +91,7 @@ export default class App extends Component {
                   position={this.props.position}
                   title={title}
                   callConfig={callConfig}
+                  showSendBtn={showSendBtn}
               />
           </TransitionGroup>
         </Draggable>

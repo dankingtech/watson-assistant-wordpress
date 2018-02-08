@@ -26,6 +26,7 @@ function renderApp() {
       minimized={settings.minimized === 'yes'}
       isMobile={window.matchMedia("(max-width:768px)").matches}
       fullScreen={settings.fullScreen === 'yes'}
+      showSendBtn={settings.showSendBtn == 'yes'}
       position={settings.position}
       fabConfig={settings.fabConfig}
       callConfig={settings.callConfig}

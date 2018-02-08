@@ -182,7 +182,7 @@ export default class ChatBox extends Component {
               )}
             </div>
           </div>
-          <InputBox sendMessage={this.sendMessage.bind(this)} />
+          <InputBox sendMessage={this.sendMessage.bind(this)} showSendBtn={this.props.showSendBtn} />
         </div>
       </div>
     );

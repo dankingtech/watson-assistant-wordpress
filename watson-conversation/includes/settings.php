@@ -1052,6 +1052,8 @@ class Settings {
             array(__CLASS__, 'render_full_screen'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_position', 'Position',
             array(__CLASS__, 'render_position'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_send_btn', 'Show Send Message Button',
+                array(__CLASS__, 'render_send_btn'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_title', 'Chat Box Title',
             array(__CLASS__, 'render_title'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_font_size', 'Font Size',
@@ -1073,6 +1075,7 @@ class Settings {
         register_setting(self::SLUG, 'watsonconv_minimized');
         register_setting(self::SLUG, 'watsonconv_full_screen');
         register_setting(self::SLUG, 'watsonconv_position');
+        register_setting(self::SLUG, 'watsonconv_send_btn');
         register_setting(self::SLUG, 'watsonconv_title');
         register_setting(self::SLUG, 'watsonconv_font_size');
         register_setting(self::SLUG, 'watsonconv_color');
@@ -1163,6 +1166,22 @@ class Settings {
                 )
             ),
             'display: inline-block'
+        );
+    }
+
+    public static function render_send_btn() {
+        self::render_radio_buttons(
+            'watsonconv_send_btn',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
         );
     }
 
