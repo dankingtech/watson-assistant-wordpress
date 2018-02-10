@@ -1,3 +1,5 @@
+/* global settings */
+
 import 'core-js/fn/symbol';
 import 'core-js/fn/promise';
 import 'core-js/fn/object';

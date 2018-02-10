@@ -1,6 +1,6 @@
+/* global jQuery */
+
 import React, { Component } from 'react';
-import Draggable from 'react-draggable';
-import { TransitionGroup } from 'react-transition-group';
 import ReactTooltip from 'react-tooltip-currenttarget';
 import webrtc from 'webrtcsupport';
 
@@ -29,7 +29,7 @@ export default class ChatBox extends Component {
     }
   }
 
-  componentDidMount(props) {
+  componentDidMount() {
     // If conversation already exists, scroll to bottom, otherwise start conversation.
     if (typeof(this.messageList) !== 'undefined') {
       this.messageList.scrollTop = this.messageList.scrollHeight;
@@ -154,7 +154,7 @@ export default class ChatBox extends Component {
       <div id='watson-box' className='drop-shadow animated'>
         <div
           id='watson-header'
-          class='watson-font'
+          className='watson-font'
         >
           <span className={`dashicons dashicons-arrow-${
               position[0] == 'bottom' ? 'down' : 'up'

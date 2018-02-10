@@ -16,7 +16,7 @@ export default class Message extends Component {
       ></div>
       {
         Array.isArray(options) && options.map((option, index) => (
-          <div className={`message message-option watson-font`} onClick={() => { sendMessage(option); }}>
+          <div key={index} className={`message message-option watson-font`} onClick={() => { sendMessage(option); }}>
             {option}
           </div>
         ))

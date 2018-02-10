@@ -1,5 +1,6 @@
+/* global Twilio */
+
 import React, { Component } from 'react';
-import { TransitionGroup } from 'react-transition-group';
 
 export default class CallInterface extends Component {
   constructor(props) {
