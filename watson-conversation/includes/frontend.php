@@ -211,7 +211,7 @@ class Frontend {
                 wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
             }
 
-            wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js', array(), '0.5.6', true);
+            wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js', array(), '0.5.7', true);
             wp_localize_script('chat-app', 'settings', $settings);
         }
     }

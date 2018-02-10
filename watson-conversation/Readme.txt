@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.9
-Stable tag: 0.5.6
+Stable tag: 0.5.7
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -85,6 +85,12 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.5.7 =
+* Improved spacing of chat box button
+* Added more customization for chat box minimized state
+* Added option for Send Message button
+* Fixed appearance of multiple-message responses from chatbot
 
 = 0.5.6 =
 * Fixed issue with chat button remaining clickable when invisible
