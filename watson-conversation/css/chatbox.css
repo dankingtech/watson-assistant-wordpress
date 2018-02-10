@@ -237,6 +237,7 @@
 #watson-box .message-form
 {
   display: flex;
+  flex-direction: row;
   height: 2.75em;
   margin: 0;
   background-color: white;
@@ -246,6 +247,8 @@
 {
   height: 100%;
   width: 100%;
+  flex-grow: 1;
+  
   border: 0;
   padding: 0 0.75em;
   background-color: #fff;
@@ -265,8 +268,7 @@
 
 #watson-box #message-send
 {
-  display: flex;
-  align-items: center;
+  display: table;
   padding: 0 0.5em;
   background-color: rgb(35, 40, 45);
   
@@ -277,6 +279,8 @@
 
 #watson-box #message-send svg
 {
+  display: table-cell;
+  vertical-align: middle;
   height: 1.8em;
   fill: white;
   stroke-width: 0;

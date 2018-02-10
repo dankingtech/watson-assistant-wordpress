@@ -28,7 +28,7 @@ class Frontend {
 
         if (is_null($force_full_screen)) {
             $full_screen_css = (get_option('watsonconv_full_screen', 'no') == 'yes') ? 
-                '%s' : '@media screen and (max-width:768px), screen and (max-height:768px) { %s }';
+                '%s' : '@media screen and (max-width:640px), screen and (max-height:640px) { %s }';
         } else {
             $full_screen_css = $force_full_screen ? '%s' : '';
         }
