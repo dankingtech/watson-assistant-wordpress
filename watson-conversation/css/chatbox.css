@@ -269,6 +269,8 @@
 #watson-box #message-send
 {
   display: table;
+  width: auto;
+  height: auto;
   padding: 0 0.5em;
   background-color: rgb(35, 40, 45);
   
