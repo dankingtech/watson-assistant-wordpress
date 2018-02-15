@@ -40,10 +40,17 @@ class Settings {
 
     public static function init_scripts($hook_suffix) {
         if ($hook_suffix == 'settings_page_'.self::SLUG) {
-            wp_enqueue_style('watsonconv-settings', WATSON_CONV_URL.'css/settings.css');
-            wp_enqueue_style('wp-color-picker');
-            wp_enqueue_script('settings-script', WATSON_CONV_URL.'includes/settings.js',
-                array('wp-color-picker'));
+            wp_enqueue_style(
+                'watsonconv-settings', 
+                WATSON_CONV_URL.'css/settings.css', 
+                array('wp-color-picker')
+            );
+
+            wp_enqueue_script(
+                'settings-script', 
+                WATSON_CONV_URL.'includes/settings.js',
+                array('wp-color-picker', 'jquery-ui-tooltip')
+            );
 
             Frontend::enqueue_styles(false);
         }
@@ -815,18 +822,82 @@ class Settings {
         add_settings_section('watsonconv_behaviour', '',
             array(__CLASS__, 'behaviour_description'), $settings_page);
 
-        add_settings_field('watsonconv_delay', esc_html__('Delay Before Pop-Up', self::SLUG),
+        $delay_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'When you use this setting, the chat box will wait for the chosen number of seconds
+                before being displayed to the user.'
+                , self::SLUG
+            ),
+            esc_html__('Delay Before Pop-Up', self::SLUG)
+        );
+
+        $show_on_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'By default, the chat box pop-up will display on every page of your website.
+                If you choose "Only Certain Pages", you can control which pages you want users
+                to see your chat box on.', 
+                self::SLUG
+            ),
+            esc_html__('Show Chat Box On:', self::SLUG)
+        );
+
+        $front_page_title = sprintf(
+            '<a href="#" title="%s">%s</a>',
+            esc_html__(
+                'This is usually the first page users see when they visit your website.
+                By default, this is a list of the latest posts on your website. However, this 
+                can also be set to a static page in the Reading section of your Settings.', 
+                self::SLUG
+            ),
+            esc_html__('Front Page', self::SLUG)
+        );
+
+        $pages_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'Simply check the boxes next to the pages you want the floating chat box to display on.
+                If you want the chat box to display on every page in this list, you can click the
+                check box at the top next to "Select all Pages".', 
+                self::SLUG
+            ),
+            esc_html__('Pages', self::SLUG)
+        );
+
+        $posts_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'Simply check the boxes next to the posts you want the floating chat box to display on.
+                If you want the chat box to display on every post in this list, you can click the
+                check box at the top next to "Select all Posts".', 
+                self::SLUG
+            ),
+            esc_html__('Posts', self::SLUG)
+        );
+
+        $cats_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'Here, you can select which categories of posts you want to display the chat box on.
+                The chat box will display on every post in the selected categories.', 
+                self::SLUG
+            ),
+            esc_html__('Categories', self::SLUG)
+        );
+
+        add_settings_field('watsonconv_delay', $delay_title,
             array(__CLASS__, 'render_delay'), $settings_page, 'watsonconv_behaviour');
 
-        add_settings_field('watsonconv_show_on', esc_html__('Show Chat Box On', self::SLUG),
+        add_settings_field('watsonconv_show_on', $show_on_title,
             array(__CLASS__, 'render_show_on'), $settings_page, 'watsonconv_behaviour');
-        add_settings_field('watsonconv_home_page', esc_html__('Front Page', self::SLUG),
+        add_settings_field('watsonconv_home_page', $front_page_title,
             array(__CLASS__, 'render_home_page'), $settings_page, 'watsonconv_behaviour');
-        add_settings_field('watsonconv_pages', esc_html__('Pages', self::SLUG),
+        add_settings_field('watsonconv_pages', $pages_title,
             array(__CLASS__, 'render_pages'), $settings_page, 'watsonconv_behaviour');
-        add_settings_field('watsonconv_posts', esc_html__('Posts', self::SLUG),
+        add_settings_field('watsonconv_posts', $posts_title,
             array(__CLASS__, 'render_posts'), $settings_page, 'watsonconv_behaviour');
-        add_settings_field('watsonconv_categories', esc_html__('Categories', self::SLUG),
+        add_settings_field('watsonconv_categories', $cats_title,
             array(__CLASS__, 'render_categories'), $settings_page, 'watsonconv_behaviour');
 
         register_setting(self::SLUG, 'watsonconv_delay');
@@ -1046,30 +1117,141 @@ class Settings {
         add_settings_section('watsonconv_appearance_button', 'Chat Button',
             array(__CLASS__, 'appearance_fab_description'), $settings_page);
 
-        add_settings_field('watsonconv_minimized', 'Chat Box Minimized by Default',
-            array(__CLASS__, 'render_minimized'), $settings_page, "watsonconv_appearance_chatbox");
-        add_settings_field('watsonconv_full_screen', 'Full Screen',
-            array(__CLASS__, 'render_full_screen'), $settings_page, 'watsonconv_appearance_chatbox');
-        add_settings_field('watsonconv_position', 'Position',
-            array(__CLASS__, 'render_position'), $settings_page, 'watsonconv_appearance_chatbox');
-        add_settings_field('watsonconv_send_btn', 'Show Send Message Button',
-                array(__CLASS__, 'render_send_btn'), $settings_page, 'watsonconv_appearance_chatbox');
-        add_settings_field('watsonconv_title', 'Chat Box Title',
-            array(__CLASS__, 'render_title'), $settings_page, 'watsonconv_appearance_chatbox');
-        add_settings_field('watsonconv_font_size', 'Font Size',
-            array(__CLASS__, 'render_font_size'), $settings_page, 'watsonconv_appearance_chatbox');
-        add_settings_field('watsonconv_color', 'Color',
-            array(__CLASS__, 'render_color'), $settings_page, 'watsonconv_appearance_chatbox');
-        add_settings_field('watsonconv_size', 'Window Size',
-            array(__CLASS__, 'render_size'), $settings_page, 'watsonconv_appearance_chatbox');
-        add_settings_field('watsonconv_chatbox_preview', 'Preview',
-            array(__CLASS__, 'render_chatbox_preview'), $settings_page, 'watsonconv_appearance_chatbox');
+        // ---- Chat Box Appearance Section ------
+
+        $minimized_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'This setting only affects how the chat box appears to the user the first time they
+                see it in a single browser session. On every page after the first one, the minimized
+                state will be controlled by the user. If you want to force the chat box to be minimized
+                on a specific page, you can add "chat_min=yes" to the end of the URL (without the quotes).'
+                , self::SLUG
+            ),
+            esc_html__('Chat Box Minimized by Default', self::SLUG)
+        );
+
+        $full_screen_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'If you select "Yes", the chat box will display in full screen mode on desktop devices.
+                The chat box will always display in full screen on mobile devices, regardless of this setting.'
+                , self::SLUG
+            ),
+            esc_html__('Full Screen', self::SLUG)
+        );
+
+        $position_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'This setting determines which corner of the screen the floating chat box will appear
+                in when the user first sees it. If the chat box isn\'t in full screen mode, the user
+                can then drag it to a different position if they please.'
+                , self::SLUG
+            ),
+            esc_html__('Position', self::SLUG)
+        );
+
+        $send_btn_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'Users can send messages from the text box by pressing the "Enter" key on desktop, 
+                or "Submit"/"Go" on mobile device keyboards. If you set this setting to "Yes", then 
+                there will also be a button next to the text box to give the user another option for
+                sending messages.'
+                , self::SLUG
+            ),
+            esc_html__('Show Send Message Button', self::SLUG)
+        );
+
+        // Weird, I know
+        $title_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'This title appears at the top of the chat box, above the messages.'
+                , self::SLUG
+            ),
+            esc_html__('Chat Box Title', self::SLUG)
+        );
+
+        $font_size_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'This changes the font size of the title and messages in the chat box.'
+                , self::SLUG
+            ),
+            esc_html__('Font Size', self::SLUG)
+        );
+
+        $color_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'This changes the color of the chatbox header, and the background color of messages
+                received by the user from the chatbot. The text color is automatically chosen between 
+                black and white depending on the brightness of your color.'
+                , self::SLUG
+            ),
+            esc_html__('Color', self::SLUG)
+        );
+
+        $size_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'This changes the size of the floating chat box window, allowing more space for the
+                messages.'
+                , self::SLUG
+            ),
+            esc_html__('Window Size', self::SLUG)
+        );
         
-        add_settings_field('watsonconv_fab_icon_pos', 'Icon Position',
+
+        add_settings_field('watsonconv_minimized', $minimized_title,
+            array(__CLASS__, 'render_minimized'), $settings_page, "watsonconv_appearance_chatbox");
+        add_settings_field('watsonconv_full_screen', $full_screen_title,
+            array(__CLASS__, 'render_full_screen'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_position', $position_title,
+            array(__CLASS__, 'render_position'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_send_btn', $send_btn_title,
+                array(__CLASS__, 'render_send_btn'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_title', $title_title,
+            array(__CLASS__, 'render_title'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_font_size', $font_size_title,
+            array(__CLASS__, 'render_font_size'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_color', $color_title,
+            array(__CLASS__, 'render_color'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_size', $size_title,
+            array(__CLASS__, 'render_size'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_chatbox_preview', esc_html__('Preview'),
+            array(__CLASS__, 'render_chatbox_preview'), $settings_page, 'watsonconv_appearance_chatbox');
+
+        // ---- FAB Appearance Section ------
+
+        $fab_icon_pos_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'If you want the chat button to have an icon and a text label, then you can specify whether
+                you want the icon to be on the left of the text or the right. If there is no text,
+                the position doesn\'t matter. Alternatively, you can hide the icon and just use text.'
+                , self::SLUG
+            ),
+            esc_html__('Icon Position', self::SLUG)
+        );
+
+        $fab_text_title = sprintf(
+            '<a href="#" title="%s">%s</a>', 
+            esc_html__(
+                'This is the label for the chat button that users click to open the chat box. This
+                can be left blank if you like.'
+                , self::SLUG
+            ),
+            esc_html__('Text Label', self::SLUG)
+        );
+        
+        add_settings_field('watsonconv_fab_icon_pos', $fab_icon_pos_title,
             array(__CLASS__, 'render_fab_icon_pos'), $settings_page, 'watsonconv_appearance_button');
-        add_settings_field('watsonconv_fab_text', 'Text',
+        add_settings_field('watsonconv_fab_text', $fab_text_title,
             array(__CLASS__, 'render_fab_text'), $settings_page, 'watsonconv_appearance_button');
-        add_settings_field('watsonconv_fab_preview', 'Preview',
+        add_settings_field('watsonconv_fab_preview', esc_html__('Preview'),
             array(__CLASS__, 'render_fab_preview'), $settings_page, 'watsonconv_appearance_button');
 
         register_setting(self::SLUG, 'watsonconv_minimized');

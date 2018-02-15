@@ -35,6 +35,24 @@ a:hover {
   transition: box-shadow 0.3s cubic-bezier(.25,.8,.25,1);
 }
 
+div.tab-page a[title]
+{
+ cursor: default;
+}
+
+.ui-tooltip {
+  display: block;
+  position: absolute;
+  z-index: 10000;
+  
+  max-width: 40em;
+  padding: 8px;
+
+  background-color: white;
+  border-radius: 3px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
 pre {
   white-space: pre-wrap;     
   white-space: -moz-pre-wrap;

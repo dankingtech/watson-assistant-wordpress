@@ -43,6 +43,11 @@ jQuery(document).ready(function($) {
     switch_tab(sessionStorage.getItem('watsonconv_active_tab'));
   }
 
+  $(document).tooltip({
+    show: 200,
+    hide: 200
+  });
+
   $('#error_expand')
     .on('click', function(e) {
       e.preventDefault();
