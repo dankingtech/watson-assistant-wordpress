@@ -24,9 +24,9 @@ export default class App extends Component {
     let params = qs.parse(window.location.search);
 
     if (params.hasOwnProperty('chat_min')) {
-      if (params.chat_min == 'true') {
+      if (params.chat_min == 'true' || params.chat_min == 'yes') {
         this.state.minimized = true;
-      } else if (params.chat_min == 'false') {
+      } else if (params.chat_min == 'false' || params.chat_min == 'no') {
         this.state.minimized = false;
       }
     }
@@ -66,8 +66,7 @@ export default class App extends Component {
     }
   }
 
-  render({isMobile}, {minimized, animated}) {
-    let fullScreen = (watsonconvSettings.fullScreen === 'yes');
+  render(props, {minimized, animated}) {
     let showSendBtn = (watsonconvSettings.showSendBtn === 'yes');
 
     return (
@@ -77,7 +76,6 @@ export default class App extends Component {
           cancel='#watson-header .header-button'
           onStart={this.startDragging.bind(this)}
           onStop={this.savePosition.bind(this)}
-          position={(minimized || fullScreen || isMobile) ? {x: 0, y: 0} : this.state.position}
         >
           <TransitionGroup
             id='watson-float'

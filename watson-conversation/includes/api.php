@@ -161,7 +161,7 @@ class API {
                 return new \WP_Error(
                     'watson_error',
                     $response_body,
-                    $response_code
+                    !empty($response_code) ? array('status' => $response_code) : array()
                 );
             } else {
                 return $response_body;
