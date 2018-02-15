@@ -16,7 +16,7 @@ export default class App extends Component {
       this.state = JSON.parse(sessionStorage.getItem('watson_bot_window_state'));
     } else {
       this.state = {
-        minimized: props.isMobile || props.minimized,
+        minimized: props.isMobile || (watsonconvSettings.minimized === 'yes'),
         position: {x: 0, y: 0}
       };
     }
@@ -66,16 +66,15 @@ export default class App extends Component {
     }
   }
 
-  render() {
-    let { isMobile, fullScreen, title, callConfig, fabConfig, showSendBtn } = this.props;
-    let { minimized, animated } = this.state;
+  render({isMobile}, {minimized, animated}) {
+    let fullScreen = (watsonconvSettings.fullScreen === 'yes');
+    let showSendBtn = (watsonconvSettings.showSendBtn === 'yes');
 
     return (
       <div>
         <Draggable
           handle='#watson-header'
           cancel='#watson-header .header-button'
-          bounds={(fullScreen || isMobile) && {left: 0, top: 0, right: 0, bottom: 0}}
           onStart={this.startDragging.bind(this)}
           onStop={this.savePosition.bind(this)}
           position={(minimized || fullScreen || isMobile) ? {x: 0, y: 0} : this.state.position}
@@ -88,9 +87,6 @@ export default class App extends Component {
               <ChatBox
                   minimize={this.toggleMinimize.bind(this)}
                   isMinimized={minimized}
-                  position={this.props.position}
-                  title={title}
-                  callConfig={callConfig}
                   showSendBtn={showSendBtn}
               />
           </TransitionGroup>
@@ -100,13 +96,7 @@ export default class App extends Component {
           class='animated'
           style={!minimized && {opacity: 0 , visibility: 'hidden'}}
         >
-          {minimized && 
-            <Fab 
-              openChat={this.toggleMinimize.bind(this)} 
-              iconPos={fabConfig.iconPos} 
-              text={fabConfig.text} 
-            />
-          }
+          {minimized && <Fab openChat={this.toggleMinimize.bind(this)} />}
         </TransitionGroup>
       </div>
     );

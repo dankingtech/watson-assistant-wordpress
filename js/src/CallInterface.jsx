@@ -71,13 +71,13 @@ export default class CallInterface extends Component {
     this.setState({calling: false});
   }
 
-  render() {
-    var { callButton, recipient } = this.props.callConfig;
+  render({allowTwilio}, {calling, log}) {
+    let { callButton, recipient } = watsonconvSettings.callConfig;
 
     return <span id='call-interface'>
-        {this.state.calling ? 
+        {calling ? 
           <div id='controls'>
-            <p>{this.state.log}</p>
+            <p>{log}</p>
             <button onClick={this.disconnect.bind(this)}>Hang Up</button>
           </div> 
           :
@@ -86,7 +86,7 @@ export default class CallInterface extends Component {
               Dial <a href={`tel:${recipient}`}>{recipient}</a>
             </p>
             
-            {this.props.allowTwilio && <div>
+            {allowTwilio && <div>
               <p>
                 or
               </p>

@@ -212,7 +212,7 @@ class Frontend {
             }
 
             wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js', array(), '0.5.9', true);
-            wp_localize_script('chat-app', 'settings', $settings);
+            wp_localize_script('chat-app', 'watsonconvSettings', $settings);
         }
     }
 

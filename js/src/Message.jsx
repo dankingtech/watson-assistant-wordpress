@@ -6,9 +6,7 @@ export default class Message extends Component {
     return false;
   }
 
-  render() {
-    let {sendMessage, message: {from, text, options}} = this.props;
-
+  render({sendMessage, message: {from, text, options}}) {
     return <div>
       <div
         className={`message ${from}-message watson-font`}

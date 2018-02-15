@@ -140,15 +140,17 @@ export default class ChatBox extends Component {
   }
 
   render() {
-    var position = this.props.position || ['bottom', 'right'];
-    var showCallInterface = this.state.showCallInterface;
+    let { callConfig } = watsonconvSettings;
 
-    var allowTwilio = this.props.callConfig.useTwilio == 'yes'
-                    && this.props.callConfig.configured
+    let position = watsonconvSettings.position || ['bottom', 'right'];
+
+    let showCallInterface = this.state.showCallInterface;
+    let allowTwilio = callConfig.useTwilio == 'yes'
+                    && callConfig.configured
                     && webrtc.support 
                     && this.state.mediaSecure;
     
-    var hasNumber = Boolean(this.props.callConfig.recipient);
+    let hasNumber = Boolean(callConfig.recipient);
 
     return (
       <div id='watson-box' className='drop-shadow animated'>
@@ -163,15 +165,15 @@ export default class ChatBox extends Component {
             <span
               onClick={this.toggleCallInterface.bind(this)} 
               className={`dashicons dashicons-phone header-button`}
-              data-tip={this.props.callConfig.callTooltip || 'Talk to a Live Agent'}>
+              data-tip={callConfig.callTooltip || 'Talk to a Live Agent'}>
             </span>
           }
           <ReactTooltip />
-          <div className='overflow-hidden watson-font'>{this.props.title}</div>
+          <div className='overflow-hidden watson-font'>{watsonconvSettings.title}</div>
         </div>
         <div style={{position: 'relative', height: '100%', 'display': 'flex', 'flex-direction': 'column'}}>
           {hasNumber && showCallInterface && 
-            <CallInterface allowTwilio={allowTwilio} callConfig={this.props.callConfig} />}
+            <CallInterface allowTwilio={allowTwilio} />}
           <div id='message-container'>
             <div id='messages' ref={div => {this.messageList = div}}>
               <div style={{'text-align': 'right', margin: '-5 0 5 10'}} className='watson-font'>

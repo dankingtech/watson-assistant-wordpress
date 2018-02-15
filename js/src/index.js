@@ -1,5 +1,3 @@
-/* global settings */
-
 import 'core-js/fn/symbol';
 import 'core-js/fn/promise';
 import 'core-js/fn/object';
@@ -21,16 +19,7 @@ if (typeof localStorage !== 'undefined') {
 
 function renderApp() {
   ReactDOM.render(
-    <App
-      title={settings.title}
-      minimized={settings.minimized === 'yes'}
-      isMobile={window.matchMedia("(max-width:768px)").matches}
-      fullScreen={settings.fullScreen === 'yes'}
-      showSendBtn={settings.showSendBtn == 'yes'}
-      position={settings.position}
-      fabConfig={settings.fabConfig}
-      callConfig={settings.callConfig}
-    />,
+    <App isMobile={window.matchMedia("(max-width:768px)").matches} />,
     document.getElementById('watsonconv-chat-box')
   );
 }
@@ -40,5 +29,5 @@ if (typeof(sessionStorage) !== 'undefined' &&
 {
   renderApp();
 } else {
-  setTimeout(renderApp, settings.delay*1000);
+  setTimeout(renderApp, watsonconvSettings.delay*1000);
 }

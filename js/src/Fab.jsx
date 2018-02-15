@@ -1,6 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default ({openChat, text, iconPos}) => (
+let {text, iconPos} = watsonconvSettings.fabConfig;
+
+const Fab = ({openChat}) => (
   <div
     id='watson-fab' 
     class='drop-shadow animated' 
@@ -11,3 +13,5 @@ export default ({openChat, text, iconPos}) => (
     {iconPos === 'right' && <span id='watson-fab-icon' class='dashicons dashicons-format-chat'></span>}
   </div>
 );
+
+export default Fab;
