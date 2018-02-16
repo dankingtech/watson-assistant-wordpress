@@ -107,10 +107,6 @@ export default class ChatBox extends Component {
     }).then(body => {
       let { text } = body.output;
 
-      if (Array.isArray(text)) {
-        text = text.map(message => message.trim()).join(' ');
-      }
-
       this.setState({
         context: body.context,
         messages: this.state.messages.concat({

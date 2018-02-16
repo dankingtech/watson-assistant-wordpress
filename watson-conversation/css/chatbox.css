@@ -294,7 +294,7 @@
   clear: both;
   border-top-right-radius: 1.4em;
   border-bottom-right-radius: 1.4em;
-  margin-bottom: -1px;
+  margin-bottom: 2px;
   padding: 0.5em 0.8em;
   max-width: 80%;
   word-wrap: break-word;
@@ -320,6 +320,8 @@
   position: relative;
   cursor: pointer;
   border: 1px solid;
+  margin-top: 1px;
+  margin-bottom: -2px;
   background-color: white;
   color: rgb(35, 40, 45);
 }
