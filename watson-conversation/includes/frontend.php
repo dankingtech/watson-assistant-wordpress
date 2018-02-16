@@ -27,10 +27,11 @@ class Frontend {
         $main_color_dark = vsprintf('rgb(%d, %d, %d)', $color_rgb);
 
         if (is_null($force_full_screen)) {
-            $full_screen_css = (get_option('watsonconv_full_screen', 'no') == 'yes') ? 
-                '%s' : '@media screen and (max-width:768px) { %s }';
+            $full_screen_settings = get_option('watsonconv_full_screen');
+            $full_screen_query = isset($full_screen_settings['query']) ?
+                $full_screen_settings['query'] : '@media screen and (max-width:640px) { %s }';
         } else {
-            $full_screen_css = $force_full_screen ? '%s' : '';
+            $full_screen_query = $force_full_screen ? '%s' : '';
         }
 
         wp_add_inline_style('watsonconv-chatbox', '
@@ -107,7 +108,7 @@ class Frontend {
                 }
             }' . 
             sprintf(
-                $full_screen_css, 
+                $full_screen_query, 
                 '#watson-box
                 {
                   width: 100%;

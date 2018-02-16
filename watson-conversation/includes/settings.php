@@ -10,6 +10,7 @@ add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settin
 
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_credentials'));
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_show_on'));
+add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_full_screen'));
 
 class Settings {
     const SLUG = 'watsonconv';
@@ -1260,7 +1261,7 @@ class Settings {
             array(__CLASS__, 'render_fab_preview'), $settings_page, 'watsonconv_appearance_button');
 
         register_setting(self::SLUG, 'watsonconv_minimized');
-        register_setting(self::SLUG, 'watsonconv_full_screen');
+        register_setting(self::SLUG, 'watsonconv_full_screen', array(__CLASS__, 'parse_full_screen_settings'));
         register_setting(self::SLUG, 'watsonconv_position');
         register_setting(self::SLUG, 'watsonconv_send_btn');
         register_setting(self::SLUG, 'watsonconv_title');
@@ -1296,21 +1297,115 @@ class Settings {
             )
         );
     }
+
+    public static function migrate_old_full_screen() {
+        if (get_option('watsonconv_full_screen') == 'yes') {
+            update_option(
+                'watsonconv_full_screen', 
+                array(
+                    'mode' => 'all',
+                    'max_width' => '640px',
+                    'query' => '%s'
+                )
+            );
+        } else if (get_option('watsonconv_full_screen') == 'no') {
+            update_option(
+                'watsonconv_full_screen', 
+                array(
+                    'mode' => 'mobile',
+                    'max_width' => '640px',
+                    'query' => '@media screen and (max-width:640px) { %s }'
+                )
+            );
+        }
+    }
+
+    public static function parse_full_screen_settings($settings) {
+        if ($settings['mode'] == 'all') {
+            $settings['query'] = '%s';
+        } else if ($settings['mode'] == 'mobile') {
+            $settings['query'] = '@media screen and (max-width:'.$settings['max_width'].') { %s }';
+        } else if ($settings['mode'] == 'custom') {
+            $settings['query'] = $settings['query'] . ' { %s }';
+        } else {
+            $settings['query'] = '';
+        }
+
+        return $settings;
+    }
     
     public static function render_full_screen() {
-        self::render_radio_buttons(
-            'watsonconv_full_screen',
-            'no',
-            array(
-                array(
-                    'label' => esc_html__('Yes', self::SLUG),
-                    'value' => 'yes'
-                ), array(
-                    'label' => esc_html__('No', self::SLUG),
-                    'value' => 'no'
-                )
-            )
-        );
+        $settings = get_option('watsonconv_full_screen');
+
+        $mode = isset($settings['mode']) ? $settings['mode'] : 'mobile';
+        $max_width = isset($settings['max_width']) ? $settings['max_width'] : '640px';
+        $query = isset($settings['query']) ? 
+            substr($settings['query'], 0, -7) : 
+            '@media screen and (max-width:640px)';
+
+        ?>
+            <input
+                name="watsonconv_full_screen[mode]"
+                id="watsonconv_full_screen_all"
+                type="radio"
+                value="all"
+                <?php checked('all', $mode) ?>
+            >
+            <label for="watsonconv_full_screen_all">
+                Always
+            </label><br />
+
+            <input
+                name="watsonconv_full_screen[mode]"
+                id="watsonconv_full_screen_mobile"
+                type="radio"
+                value="mobile"
+                <?php checked('mobile', $mode) ?>
+            >
+            <label for="watsonconv_full_screen_mobile">
+                Only Small Devices
+            </label><br />
+            <div id="watsonconv_full_screen_max_width">
+                Maximum Width: 
+                <input
+                    name="watsonconv_full_screen[max_width]"
+                    type="text"
+                    value="<?php echo $max_width ?>"
+                    style="width: 6em"
+                >
+            </div>
+
+            <input
+                name="watsonconv_full_screen[mode]"
+                id="watsonconv_full_screen_never"
+                type="radio"
+                value="never"
+                <?php checked('never', $mode) ?>
+            >
+            <label for="watsonconv_full_screen_never">
+                Never (Not recommended)
+            </label><br />
+            
+            <input
+                name="watsonconv_full_screen[mode]"
+                id="watsonconv_full_screen_custom"
+                type="radio"
+                value="custom"
+                <?php checked('custom', $mode) ?>
+            >
+            <label for="watsonconv_full_screen_custom">
+                Custom CSS query (Advanced)
+            </label><br />
+            <div id="watsonconv_full_screen_query">
+                Query: 
+                <input
+                    name="watsonconv_full_screen[query]"
+                    type="text"
+                    value="<?php echo $query ?>"
+                    style="width: 40em"
+                >
+            </div>
+        <?php
     }
 
     public static function render_position() {

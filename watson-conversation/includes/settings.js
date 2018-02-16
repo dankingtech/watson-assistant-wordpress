@@ -131,6 +131,22 @@ jQuery(document).ready(function($) {
 
   // ------ Appearance Section ------
 
+  $('input[name="watsonconv_full_screen[mode]"]')
+    .on('change', function() {
+      if (this.value == 'mobile') {
+        $('#watsonconv_full_screen_query').hide();
+        $('#watsonconv_full_screen_max_width').show();
+      } else if (this.value == 'custom') {
+        $('#watsonconv_full_screen_query').show();
+        $('#watsonconv_full_screen_max_width').hide();
+      } else {
+        $('#watsonconv_full_screen_query').hide();
+        $('#watsonconv_full_screen_max_width').hide();
+      }
+    })
+    .filter('input:checked')
+    .trigger('change');
+
   $('#watsonconv_color')
     .wpColorPicker({
       palettes: true,

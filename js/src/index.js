@@ -19,7 +19,7 @@ if (typeof localStorage !== 'undefined') {
 
 function renderApp() {
   ReactDOM.render(
-    <App isMobile={window.matchMedia("(max-width:768px)").matches} />,
+    <App isMobile={window.matchMedia("(max-width:640px)").matches} />,
     document.getElementById('watsonconv-chat-box')
   );
 }
