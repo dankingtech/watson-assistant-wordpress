@@ -532,7 +532,7 @@ class Settings {
         $client_limit = get_option('watsonconv_client_limit');
     ?>
         <input name="watsonconv_client_limit" id="watsonconv_client_limit" type="number"
-            value="<?php echo empty($client_limit) ? 0 : $client_limit?>"
+            value="<?php echo empty($client_limit) ? 0 : $client_limit ?>"
             style="width: 8em" />
         <select name="watsonconv_client_interval" id="watsonconv_client_interval">
             <option value="monthly" <?php selected(get_option('watsonconv_client_interval', 'monthly'), 'monthly')?>>
@@ -823,7 +823,7 @@ class Settings {
             array(__CLASS__, 'behaviour_description'), $settings_page);
 
         $delay_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'When you use this setting, the chat box will wait for the chosen number of seconds
                 before being displayed to the user.'
@@ -833,7 +833,7 @@ class Settings {
         );
 
         $show_on_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'By default, the chat box pop-up will display on every page of your website.
                 If you choose "Only Certain Pages", you can control which pages you want users
@@ -844,7 +844,7 @@ class Settings {
         );
 
         $front_page_title = sprintf(
-            '<a href="#" title="%s">%s</a>',
+            '<span href="#" title="%s">%s</span>',
             esc_html__(
                 'This is usually the first page users see when they visit your website.
                 By default, this is a list of the latest posts on your website. However, this 
@@ -855,7 +855,7 @@ class Settings {
         );
 
         $pages_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'Simply check the boxes next to the pages you want the floating chat box to display on.
                 If you want the chat box to display on every page in this list, you can click the
@@ -866,7 +866,7 @@ class Settings {
         );
 
         $posts_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'Simply check the boxes next to the posts you want the floating chat box to display on.
                 If you want the chat box to display on every post in this list, you can click the
@@ -877,7 +877,7 @@ class Settings {
         );
 
         $cats_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'Here, you can select which categories of posts you want to display the chat box on.
                 The chat box will display on every post in the selected categories.', 
@@ -1120,7 +1120,7 @@ class Settings {
         // ---- Chat Box Appearance Section ------
 
         $minimized_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'This setting only affects how the chat box appears to the user the first time they
                 see it in a single browser session. On every page after the first one, the minimized
@@ -1132,17 +1132,22 @@ class Settings {
         );
 
         $full_screen_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
-                'If you select "Yes", the chat box will display in full screen mode on desktop devices.
-                The chat box will always display in full screen on mobile devices, regardless of this setting.'
+                'Choosing "Always" causes the chat box to always display in full-screen mode. 
+                On small devices, it can get hard to use the default draggable floating chat box.
+                By checking the "Only Small Devices" option, you can keep the floating chat box
+                for laptops and desktop computers while showing it in full screen mode for mobile
+                devices with a smaller width. The "Never" option causes the floating chat box to
+                always be used, though this can be difficult to use on small devices. Advanced users
+                can also write their own custom CSS media query by choosing the last option.'
                 , self::SLUG
             ),
             esc_html__('Full Screen', self::SLUG)
         );
 
         $position_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'This setting determines which corner of the screen the floating chat box will appear
                 in when the user first sees it. If the chat box isn\'t in full screen mode, the user
@@ -1153,7 +1158,7 @@ class Settings {
         );
 
         $send_btn_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'Users can send messages from the text box by pressing the "Enter" key on desktop, 
                 or "Submit"/"Go" on mobile device keyboards. If you set this setting to "Yes", then 
@@ -1166,7 +1171,7 @@ class Settings {
 
         // Weird, I know
         $title_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'This title appears at the top of the chat box, above the messages.'
                 , self::SLUG
@@ -1175,7 +1180,7 @@ class Settings {
         );
 
         $font_size_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'This changes the font size of the title and messages in the chat box.'
                 , self::SLUG
@@ -1184,7 +1189,7 @@ class Settings {
         );
 
         $color_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'This changes the color of the chatbox header, and the background color of messages
                 received by the user from the chatbot. The text color is automatically chosen between 
@@ -1195,7 +1200,7 @@ class Settings {
         );
 
         $size_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'This changes the size of the floating chat box window, allowing more space for the
                 messages.'
@@ -1227,7 +1232,7 @@ class Settings {
         // ---- FAB Appearance Section ------
 
         $fab_icon_pos_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'If you want the chat button to have an icon and a text label, then you can specify whether
                 you want the icon to be on the left of the text or the right. If there is no text,
@@ -1238,7 +1243,7 @@ class Settings {
         );
 
         $fab_text_title = sprintf(
-            '<a href="#" title="%s">%s</a>', 
+            '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'This is the label for the chat button that users click to open the chat box. This
                 can be left blank if you like.'
