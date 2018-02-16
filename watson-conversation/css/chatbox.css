@@ -270,8 +270,9 @@
 {
   display: table;
   width: auto;
-  height: auto;
-  padding: 0 0.5em;
+  height: 100%;
+  line-height: 0;
+  padding: 0;
   background-color: rgb(35, 40, 45);
   
   border-bottom-left-radius: 0;
@@ -279,14 +280,18 @@
   border-top-right-radius: 0;
 }
 
-#watson-box #message-send svg
+#watson-box #message-send div
 {
   display: table-cell;
   vertical-align: middle;
+  padding: 0 0.5em 0 0.6em;
+}
+
+#watson-box #message-send div svg
+{
   height: 1.8em;
   fill: white;
   stroke-width: 0;
-  margin-left: 0.1em;
 }
 
 #message-container #messages .message
