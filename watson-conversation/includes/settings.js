@@ -15,6 +15,10 @@ if (typeof localStorage !== 'undefined') {
 function luminance(hex) {
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
+  if (!Array.isArray(result) || result.length !== 4) {
+    return 0;
+  }
+
   var rgb = result.slice(1, 4).map(function(val) {
     val = parseInt(val, 16) / 255;
 

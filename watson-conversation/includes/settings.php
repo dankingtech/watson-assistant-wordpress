@@ -1193,8 +1193,10 @@ class Settings {
             '<span href="#" title="%s">%s</span>', 
             esc_html__(
                 'This changes the color of the chatbox header, and the background color of messages
-                received by the user from the chatbot. The text color is automatically chosen between 
-                black and white depending on the brightness of your color.'
+                received by the user from the chatbot. If your version of Wordpress does not support
+                the color picker, you will have to manually enter the color in hexadecimal format 
+                prefixed with #. For example, white would be written as #ffffff or #FFFFFF, and black
+                would be written as #000000.'
                 , self::SLUG
             ),
             esc_html__('Color', self::SLUG)
@@ -1266,7 +1268,7 @@ class Settings {
         register_setting(self::SLUG, 'watsonconv_send_btn');
         register_setting(self::SLUG, 'watsonconv_title');
         register_setting(self::SLUG, 'watsonconv_font_size');
-        register_setting(self::SLUG, 'watsonconv_color');
+        register_setting(self::SLUG, 'watsonconv_color', array(__CLASS__,  'validate_color'));
         register_setting(self::SLUG, 'watsonconv_size');
 
         register_setting(self::SLUG, 'watsonconv_fab_icon_pos');
@@ -1482,6 +1484,18 @@ class Settings {
             value="<?php echo get_option('watsonconv_font_size', 11) ?>" />
         pt
     <?php
+    }
+
+    public static function validate_color($val) {
+        if (strlen($val) < 7 || count(sscanf($val, "#%02x%02x%02x")) !== 3) {
+            add_settings_error('watsonconv_color', 'invalid-format', 
+                'The color entered must be in 6-digit hexadecimal format prefixed with #. For example, 
+                white would be written as #ffffff or #FFFFFF, and black would be written as #000000.');
+
+            return get_option('watsonconv_color', '#23282d');
+        }
+
+        return $val;
     }
 
     public static function render_color() {
