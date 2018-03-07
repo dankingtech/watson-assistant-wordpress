@@ -119,15 +119,27 @@
   font-weight: 600;
   color: white;
   background-color: rgb(35, 40, 45);
-  cursor: pointer;
+  cursor: default;
 
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
 
+#watson-float #watson-box #watson-header
+{
+  cursor: pointer;
+}
+
 #watson-box #watson-header .popup-control
 {
+  display: none
+}
+
+#watson-float #watson-box #watson-header .popup-control
+{
+  display: initial;
+
   float: right;
   font-size: 1.45em;
   opacity: 0.6;
@@ -140,10 +152,17 @@
   float: right;
   font-size: 1.15em;
   margin-top: 0.15em;
-  margin-right: 0.75em;
+  margin-right: 0.2em;
   opacity: 0.6;
   height: auto;
   width: auto;
+
+  cursor: pointer;
+}
+
+#watson-float #watson-header .header-button
+{
+  margin-right: 0.75em;
 }
 
 #watson-box #watson-header:hover .popup-control, #watson-box #watson-header .header-button:hover
@@ -239,6 +258,7 @@
   display: flex;
   flex-direction: row;
   height: 2.75em;
+  width: 100%;
   margin: 0;
   background-color: white;
 }

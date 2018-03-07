@@ -3,10 +3,13 @@ namespace WatsonConv;
 
 add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'render_chat_box'));
 add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
+add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'watsonconv_shortcode'));
 
 class Frontend {
+    const VERSION = '0.6.0';
+
     public static function enqueue_styles($force_full_screen = null) {
-        wp_enqueue_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), '0.5.10');
+        wp_enqueue_style('watsonconv-chatbox');
 
         $font_size = get_option('watsonconv_font_size', 11);
         $color_rgb = sscanf(get_option('watsonconv_color', '#23282d'), "#%02x%02x%02x");
@@ -109,10 +112,15 @@ class Frontend {
             }' . 
             sprintf(
                 $full_screen_query, 
-                '#watson-box
+                '#watson-float #watson-box
                 {
                   width: 100%;
                   height: 100%;
+                }
+
+                #watson-box
+                {
+                  max-width: 100%;
                 }
               
                 #watson-float
@@ -124,14 +132,9 @@ class Frontend {
                   transform: translate(0, 0) !important;
                 }
 
-                #message-container
+                #watson-float #message-container
                 {
                     height: auto;
-                }
-              
-                #watson-box .message-form
-                {
-                  width: 100vw;
                 }'
             )
         );
@@ -151,7 +154,43 @@ class Frontend {
         return 0.2126 * $lin_rgb[0] + 0.7152 * $lin_rgb[1] + 0.0722 * $lin_rgb[2];
     }
 
+    public static function get_settings() {
+        $twilio_config = get_option('watsonconv_twilio');
+
+        $call_configured = boolval(
+            !empty($twilio_config['sid']) && 
+            !empty($twilio_config['auth_token']) && 
+            get_option('watsonconv_twiml_sid') &&
+            get_option('watsonconv_call_id') &&
+            get_option('watsonconv_call_recipient')
+        );
+
+        return array(
+            'delay' => (int) get_option('watsonconv_delay', 0),
+            'minimized' => get_option('watsonconv_minimized', 'no'),
+            'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
+            'title' => get_option('watsonconv_title', ''),
+            'fullScreen' => get_option('watsonconv_full_screen', 'no'),
+            'showSendBtn' => get_option('watsonconv_send_btn', 'no'),
+            'fabConfig' => array(
+                'iconPos' => get_option('watsonconv_fab_icon_pos', 'left'),
+                'text' => get_option('watsonconv_fab_text', '')
+            ),
+            'callConfig' => array(
+                'useTwilio' => get_option('watsonconv_use_twilio', 'no'),
+                'configured' => $call_configured,
+                'recipient' => get_option('watsonconv_call_recipient'),
+                'callTooltip' => get_option('watsonconv_call_tooltip'),
+                'callButton' => get_option('watsonconv_call_button'),
+                'callingText' => get_option('watsonconv_calling_text')
+            )
+        );
+    }
+
     public static function render_chat_box() {
+        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array(), self::VERSION, true);
+        wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::VERSION);
+
         $ip_addr = API::get_client_ip();
 
         $page_selected =
@@ -175,51 +214,55 @@ class Frontend {
                 $client_requests < get_option('watsonconv_client_limit', 100)) &&
             !empty($credentials)) {
 
-            Frontend::enqueue_styles();
-
-            $twilio_config = get_option('watsonconv_twilio');
-
-            $call_configured = boolval(
-                !empty($twilio_config['sid']) && 
-                !empty($twilio_config['auth_token']) && 
-                get_option('watsonconv_twiml_sid') &&
-                get_option('watsonconv_call_id') &&
-                get_option('watsonconv_call_recipient')
-            );
-
-            $settings = array(
-                'delay' => (int) get_option('watsonconv_delay', 0),
-                'minimized' => get_option('watsonconv_minimized', 'no'),
-                'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
-                'title' => get_option('watsonconv_title', ''),
-                'fullScreen' => get_option('watsonconv_full_screen', 'no'),
-                'showSendBtn' => get_option('watsonconv_send_btn', 'no'),
-                'fabConfig' => array(
-                    'iconPos' => get_option('watsonconv_fab_icon_pos', 'left'),
-                    'text' => get_option('watsonconv_fab_text', '')
-                ),
-                'callConfig' => array(
-                    'useTwilio' => get_option('watsonconv_use_twilio', 'no'),
-                    'configured' => $call_configured,
-                    'recipient' => get_option('watsonconv_call_recipient'),
-                    'callTooltip' => get_option('watsonconv_call_tooltip'),
-                    'callButton' => get_option('watsonconv_call_button'),
-                    'callingText' => get_option('watsonconv_calling_text')
-                )
-            );
-
-            if ($settings['callConfig']['useTwilio'] == 'yes' && $call_configured) {
+            self::enqueue_styles();
+            $settings = self::get_settings();
+            
+            if ($settings['callConfig']['useTwilio'] == 'yes' && $settings['callConfig']['callConfigured']) {
                 wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
             }
 
-            wp_enqueue_script('chat-app', WATSON_CONV_URL.'app.js', array(), '0.5.10', true);
-            wp_localize_script('chat-app', 'watsonconvSettings', $settings);
+            wp_enqueue_script('watsonconv-chat-app');
+            wp_localize_script('watsonconv-chat-app', 'watsonconvSettings', $settings);
         }
+    }
+
+    public static function watsonconv_shortcode() {
+        $ip_addr = API::get_client_ip();
+
+        $total_requests = get_option('watsonconv_total_requests', 0) +
+            get_transient('watsonconv_total_requests') ?: 0;
+        $client_requests = get_option("watsonconv_requests_$ip_addr", 0) +
+            get_transient("watsonconv_requests_$ip_addr") ?: 0;
+
+        $credentials = get_option('watsonconv_credentials');
+
+        if ((get_option('watsonconv_use_limit', 'no') == 'no' ||
+                $total_requests < get_option('watsonconv_limit', 10000)) &&
+            (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
+                $client_requests < get_option('watsonconv_client_limit', 100)) &&
+            !empty($credentials)) 
+        {
+            if (!wp_script_is('watsonconv-chat-app', 'enqueued')) {
+                self::enqueue_styles();
+                $settings = self::get_settings();
+                
+                if ($settings['callConfig']['useTwilio'] == 'yes' && $settings['callConfig']['callConfigured']) {
+                    wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
+                }
+    
+                wp_enqueue_script('watsonconv-chat-app');
+                wp_localize_script('watsonconv-chat-app', 'watsonconvSettings', $settings);
+            }
+
+            return '<div id="watsonconv-inline-box"></div>';
+        }
+
+        return '';
     }
 
     public static function render_div() {
         ?>
-            <div id="watsonconv-chat-box"></div>
+            <div id="watsonconv-floating-box"></div>
         <?php
     }
 }

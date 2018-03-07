@@ -6,6 +6,7 @@ import 'core-js/es6/map';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App.jsx';
+import ChatBox from './ChatBox.jsx';
 
 if (typeof localStorage !== 'undefined') {
     try {
@@ -17,11 +18,21 @@ if (typeof localStorage !== 'undefined') {
     }
 }
 
+let shortcodeDiv = document.getElementById('watsonconv-inline-box');
+let floatDiv = document.getElementById('watsonconv-floating-box');
+
 function renderApp() {
-  ReactDOM.render(
-    <App isMobile={window.matchMedia("(max-width:640px)").matches} />,
-    document.getElementById('watsonconv-chat-box')
-  );
+  if (shortcodeDiv) {
+    ReactDOM.render(
+      <ChatBox isMinimized={false} />,
+      shortcodeDiv
+    );
+  } else if (floatDiv) {
+    ReactDOM.render(
+      <App isMobile={window.matchMedia("(max-width:640px)").matches} />,
+      floatDiv
+    );
+  }
 }
 
 if (typeof(sessionStorage) !== 'undefined' &&
