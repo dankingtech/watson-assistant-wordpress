@@ -135,7 +135,7 @@ class API {
                 )
             );
             
-            do_action('watsonconv_message_pre_send', $response_body);
+            do_action('watsonconv_message_pre_send', $send_body);
 
             $response = wp_remote_post(
                 $credentials['workspace_url'].'?version='.self::API_VERSION,
@@ -161,7 +161,7 @@ class API {
                 return new \WP_Error(
                     'watson_error',
                     $response_body,
-                    !empty($response_code) ? array('status' => $response_code) : array()
+                    empty($response_code) ? array() : array('status' => $response_code)
                 );
             } else {
                 return $response_body;
