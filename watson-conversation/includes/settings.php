@@ -118,6 +118,8 @@ class Settings {
                 }
             ?>
 
+            <input type="hidden" value="" name="watsonconv_css_cache" />
+
             <?php submit_button(); ?>
             <p class="update-message notice inline notice-warning notice-alt"
                style="padding-top: 0.5em; padding-bottom: 0.5em">
@@ -1273,6 +1275,8 @@ class Settings {
 
         register_setting(self::SLUG, 'watsonconv_fab_icon_pos');
         register_setting(self::SLUG, 'watsonconv_fab_text');
+
+        register_setting(self::SLUG, 'watsonconv_css_cache');
     }
 
     public static function appearance_chatbox_description($args) {

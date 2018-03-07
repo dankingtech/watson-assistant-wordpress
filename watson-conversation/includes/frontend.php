@@ -1,6 +1,7 @@
 <?php
 namespace WatsonConv;
 
+add_action('wp_loaded', array('WatsonConv\Frontend', 'register_scripts'));
 add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'render_chat_box'));
 add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'watsonconv_shortcode'));
@@ -37,107 +38,114 @@ class Frontend {
             $full_screen_query = $force_full_screen ? '%s' : '';
         }
 
-        wp_add_inline_style('watsonconv-chatbox', '
-            #message-container #messages .watson-message,
-                #watson-box #watson-header,
-                #watson-fab
-            {
-                background-color: '.$main_color.';
-                color: '.$text_color.';
-            }
+        $inline_style = get_option('watsonconv_css_cache');
 
-            #watson-box #message-send
-            {
-                background-color: '. $main_color .';
-            }
+        if (!$inline_style) {
+            $inline_style = '
+                #message-container #messages .watson-message,
+                    #watson-box #watson-header,
+                    #watson-fab
+                {
+                    background-color: '.$main_color.';
+                    color: '.$text_color.';
+                }
 
-            #watson-box #message-send:hover
-            {
-                background-color: '. ($is_dark ? $main_color_light : $main_color_dark) .';
-            }
-            
-            #watson-box #message-send svg
-            {
-              fill: '. ($is_dark ? $text_color : 'rgba(0, 0, 0, 0.9)') .';
-            }
+                #watson-box #message-send
+                {
+                    background-color: '. $main_color .';
+                }
 
-            #message-container #messages .message-option
-            {
-                border-color: '. ($is_dark ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
-                color: '. ($is_dark ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
-            }
+                #watson-box #message-send:hover
+                {
+                    background-color: '. ($is_dark ? $main_color_light : $main_color_dark) .';
+                }
+                
+                #watson-box #message-send svg
+                {
+                fill: '. ($is_dark ? $text_color : 'rgba(0, 0, 0, 0.9)') .';
+                }
 
-            #message-container #messages .message-option:hover
-            {
-                border-color: '. ($is_dark ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
-                color: '. ($is_dark ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
-            }
+                #message-container #messages .message-option
+                {
+                    border-color: '. ($is_dark ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
+                    color: '. ($is_dark ? $main_color : 'rgba(0, 0, 0, 0.9)') .';
+                }
 
-            #watson-box #messages > div:not(.message) > a
-            {
-                color: '. ($is_dark ? $main_color : $text_color) .';
-            }
-        
-            #watson-fab-float
-            {
-                '.$position[0].': 5vmin;
-                '.$position[1].': 5vmin;
-            }
+                #message-container #messages .message-option:hover
+                {
+                    border-color: '. ($is_dark ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
+                    color: '. ($is_dark ? $main_color_light : 'rgba(0, 0, 0, 0.6)') .';
+                }
 
-            #watson-box .watson-font
-            {
-                font-size: '.$font_size.'pt;
-            }
+                #watson-box #messages > div:not(.message) > a
+                {
+                    color: '. ($is_dark ? $main_color : $text_color) .';
+                }
 
-            #watson-float
-            {
-                '.$position[0].': 5vmin;
-                '.$position[1].': 5vmin;
-            }
-            #watson-box
-            {
-                width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
-                height: auto;
-            }
-            #message-container
-            {
-                height: '.$messages_height.'pt
-            }
-            
-            @media (max-width:768px)  {
+                #watson-fab-float
+                {
+                    '.$position[0].': 5vmin;
+                    '.$position[1].': 5vmin;
+                }
+
                 #watson-box .watson-font
                 {
-                    font-size: 16px;
-                }
-            }' . 
-            sprintf(
-                $full_screen_query, 
-                '#watson-float #watson-box
-                {
-                  width: 100%;
-                  height: 100%;
+                    font-size: '.$font_size.'pt;
                 }
 
-                #watson-box
-                {
-                  max-width: 100%;
-                }
-              
                 #watson-float
                 {
-                  top: 0;
-                  right: 0;
-                  bottom: 0;
-                  left: 0;
-                  transform: translate(0, 0) !important;
+                    '.$position[0].': 5vmin;
+                    '.$position[1].': 5vmin;
                 }
-
-                #watson-float #message-container
+                #watson-box
                 {
+                    width: '.(0.825*$messages_height + 4.2*$font_size).'pt;
                     height: auto;
-                }'
-            )
-        );
+                }
+                #message-container
+                {
+                    height: '.$messages_height.'pt
+                }
+                
+                @media (max-width:768px)  {
+                    #watson-box .watson-font
+                    {
+                        font-size: 16px;
+                    }
+                }' . 
+                sprintf(
+                    $full_screen_query, 
+                    '#watson-float #watson-box
+                    {
+                    width: 100%;
+                    height: 100%;
+                    }
+
+                    #watson-box
+                    {
+                    max-width: 100%;
+                    }
+                
+                    #watson-float
+                    {
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    transform: translate(0, 0) !important;
+                    }
+
+                    #watson-float #message-container
+                    {
+                        height: auto;
+                    }'
+                );
+            
+            update_option('watsonconv_css_cache', $inline_style);
+        }
+
+        wp_add_inline_style('watsonconv-chatbox', $inline_style);
     }
 
     private static function luminance($srgb) {
@@ -188,9 +196,6 @@ class Frontend {
     }
 
     public static function render_chat_box() {
-        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array(), self::VERSION, true);
-        wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::VERSION);
-
         $ip_addr = API::get_client_ip();
 
         $page_selected =
@@ -264,5 +269,10 @@ class Frontend {
         ?>
             <div id="watsonconv-floating-box"></div>
         <?php
+    }
+
+    public static function register_scripts() {
+        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array(), self::VERSION, true);
+        wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::VERSION);
     }
 }
