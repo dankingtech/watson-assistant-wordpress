@@ -28,6 +28,8 @@ export default class InputBox extends Component {
   }
 
   render() {
+    let showSendBtn = (watsonconvSettings.showSendBtn === 'yes');
+
     return (
       <form action='' className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
         <input
@@ -37,7 +39,7 @@ export default class InputBox extends Component {
           value={this.state.message}
           onChange={this.setMessage.bind(this)}
         />
-        {this.props.showSendBtn && 
+        {showSendBtn && 
           <button type='submit' id='message-send'>
             <div>
               <svg xmlns="http://www.w3.org/2000/svg" 

@@ -67,7 +67,6 @@ export default class App extends Component {
   }
 
   render(props, {minimized, animated}) {
-    let showSendBtn = (watsonconvSettings.showSendBtn === 'yes');
 
     return (
       <div>
@@ -82,11 +81,7 @@ export default class App extends Component {
             class={!animated && 'animated'}
             style={minimized && {opacity: 0 , visibility: 'hidden'}}
           >
-              <ChatBox
-                  minimize={this.toggleMinimize.bind(this)}
-                  isMinimized={minimized}
-                  showSendBtn={showSendBtn}
-              />
+            <ChatBox isMinimized={minimized} />
           </TransitionGroup>
         </Draggable>
         <TransitionGroup

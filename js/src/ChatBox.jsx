@@ -180,7 +180,7 @@ export default class ChatBox extends Component {
               )}
             </div>
           </div>
-          <InputBox sendMessage={this.sendMessage.bind(this)} showSendBtn={this.props.showSendBtn} />
+          <InputBox sendMessage={this.sendMessage.bind(this)} />
         </div>
       </div>
     );
