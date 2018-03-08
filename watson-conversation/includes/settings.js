@@ -199,6 +199,16 @@ jQuery(document).ready(function($) {
     .on('input', function() {
       $('#watson-title').text(this.value)
     });
+
+  $('#watsonconv_clear_text')
+    .on('input', function() {
+      $('#watson-clear-messages').text(this.value)
+    });
+
+  $('#watsonconv_message_prompt')
+    .on('input', function() {
+      $('#watson-message-input').attr('placeholder', this.value)
+    });
   
   $('input[name="watsonconv_fab_icon_pos"]')
     .on('change', function() {

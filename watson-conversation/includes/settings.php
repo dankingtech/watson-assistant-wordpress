@@ -1182,6 +1182,24 @@ class Settings {
             esc_html__('Chat Box Title', self::SLUG)
         );
 
+        $clear_text_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'This is the text the user can click to clear the conversation history and start over.'
+                , self::SLUG
+            ),
+            esc_html__('"Clear Messages" Text', self::SLUG)
+        );
+
+        $message_prompt_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'This is the text that appears in the message text box to prompt the user to type a message.'
+                , self::SLUG
+            ),
+            esc_html__('"Type Message" Prompt', self::SLUG)
+        );
+
         $font_size_title = sprintf(
             '<span href="#" title="%s">%s</span>', 
             esc_html__(
@@ -1225,6 +1243,10 @@ class Settings {
                 array(__CLASS__, 'render_send_btn'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_title', $title_title,
             array(__CLASS__, 'render_title'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_clear_text', $clear_text_title,
+            array(__CLASS__, 'render_clear_text'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_message_prompt', $message_prompt_title,
+            array(__CLASS__, 'render_message_prompt'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_font_size', $font_size_title,
             array(__CLASS__, 'render_font_size'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_color', $color_title,
@@ -1269,6 +1291,8 @@ class Settings {
         register_setting(self::SLUG, 'watsonconv_position');
         register_setting(self::SLUG, 'watsonconv_send_btn');
         register_setting(self::SLUG, 'watsonconv_title');
+        register_setting(self::SLUG, 'watsonconv_clear_text');
+        register_setting(self::SLUG, 'watsonconv_message_prompt');
         register_setting(self::SLUG, 'watsonconv_font_size');
         register_setting(self::SLUG, 'watsonconv_color', array(__CLASS__,  'validate_color'));
         register_setting(self::SLUG, 'watsonconv_size');
@@ -1481,6 +1505,22 @@ class Settings {
     <?php
     }
 
+    public static function render_clear_text() {
+    ?>
+        <input name="watsonconv_clear_text" id="watsonconv_clear_text"
+            type="text" style="width: 16em"
+            value="<?php echo get_option('watsonconv_clear_text', 'Clear Messages') ?>" />
+    <?php
+    }
+
+    public static function render_message_prompt() {
+    ?>
+        <input name="watsonconv_message_prompt" id="watsonconv_message_prompt"
+            type="text" style="width: 16em"
+            value="<?php echo get_option('watsonconv_message_prompt', 'Type a Message') ?>" />
+    <?php
+    }
+
     public static function render_font_size() {
     ?>
         <input name="watsonconv_font_size" id="watsonconv_font_size"
@@ -1538,6 +1578,11 @@ class Settings {
                 </div>
                 <div id='message-container'>
                     <div id='messages' class='watson-font'>
+                        <div style='text-align: right; margin: -5px 5px 5px 10px' className='watson-font'>
+                            <a id='watson-clear-messages' style='font-size: 0.85em'>
+                                <?php echo get_option('watsonconv_clear_text', 'Clear Messages') ?>
+                            </a>
+                        </div>
                         <div>
                             <div class='message watson-message'>
                                 This is a message from the chatbot.
@@ -1562,9 +1607,10 @@ class Settings {
                 </div>
                 <div class='message-form watson-font'>
                     <input
+                        id='watson-message-input'
                         class='message-input watson-font'
                         type='text'
-                        placeholder='Type a message'
+                        placeholder='<?php echo get_option('watsonconv_message_prompt', 'Type a Message') ?>'
                         disabled='true'
                     />
                     <div id='message-send'>

@@ -29,13 +29,14 @@ export default class InputBox extends Component {
 
   render() {
     let showSendBtn = (watsonconvSettings.showSendBtn === 'yes');
+    let { messagePrompt } = watsonconvSettings;
 
     return (
       <form action='' className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
         <input
           className='message-input watson-font'
           type='text'
-          placeholder='Type a message'
+          placeholder={messagePrompt}
           value={this.state.message}
           onChange={this.setMessage.bind(this)}
         />

@@ -136,7 +136,7 @@ export default class ChatBox extends Component {
   }
 
   render() {
-    let { callConfig } = watsonconvSettings;
+    let { callConfig, clearText } = watsonconvSettings;
 
     let position = watsonconvSettings.position || ['bottom', 'right'];
 
@@ -173,7 +173,7 @@ export default class ChatBox extends Component {
           <div id='message-container'>
             <div id='messages' ref={div => {this.messageList = div}}>
               <div style={{'text-align': 'right', margin: '-5 0 5 10'}} className='watson-font'>
-                <a style={{'font-size': '0.85em'}} onClick={this.reset.bind(this)}>Clear Messages</a>
+                <a style={{'font-size': '0.85em'}} onClick={this.reset.bind(this)}>{clearText}</a>
               </div>
               {this.state.messages.map(
                 (message, index) => <Message message={message} key={index} sendMessage={this.sendMessage.bind(this)} />

@@ -17,7 +17,6 @@ class Frontend {
         $messages_height = get_option('watsonconv_size', 200);
         $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
         
-
         $is_dark = self::luminance($color_rgb) <= 0.5;
         $text_color = $is_dark ? 'white' : 'black';
 
@@ -178,6 +177,8 @@ class Frontend {
             'minimized' => get_option('watsonconv_minimized', 'no'),
             'position' => explode('_', get_option('watsonconv_position', 'bottom_right')),
             'title' => get_option('watsonconv_title', ''),
+            'clearText' => get_option('watsonconv_clear_text', 'Clear Messages'),
+            'messagePrompt' => get_option('watsonconv_message_prompt', 'Type a Message'),
             'fullScreen' => get_option('watsonconv_full_screen', 'no'),
             'showSendBtn' => get_option('watsonconv_send_btn', 'no'),
             'fabConfig' => array(
