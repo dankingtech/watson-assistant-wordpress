@@ -21,24 +21,22 @@ if (typeof localStorage !== 'undefined') {
 let shortcodeDiv = document.getElementById('watsonconv-inline-box');
 let floatDiv = document.getElementById('watsonconv-floating-box');
 
-function renderApp() {
-  if (shortcodeDiv) {
-    ReactDOM.render(
-      <ChatBox isMinimized={false} />,
-      shortcodeDiv
-    );
-  } else if (floatDiv) {
-    ReactDOM.render(
-      <App isMobile={window.matchMedia("(max-width:640px)").matches} />,
-      floatDiv
-    );
-  }
+function renderFloatingBox() {
+  ReactDOM.render(
+    <App isMobile={window.matchMedia("(max-width:640px)").matches} />,
+    floatDiv
+  );
 }
 
-if (typeof(sessionStorage) !== 'undefined' &&
+if (shortcodeDiv) {
+  ReactDOM.render(
+    <ChatBox isMinimized={false} />,
+    shortcodeDiv
+  );
+} else if (typeof(sessionStorage) !== 'undefined' &&
     sessionStorage.getItem('chat_bot_state') !== null)
 {
-  renderApp();
+  renderFloatingBox();
 } else {
-  setTimeout(renderApp, watsonconvSettings.delay*1000);
+  setTimeout(renderFloatingBox, watsonconvSettings.delay*1000);
 }
