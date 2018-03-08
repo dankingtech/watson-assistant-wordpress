@@ -2,9 +2,9 @@
 namespace WatsonConv;
 
 add_action('wp_loaded', array('WatsonConv\Frontend', 'register_scripts'));
-add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'render_chat_box'));
+add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'chatbox_popup'));
 add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
-add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'watsonconv_shortcode'));
+add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'chatbox_shortcode'));
 
 class Frontend {
     const VERSION = '0.6.0';
@@ -195,7 +195,7 @@ class Frontend {
         );
     }
 
-    public static function render_chat_box() {
+    public static function chatbox_popup() {
         $ip_addr = API::get_client_ip();
 
         $page_selected =
@@ -231,7 +231,7 @@ class Frontend {
         }
     }
 
-    public static function watsonconv_shortcode() {
+    public static function chatbox_shortcode() {
         $ip_addr = API::get_client_ip();
 
         $total_requests = get_option('watsonconv_total_requests', 0) +
