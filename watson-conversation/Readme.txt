@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
 Tested up to: 4.9
-Stable tag: 0.5.10
+Stable tag: 0.6.0
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -58,7 +58,7 @@ Once you've created your workspace using the course or the link above, you must 
 
 1. Enter these on the "Main Setup" tab of your settings page. Once you click "Save Changes", the plugin will verify if the credentials are valid and notify you of whether or not the configuration was successful. 
 
-1. (Optional) By default, the chatbot shows up on all pages of your website. In the Behaviour tab of your settings page, you can choose which pages to show the chat bot on.
+1. (Optional) By default, the chatbot shows up on all pages of your website. In the Behaviour tab of your settings page, you can choose which pages to show the chat bot on. You can also show the chat box inline within posts and pages using the shortcode `[watson-chat-box]`
 
 **Note:**
 If you have a server-side caching plugin installed such as WP Super Cache, you may need to clear your cache after changing settings or deactivating the plugin. Otherwise, your action may not take effect.
@@ -85,6 +85,12 @@ On the same page where you build your chatbot in Bluemix, you can click on the I
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.6.0 =
+* Added chat box shortcode feature
+* Added more text customization to Appearance tab
+* Added CSS caching to reduce server load
+* Fixed bug causing some websites to have issues sending messages
 
 = 0.5.10 =
 * Added tooltips to settings

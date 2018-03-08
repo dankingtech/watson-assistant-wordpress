@@ -175,6 +175,8 @@ class Settings {
                 <li><p>
                     (Optional) By default, the chatbot shows up on all pages of your website.
                     In the Behaviour tab, you can choose which pages to show the chat bot on.
+                    You can also show the chat box inline within posts and pages using the shortcode
+                    <b>[watson-chat-box]</b>.
                 </p></li>
             </ol>
         </p>
@@ -920,7 +922,9 @@ class Settings {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
             <?php esc_html_e('This section allows you to customize
-                how you want the chat box to behave.', self::SLUG) ?>
+                how you want the chat box to behave. These settings display the chatbox as a
+                floating box on the specified pages. If you want to show the chat box inline within 
+                posts and pages, you can use the shortcode', self::SLUG) ?> <b>[watson-chat-box]</b>.
         </p>
     <?php
     }
