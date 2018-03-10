@@ -318,7 +318,9 @@ class Settings {
 
         $json_data = @json_decode($response_body);
 
-        if (!is_null($json_data) && json_last_error() === JSON_ERROR_NONE) {
+        if (empty($response_body)) {
+            $response_string = var_export($response, true);
+        } else if (!is_null($json_data) && json_last_error() === JSON_ERROR_NONE) {
             $response_string = json_encode($json_data, JSON_PRETTY_PRINT);
         } else if (is_array($response_body)) {
             $response_string = json_encode($response_body, JSON_PRETTY_PRINT);
@@ -329,21 +331,22 @@ class Settings {
         }
 
         $response_string = str_replace('\\/', '/', $response_string);
+        $response_code_string = empty($response_code) ? '' : ' ('.$response_code.')';
 
-        $debug_info = empty($response_body) ? '' : '<a id="error_expand">Click here for debug information.</a>
+        $debug_info = '<a id="error_expand">Click here for debug information.</a>
             <pre id="error_response" style="display: none;">'.$response_string.'</pre>';
 
         if ($response_code == 401) {
             add_settings_error('watsonconv_credentials', 'invalid-credentials', 
-                'Please ensure you entered a valid username/password and URL. ' . $debug_info);
+                'Please ensure you entered a valid username/password and URL'.$response_code_string.'. ' . $debug_info);
             return get_option('watsonconv_credentials');
         } else if ($response_code == 404 || $response_code == 400) {
             add_settings_error('watsonconv_credentials', 'invalid-id', 
-                'Please ensure you entered a valid workspace URL. ' . $debug_info);
+                'Please ensure you entered a valid workspace URL'.$response_code_string.'. ' . $debug_info);
             return get_option('watsonconv_credentials');
         } else if ($response_code != 200) {
             add_settings_error('watsonconv_credentials', 'invalid-url',
-                'Please ensure you entered a valid workspace URL. ' . $debug_info);
+                'Please ensure you entered a valid workspace URL'.$response_code_string.'. ' . $debug_info);
             return get_option('watsonconv_credentials');
         }
 
