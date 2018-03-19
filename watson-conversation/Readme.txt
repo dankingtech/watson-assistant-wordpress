@@ -1,4 +1,4 @@
-=== IBM Watson Conversation ===
+=== IBM Watson Assistant ===
 Contributors: cognitiveclass
 Tags: chatbot, chat bot, artificial intelligence
 Requires at least: 4.7
@@ -7,21 +7,21 @@ Stable tag: 0.6.1
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
-This plugin allows you to easily add chatbots powered by IBM Watson Conversation to your website.
+This plugin allows you to easily add chatbots powered by IBM Watson Assistant to your website.
 
 == Description ==
 
-Watson Conversation is a chatbot service, one of many AI services offered by IBM to integrate cognitive computing into your applications. With the use of this plugin, you can easily add chatbots to your website created using the Watson Conversation service.
+Watson Assistant, formerly known as Watson Conversation, is a chatbot service. This is one of many AI services offered by IBM to help integrate cognitive computing into your applications. With the use of this plugin, you can easily add chatbots to your website created using the Watson Assistant service.
 
 Currently supported features:
 
-* **All New:** Easy VOIP calling powered by Twilio for users to contact a real person if they wish
-* Simple plugin setup to get your Watson Conversation chatbot available to users as soon as possible
-* Control usage of the Watson Conversation service directly from the plugin settings page
+* Easy VOIP calling powered by Twilio for users to contact a real person if they wish
+* Simple plugin setup to get your Watson Assistant chatbot available to users as soon as possible
+* Control usage of the Watson Assistant service directly from the plugin settings page
 * Choose the pages and posts you want the visitors to see the chat bot on
 * Customize the appearance of the chat box to your preference
 
-Learn how to set up your Watson Conversation chatbot with [this free course](https://cocl.us/build-a-chatbot).
+Learn how to set up your Watson Assistant chatbot with [this free course](https://cocl.us/build-a-chatbot).
 
 == Installation ==
 
@@ -33,7 +33,7 @@ This plugin requires the [WordPress REST API Plugin](https://en-ca.wordpress.org
 
 1. Log in to your site’s Dashboard.
 1. Click on the `Plugins` tab in the left panel, then click `Add New`.
-1. Search for “Watson Conversation” and the latest version will appear at the top of the list of results.
+1. Search for “Watson Assistant” and the latest version will appear at the top of the list of results.
 1. Install the plugin by clicking the `Install Now` link.
 1. When installation finishes, click `Activate Plugin`.
 
@@ -44,11 +44,11 @@ If your WordPress site is hosted by WordPress (with a URL like `websitename.word
 
 = Building Your Chatbot =
 
-1. Learn how to set up your Watson Conversation chatbot with [this quick free course](https://cocl.us/build-a-chatbot).
+1. Learn how to set up your Watson Assistant chatbot with [this quick free course](https://cocl.us/build-a-chatbot).
 
 1. [Sign up for a free IBM Cloud Lite account.](https://cocl.us/bluemix-registration)
 
-1. You can see [the Watson Conversation documentation](https://cocl.us/watson-conversation-help) for more information.
+1. You can see [the Watson Assistant documentation](https://cocl.us/watson-conversation-help) for more information.
 
 Once you've created your workspace using the course or the link above, you must connect it to your Wordpress site.
 
@@ -71,11 +71,11 @@ Check out [this free course](https://cocl.us/build-a-chatbot) to learn how to bu
 
 = Why should I use this? =
 
-Watson Conversation, when used with this plugin, allows you to build and deploy a fully customized chat bot with little technical knowledge. It can talk to your website's visitors about whatever you choose, from helping navigate the website and providing support with common questions, to just having a casual conversation on a topic of interest.
+Watson Assistant, when used with this plugin, allows you to build and deploy a fully customized chat bot with little technical knowledge. It can talk to your website's visitors about whatever you choose, from helping navigate the website and providing support with common questions, to just having a casual conversation on a topic of interest.
 
 = Do I need to know how to code? =
 
-Nope. This plugin allows you to easily deploy chatbots that you create using the Watson Conversation service on IBM Bluemix. [This free course](https://cocl.us/build-a-chatbot) will guide you through this intuitive process – no prior technical knowledge necessary.
+Nope. This plugin allows you to easily deploy chatbots that you create using the Watson Assistant service on IBM Bluemix. [This free course](https://cocl.us/build-a-chatbot) will guide you through this intuitive process – no prior technical knowledge necessary.
 
 = How do I see my chatbot's conversations with users? =
 

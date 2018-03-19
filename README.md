@@ -1,5 +1,5 @@
 # conversation-wordpress-plugin
-A Wordpress plugin for Watson Conversation.
+A Wordpress plugin for Watson Assistant.
 
 ## Setup
 Before you can use this plugin, you need to build the Javascript app by running the following commands from the `js` directory:

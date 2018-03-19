@@ -16,7 +16,7 @@ class Settings {
     const SLUG = 'watsonconv';
 
     public static function init_page() {
-        add_options_page('Watson Conversation', 'Watson', 'manage_options',
+        add_options_page('Watson Assistant', 'Watson', 'manage_options',
             self::SLUG, array(__CLASS__, 'render_page'));
     }
 
@@ -68,7 +68,7 @@ class Settings {
                     <span style='color:orange; margin-right:0.3em'
                           class='dashicons dashicons-admin-settings'></span>
                     <a href="options-general.php?page=<?php echo self::SLUG ?>">
-                        <?php esc_html_e('Please fill in your Watson Conversation Workspace Credentials.', self::SLUG) ?>
+                        <?php esc_html_e('Please fill in your Watson Assistant Workspace Credentials.', self::SLUG) ?>
                     </a>
                 </div>
             </td></tr>
@@ -89,7 +89,7 @@ class Settings {
     public static function render_page() {
     ?>
       <div class="wrap" style="max-width: 95em">
-          <h2><?php esc_html_e('Watson Conversation Settings', self::SLUG); ?></h2>
+          <h2><?php esc_html_e('Watson Assistant Settings', self::SLUG); ?></h2>
 
           <h2 class="nav-tab-wrapper">
             <a onClick="switch_tab('intro')" class="nav-tab nav-tab-active intro_tab">Introduction</a>
@@ -135,15 +135,15 @@ class Settings {
     public static function render_intro() {
     ?>
         <p>
-            Watson Conversation is a chatbot service, one of many AI services offered by IBM to help
-            integrate cognitive computing into your applications. With the use of this plugin, you can 
-            easily add chatbots to your website created using the Watson Conversation service. The
-            instructions below will help you get started:
+            Watson Assistant, formerly known as Watson Conversation, is a chatbot service. This is
+            one of many AI services offered by IBM to help integrate cognitive computing into your 
+            applications. With the use of this plugin, you can easily add chatbots to your website 
+            created using the Watson Assistant service. The instructions below will help you get started:
 
             <h4>Building Your Chatbot</h4>
             <ol>
                 <li><p>
-                    Learn how to set up your Watson Conversation chatbot with 
+                    Learn how to set up your Watson Assistant chatbot with 
                     <a href="https://cocl.us/build-a-chatbot" rel="nofollow">this quick free course</a>.
                 </p></li>
                 <li><p>
@@ -153,7 +153,7 @@ class Settings {
                 <li><p>
                     You can see 
                     <a href="https://cocl.us/watson-conversation-help" rel="nofollow">
-                        the Watson Conversation documentation</a>
+                        the Watson Assistant documentation</a>
                     for more information.
                 </p></li>
             </ol>
@@ -194,7 +194,7 @@ class Settings {
         <img class="drop-shadow" style="height: 24em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/result.png">
         <p><?php esc_html_e('The following instructions will guide you through the process of using this feature.') ?></p>
 
-        <h4><?php esc_html_e('1. Open your chatbot workspace in Watson Conversation and go to the Dialog tab.') ?>
+        <h4><?php esc_html_e('1. Open your chatbot workspace in Watson Assistant and go to the Dialog tab.') ?>
         <h4><?php esc_html_e('2. Select the node you want to create predefined messages for.') ?></h4>
         <img class="drop-shadow" style="width: 60em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/2_full_page_highlighted.jpg">
         <h4><?php esc_html_e('3. Click the 3 dots at the top-right of this section to get the following dropdown.
@@ -365,7 +365,7 @@ class Settings {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
             <?php esc_html_e('Here, you can specify the Workspace ID for your Watson
-                Conversation Workspace in addition to the required credentials.', self::SLUG) ?> <br />
+                Assistant Workspace in addition to the required credentials.', self::SLUG) ?> <br />
             <?php esc_html_e('Note: These are not the same as your IBM Cloud Login Credentials.', self::SLUG) ?>
         </p>
     <?php
@@ -430,7 +430,7 @@ class Settings {
             <p>
                 <?php esc_html_e("
                     If you have a paid plan for Watson
-                    Conversation, then the amount you have to pay is directly related to the
+                    Assistant, then the amount you have to pay is directly related to the
                     number of API requests made. The number of API requests is equal to the
                     number of messages sent by users of your chat bot, in addition to the chatbot's initial greeting.
                 ", self::SLUG) ?>
