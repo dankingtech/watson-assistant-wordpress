@@ -140,6 +140,7 @@ class API {
             $response = wp_remote_post(
                 $credentials['workspace_url'].'?version='.self::API_VERSION,
                 array(
+                    'timeout' => 20,
                     'headers' => array(
                         'Authorization' => $auth_token,
                         'Content-Type' => 'application/json'

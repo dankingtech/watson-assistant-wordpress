@@ -303,6 +303,7 @@ class Settings {
         $response = wp_remote_post(
             $credentials['workspace_url'].'?version='.API::API_VERSION,
             array(
+                'timeout' => 20,
                 'headers' => array(
                     'Authorization' => $auth_token,
                     'Content-Type' => 'application/json'
@@ -336,7 +337,11 @@ class Settings {
         $debug_info = '<a id="error_expand">Click here for debug information.</a>
             <pre id="error_response" style="display: none;">'.$response_string.'</pre>';
 
-        if ($response_code == 401) {
+        if (is_wp_error($response)) {
+            add_settings_error('watsonconv_credentials', 'invalid-credentials', 
+                'Unable to connect to Watson server'.$response_code_string.'. ' . $debug_info);
+            return get_option('watsonconv_credentials');
+        } else if ($response_code == 401) {
             add_settings_error('watsonconv_credentials', 'invalid-credentials', 
                 'Please ensure you entered a valid username/password and URL'.$response_code_string.'. ' . $debug_info);
             return get_option('watsonconv_credentials');
