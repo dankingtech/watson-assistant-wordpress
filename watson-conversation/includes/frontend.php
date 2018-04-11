@@ -164,7 +164,7 @@ class Frontend {
     public static function get_settings() {
         $twilio_config = get_option('watsonconv_twilio');
 
-        $call_configured = boolval(
+        $call_configured = (bool)(
             !empty($twilio_config['sid']) && 
             !empty($twilio_config['auth_token']) && 
             get_option('watsonconv_twiml_sid') &&
@@ -212,13 +212,14 @@ class Frontend {
             get_transient("watsonconv_requests_$ip_addr") ?: 0;
 
         $credentials = get_option('watsonconv_credentials');
+        $is_enabled = !empty($credentials) && (!isset($credentials['enabled']) || $credentials['enabled'] == 'true');
 
         if ($page_selected &&
             (get_option('watsonconv_use_limit', 'no') == 'no' ||
                 $total_requests < get_option('watsonconv_limit', 10000)) &&
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
                 $client_requests < get_option('watsonconv_client_limit', 100)) &&
-            !empty($credentials)) {
+            $is_enabled) {
 
             self::enqueue_styles();
             $settings = self::get_settings();
@@ -241,12 +242,13 @@ class Frontend {
             get_transient("watsonconv_requests_$ip_addr") ?: 0;
 
         $credentials = get_option('watsonconv_credentials');
+        $is_enabled = !empty($credentials) && (!isset($credentials['enabled']) || $credentials['enabled'] == 'true');
 
         if ((get_option('watsonconv_use_limit', 'no') == 'no' ||
                 $total_requests < get_option('watsonconv_limit', 10000)) &&
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
                 $client_requests < get_option('watsonconv_client_limit', 100)) &&
-            !empty($credentials)) 
+            $is_enabled) 
         {
             if (!wp_script_is('watsonconv-chat-app', 'enqueued')) {
                 self::enqueue_styles();

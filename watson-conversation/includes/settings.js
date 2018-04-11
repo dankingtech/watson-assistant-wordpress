@@ -59,6 +59,17 @@ jQuery(document).ready(function($) {
       $('#error_response').toggle(200);
     })
 
+  // ---- Main Setup Section ----
+  $('#watsonconv_enabled')
+    .on('change', function() {
+      if (this.checked) {
+        $('input.watsonconv_credentials').prop('disabled', false);
+      } else {
+        $('input.watsonconv_credentials').prop('disabled', true);
+      }
+    })
+    .trigger('change');
+
   // ---- Voice Calling Section ----
 
   $('input[name="watsonconv_use_twilio"]')
@@ -91,14 +102,14 @@ jQuery(document).ready(function($) {
 
   $('input[name="watsonconv_use_limit"]')
     .on('change', function() {
-      $('#watsonconv_limit, #watsonconv_interval').prop('disabled', this.value == 'no');
+      $('#watsonconv_limit, #watsonconv_interval, #watsonconv_limit_message').prop('disabled', this.value == 'no');
     })
     .filter('input:checked')
     .trigger('change');
 
   $('input[name="watsonconv_use_client_limit"]')
     .on('change', function() {
-      $('#watsonconv_client_limit, #watsonconv_client_interval').prop('disabled', this.value == 'no');
+      $('#watsonconv_client_limit, #watsonconv_client_interval, #watsonconv_client_limit_message').prop('disabled', this.value == 'no');
     })
     .filter('input:checked')
     .trigger('change');

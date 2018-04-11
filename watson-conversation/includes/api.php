@@ -16,7 +16,10 @@ class API {
     const API_VERSION = '2017-04-21';
 
     public static function register_routes() {
-        if (get_option('watsonconv_credentials')) {
+        $credentials = get_option('watsonconv_credentials');
+        $is_enabled = !empty($credentials) && (!isset($credentials['enabled']) || $credentials['enabled'] == 'true');
+
+        if ($is_enabled) {
             register_rest_route('watsonconv/v1', '/message',
                 array(
                     'methods' => 'post',
@@ -93,20 +96,28 @@ class API {
         $client_requests = get_option("watsonconv_requests_$ip_addr", 0) +
             get_transient("watsonconv_requests_$ip_addr") ?: 0;
 
-        if ((get_option('watsonconv_use_limit', 'no') == 'no' ||
-                $total_requests < get_option('watsonconv_limit', 10000)) &&
-            (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
-                $client_requests < get_option('watsonconv_client_limit', 100)))
+        if (get_option('watsonconv_use_limit', 'no') == 'yes' &&
+                $total_requests > get_option('watsonconv_limit', INF)) 
         {
+            return array('output' => array('text' => 
+                get_option('watsonconv_limit_message', "Sorry, I can't talk right now. Try again later.")
+            ));
+        } else if (get_option('watsonconv_use_client_limit', 'no') == 'yes' &&
+            $client_requests > get_option('watsonconv_client_limit', INF)) 
+        {
+            return array('output' => array('text' => 
+                get_option('watsonconv_client_limit_message', "Sorry, I can't talk right now. Try again later.")
+            ));
+        } else {
             set_transient(
                 'watsonconv_total_requests',
                 (get_transient('watsonconv_total_requests') ?: 0) + 1,
-                DAY_IN_SECONDS
+                MONTH_IN_SECONDS
             );
             set_transient(
                 "watsonconv_requests_$ip_addr",
                 (get_transient("watsonconv_requests_$ip_addr") ?: 0) + 1,
-                DAY_IN_SECONDS
+                MONTH_IN_SECONDS
             );
 
             $client_list = get_transient('watsonconv_client_list', array());
@@ -114,8 +125,9 @@ class API {
             set_transient('watsonconv_client_list', $client_list, DAY_IN_SECONDS);
 
             $credentials = get_option('watsonconv_credentials');
+            $is_enabled = !empty($credentials) && (!isset($credentials['enabled']) || $credentials['enabled'] == 'true');
 
-            if (empty($credentials)) {
+            if (!$is_enabled) {
                 return new \WP_Error(
                     'config_error',
                     'Service not configured.',
@@ -153,8 +165,6 @@ class API {
 
             $response_body = json_decode(wp_remote_retrieve_body($response), true);
             $response_code = wp_remote_retrieve_response_code($response);
-            
-            do_action('watsonconv_message_parsed', $response_body);
 
             $response_body = apply_filters('watsonconv_bot_message', $response_body);
 
@@ -165,10 +175,9 @@ class API {
                     empty($response_code) ? array() : array('status' => $response_code)
                 );
             } else {
+                do_action('watsonconv_message_parsed', $response_body);
                 return $response_body;
             }
-        } else {
-            return array('output' => array('text' => "Sorry, I can't talk right now. Try again later."));
         }
     }
 

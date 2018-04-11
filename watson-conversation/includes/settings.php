@@ -8,6 +8,8 @@ add_action('admin_enqueue_scripts', array('WatsonConv\Settings', 'init_scripts')
 add_action('after_plugin_row_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'render_notice'), 10, 3);
 add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'add_links'));
 
+add_action('admin_notices', array('WatsonConv\Settings', 'ibm_partner_banner'));
+
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_credentials'));
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_show_on'));
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_full_screen'));
@@ -74,6 +76,18 @@ class Settings {
             </td></tr>
         <?php
         }
+    }
+    
+    public static function ibm_partner_banner() {
+        ?>
+        <div class="notice notice-info is-dismissible">
+            <p><?php esc_html_e('
+                Want to make money building chatbots for clients? Become an IBM Partner, registration is quick and free!
+                Get one year of Watson Assistant and 100,000 API calls, 10 workspaces or chatbots, 200 intents and 200 entities as your free starting bonus.'
+            , self::SLUG); ?></p>
+            <a class='button button-primary' style='margin-bottom: 0.5em' href='https://cocl.us/watson-assistant-isv'>Become a Partner</a>
+        </div>
+        <?php
     }
 
     public static function add_links($links) {
@@ -144,15 +158,15 @@ class Settings {
             <ol>
                 <li><p>
                     Learn how to set up your Watson Assistant chatbot with 
-                    <a href="https://cocl.us/build-a-chatbot" rel="nofollow">this quick free course</a>.
+                    <a href="https://cocl.us/build-a-chatbot" rel="nofollow" target="_blank">this quick free course</a>.
                 </p></li>
                 <li><p>
-                    <a href="https://cocl.us/bluemix-registration" rel="nofollow">
+                    <a href="https://cocl.us/bluemix-registration" rel="nofollow" target="_blank">
                         Sign up for a free IBM Cloud Lite account.</a>
                 </p></li>
                 <li><p>
                     You can see 
-                    <a href="https://cocl.us/watson-conversation-help" rel="nofollow">
+                    <a href="https://cocl.us/watson-conversation-help" rel="nofollow" target="_blank">
                         the Watson Assistant documentation</a>
                     for more information.
                 </p></li>
@@ -234,7 +248,7 @@ class Settings {
         <p>
             This page contains all the configuration you need to get your chatbot working.<br>
             Before you get these credentials, you need to set up a chatbot on your 
-            <a href="https://cocl.us/bluemix-registration" rel="nofollow">free IBM Cloud account</a>.
+            <a href="https://cocl.us/bluemix-registration" rel="nofollow" target="_blank">free IBM Cloud account</a>.
             See the Introduction tab for details.
         </p>
     <?php
@@ -262,6 +276,9 @@ class Settings {
         add_settings_section('watsonconv_workspace', 'Workspace Credentials',
             array(__CLASS__, 'workspace_description'), $settings_page);
 
+
+        add_settings_field('watsonconv_enabled', '', array(__CLASS__, 'render_enabled'),
+            $settings_page, 'watsonconv_workspace');
         add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'render_username'),
             $settings_page, 'watsonconv_workspace');
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'render_password'),
@@ -269,11 +286,17 @@ class Settings {
         add_settings_field('watsonconv_workspace_url', 'Workspace URL', array(__CLASS__, 'render_url'),
             $settings_page, 'watsonconv_workspace');
 
+        register_setting(self::SLUG, 'watsonconv_enabled');
         register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
 
     public static function validate_credentials($credentials) {
         $old_credentials = get_option('watsonconv_credentials');
+
+        if (!isset($credentials['enabled'])) {
+            $old_credentials['enabled'] = 'false';
+            return $old_credentials;
+        }
 
         if (empty($credentials['workspace_url'])) {
             add_settings_error('watsonconv_credentials', 'invalid-id', 'Please enter a Workspace URL.');
@@ -322,9 +345,9 @@ class Settings {
         if (empty($response_body)) {
             $response_string = var_export($response, true);
         } else if (!is_null($json_data) && json_last_error() === JSON_ERROR_NONE) {
-            $response_string = json_encode($json_data, JSON_PRETTY_PRINT);
+            $response_string = json_encode($json_data, defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 128);
         } else if (is_array($response_body)) {
-            $response_string = json_encode($response_body, JSON_PRETTY_PRINT);
+            $response_string = json_encode($response_body, defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 128);
         } else if (is_string($response_body)) {
             $response_string = $response_body;
         } else {
@@ -376,10 +399,29 @@ class Settings {
     <?php
     }
 
+    public static function render_enabled() {
+        $credentials = get_option('watsonconv_credentials');
+        $enabled = (isset($credentials['enabled']) ? $credentials['enabled'] : 'true') == 'true';
+    ?>
+        <fieldset>
+            <input
+                type="checkbox" id="watsonconv_enabled"
+                name="watsonconv_credentials[enabled]"
+                value="true"
+                <?php echo $enabled ? 'checked' : '' ?>
+            />
+            <label for="watsonconv_enabled">
+                Enable Chatbot
+            </label>
+        </fieldset>
+    <?php
+    }
+
     public static function render_username() {
         $credentials = get_option('watsonconv_credentials', array('username' => ''));
     ?>
-        <input name="watsonconv_credentials[username]" id="watsonconv_username" type="text"
+        <input name="watsonconv_credentials[username]" class="watsonconv_credentials"
+            id="watsonconv_username" type="text"
             value="<?php echo $credentials['username'] ?>"
             placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
             style="width: 24em"/>
@@ -389,7 +431,8 @@ class Settings {
     public static function render_password() {
         $credentials = get_option('watsonconv_credentials', array('password' => ''));
     ?>
-        <input name="watsonconv_credentials[password]" id="watsonconv_password" type="password"
+        <input name="watsonconv_credentials[password]" class="watsonconv_credentials"
+            id="watsonconv_password" type="password"
             value="<?php echo $credentials['password'] ?>"
             style="width: 8em" />
     <?php
@@ -398,7 +441,8 @@ class Settings {
     public static function render_url() {
         $credentials = get_option('watsonconv_credentials', array('workpsace_url' => ''));
     ?>
-        <input name="watsonconv_credentials[workspace_url]" id="watsonconv_workspace_url" type="text"
+        <input name="watsonconv_credentials[workspace_url]" class="watsonconv_credentials"
+            id="watsonconv_workspace_url" type="text"
             value="<?php echo $credentials['workspace_url']; ?>"
             placeholder='https://gateway.watsonplatform.net/conversation/api/v1/workspaces/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/message/'
             style="width: 60em" />
@@ -413,14 +457,28 @@ class Settings {
         add_settings_section('watsonconv_rate_limit', 'Total Usage Management',
             array(__CLASS__, 'rate_limit_description'), $settings_page);
 
+        $overage_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'This is the message that will be given to users who are talking with your chatbot
+                when the Maximum Number of Total Requests is exceeded. The chat box will disappear
+                when the user navigates to a different page.'
+                , self::SLUG
+            ),
+            esc_html__('Overage Message', self::SLUG)
+        );
+
         add_settings_field('watsonconv_use_limit', 'Limit Total API Requests',
             array(__CLASS__, 'render_use_limit'), $settings_page, 'watsonconv_rate_limit');
         add_settings_field('watsonconv_limit', 'Maximum Number of Total Requests',
             array(__CLASS__, 'render_limit'), $settings_page, 'watsonconv_rate_limit');
+        add_settings_field('watsonconv_limit_message', $overage_title,
+            array(__CLASS__, 'render_limit_message'), $settings_page, 'watsonconv_rate_limit');
 
         register_setting(self::SLUG, 'watsonconv_use_limit');
         register_setting(self::SLUG, 'watsonconv_interval');
         register_setting(self::SLUG, 'watsonconv_limit');
+        register_setting(self::SLUG, 'watsonconv_limit_message');
     }
 
     public static function rate_limit_description($args) {
@@ -441,14 +499,24 @@ class Settings {
                 ", self::SLUG) ?>
             </p>
             <p>
-                <?php esc_html_e("
-                    For example, the Standard plan charges $0.0025 per API
-                    call. That means if visitors to your site send a total of 1000 messages in
-                    a month, you will be charged ($0.0025 per API call) x (1000 calls) =
-                    $2.50. If you want to limit the costs incurred by this chatbot, you can
-                    put a limit on the total number of API requests for a specific period of
-                    time here.
-                ", self::SLUG) ?>
+                <?php 
+                    esc_html_e("
+                        For example, the Standard plan charges $0.0025 per API call (one API call includes
+                        one message sent by a user and its response from the chatbot). That means if 
+                        visitors to your site send a total of 1000 messages in a month, you will be 
+                        charged ($0.0025 per API call) x (1000 calls) = $2.50. If you want to limit the 
+                        costs incurred by this chatbot, you can put a limit on the total number of API 
+                        requests for a specific period of time here. However, it is recommended to regularly
+                        check your API usage for Watson Assistant in your
+                    ", self::SLUG);
+                    printf(
+                        ' <a href="https://console.bluemix.net/dashboard/apps" target="_blank">%s</a> ', 
+                        esc_html__('IBM Cloud Console', self::SLUG)
+                    );
+                    esc_html_e("
+                        as that is the most accurate measure.
+                    ", self::SLUG);
+                ?>
             </p>
         </p>
     <?php
@@ -492,6 +560,14 @@ class Settings {
         </select>
     <?php
     }
+    
+    public static function render_limit_message() {
+    ?>
+        <input name="watsonconv_limit_message" id="watsonconv_limit_message" type="text"
+            value="<?php echo get_option('watsonconv_limit_message', "Sorry, I can't talk right now. Try again later.") ?>"
+            style="width: 40em" />
+    <?php
+    }
 
     // ---------- Rate Limiting Per Client --------------
 
@@ -501,14 +577,28 @@ class Settings {
         add_settings_section('watsonconv_client_rate_limit', 'Usage Per Client',
             array(__CLASS__, 'client_rate_limit_description'), $settings_page);
 
+        $overage_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'This is the message that will be given to users who exceed the Maximum Number of
+                Requests Per Client. The chat box will disappear when the user navigates to a 
+                different page.'
+                , self::SLUG
+            ),
+            esc_html__('Overage Message', self::SLUG)
+        );
+
         add_settings_field('watsonconv_use_client_limit', 'Limit API Requests Per Client',
             array(__CLASS__, 'render_use_client_limit'), $settings_page, 'watsonconv_client_rate_limit');
         add_settings_field('watsonconv_client_limit', 'Maximum Number of Requests Per Client',
             array(__CLASS__, 'render_client_limit'), $settings_page, 'watsonconv_client_rate_limit');
+        add_settings_field('watsonconv_client_limit_message', $overage_title,
+            array(__CLASS__, 'render_client_limit_message'), $settings_page, 'watsonconv_client_rate_limit');
 
         register_setting(self::SLUG, 'watsonconv_use_client_limit');
         register_setting(self::SLUG, 'watsonconv_client_interval');
         register_setting(self::SLUG, 'watsonconv_client_limit');
+        register_setting(self::SLUG, 'watsonconv_client_limit_message');
     }
 
     public static function render_use_client_limit() {
@@ -563,6 +653,14 @@ class Settings {
         </select>
     <?php
     }
+    
+    public static function render_client_limit_message() {
+    ?>
+        <input name="watsonconv_client_limit_message" id="watsonconv_client_limit_message" type="text"
+            value="<?php echo get_option('watsonconv_client_limit_message', "Sorry, I can't talk right now. Try again later.") ?>"
+            style="width: 40em" />
+    <?php
+    }
 
     // ------------- Voice Calling -------------------
 
@@ -592,7 +690,7 @@ class Settings {
                 your number on their phone, or you can enable the VOIP feature which allows the user to call
                 you directly from their browser through their internet connection, with no toll. This is powered
                 by a service called ') ?>
-            <a href="http://cocl.us/what-is-twilio">Twilio</a>.
+            <a href="http://cocl.us/what-is-twilio" target="_blank">Twilio</a>.
         </p>
     <?php
     }
@@ -718,10 +816,14 @@ class Settings {
     public static function twilio_cred_description($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>" class="twilio_settings">
-            <a href="http://cocl.us/try-twilio"><?php esc_html_e('Start by creating your free trial Twilio account here.')?></a><br>
+            <a href="http://cocl.us/try-twilio" target="_blank">
+                <?php esc_html_e('Start by creating your free trial Twilio account here.')?>
+            </a><br>
             <?php esc_html_e(' You can get your Account SID and Auth Token from your Twilio Dashboard.') ?> <br>
             <?php esc_html_e('For the caller ID, you can use a number that you\'ve either obtained from or') ?>
-            <a href="https://www.twilio.com/console/phone-numbers/verified"><?php esc_html_e('verified with') ?></a>
+            <a href="https://www.twilio.com/console/phone-numbers/verified" target="_blank">
+                <?php esc_html_e('verified with') ?>
+            </a>
             <?php esc_html_e('Twilio.') ?> <br>
             <?php esc_html_e('Then just specify the phone number you want to answer the user\'s calls on 
                 and you\'re good to go.') ?> <br>
