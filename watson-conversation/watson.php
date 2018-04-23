@@ -17,3 +17,22 @@ require_once(WATSON_CONV_PATH.'vendor/autoload.php');
 require_once(WATSON_CONV_PATH.'includes/settings.php');
 require_once(WATSON_CONV_PATH.'includes/frontend.php');
 require_once(WATSON_CONV_PATH.'includes/api.php');
+
+register_activation_hook(WATSON_CONV_FILE, 'watsonconv_check_php_compatibility');
+
+function watsonconv_check_php_compatibility() {
+    $required = '5.3';
+
+    if (version_compare( PHP_VERSION, $required, '<' )) {
+        deactivate_plugins( basename( __FILE__ ) );
+        wp_die(
+            "<p>The <strong>Watson Assistant</strong> plugin requires PHP version <b>$required</b> or greater. 
+                You have PHP version <b>". PHP_VERSION . '</b>. See <a href="https://wordpress.org/support/upgrade-php/">this page</a>
+                for information on upgrading.</p>',
+            'Plugin Activation Error',  
+            array('response' => 200, 'back_link' => TRUE)
+        );
+    } else {
+        return;
+    }
+}
