@@ -105,13 +105,6 @@ class Frontend {
                 #message-container
                 {
                     height: '.$messages_height.'pt
-                }
-                
-                @media (max-width:768px)  {
-                    #watson-box .watson-font
-                    {
-                        font-size: 16px;
-                    }
                 }' . 
                 sprintf(
                     $full_screen_query, 

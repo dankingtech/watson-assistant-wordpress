@@ -1638,7 +1638,7 @@ class Settings {
     public static function render_font_size() {
     ?>
         <input name="watsonconv_font_size" id="watsonconv_font_size"
-            type="number" min=9 step=0.5 style="width: 4em"
+            type="number" min=4 step=0.5 style="width: 4em"
             value="<?php echo get_option('watsonconv_font_size', 11) ?>" />
         pt
     <?php

@@ -314,10 +314,13 @@
 {
   display: flex;
   flex-direction: row;
-  height: 2.75em;
+  min-height: 2.75em;
   width: 100%;
   margin: 0;
   background-color: white;
+
+  justify-content: center;
+  align-items: center;
 }
 
 #watson-box .message-form .message-input
@@ -361,7 +364,7 @@
 {
   display: table-cell;
   vertical-align: middle;
-  padding: 0 0.5em 0 0.6em;
+  padding: 0.25em 0.5em 0.25em 0.6em;
 }
 
 #watson-box #message-send div svg
