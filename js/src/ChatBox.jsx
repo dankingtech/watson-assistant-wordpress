@@ -167,7 +167,7 @@ export default class ChatBox extends Component {
           <ReactTooltip />
           <div className='overflow-hidden watson-font'>{watsonconvSettings.title}</div>
         </div>
-        <div style={{position: 'relative', height: '100%', 'display': 'flex', 'flex-direction': 'column'}}>
+        <div id="chatbox-body">
           {hasNumber && showCallInterface && 
             <CallInterface allowTwilio={allowTwilio} />}
           <div id='message-container'>

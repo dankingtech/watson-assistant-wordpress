@@ -7,7 +7,7 @@ add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'chatbox_shortcode'));
 
 class Frontend {
-    const VERSION = '0.6.0';
+    const VERSION = '0.6.4';
 
     public static function enqueue_styles($force_full_screen = null) {
         wp_enqueue_style('watsonconv-chatbox');
@@ -117,31 +117,38 @@ class Frontend {
                     $full_screen_query, 
                     '#watson-float #watson-box
                     {
-                    width: 100%;
-                    height: 100%;
+                        width: 100%;
+                        height: 100%;
                     }
 
                     #watson-box
                     {
-                    max-width: 100%;
+                        max-width: 100%;
                     }
                 
                     #watson-float
                     {
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                    transform: translate(0, 0) !important;
+                        top: 0;
+                        right: 0;
+                        bottom: 0;
+                        left: 0;
+                        transform: translate(0, 0) !important;
                     }
 
                     #watson-float #message-container
                     {
                         height: auto;
+                    }
+                    #chatbox-body
+                    {           
+                        display: flex; 
+                        flex-direction: column;
                     }'
                 );
             
-            update_option('watsonconv_css_cache', $inline_style);
+            if (is_null($force_full_screen)) {
+                update_option('watsonconv_css_cache', $inline_style);
+            }
         }
 
         wp_add_inline_style('watsonconv-chatbox', $inline_style);

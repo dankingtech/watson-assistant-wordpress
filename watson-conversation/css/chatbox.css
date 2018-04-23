@@ -175,6 +175,12 @@
   opacity: 0.6;
 }
 
+#watson-box #chatbox-body
+{
+  position: relative;
+  height: 100%;
+}
+
 #call-interface
 {
   position: absolute;
@@ -248,9 +254,60 @@
   border: none;
 }
 
-#message-container > *:last-child
+#message-container #messages .message
 {
+  clear: both;
+  border-top-right-radius: 1.4em;
+  border-bottom-right-radius: 1.4em;
+  margin-bottom: 2px;
+  padding: 0.5em 0.8em;
+  max-width: 80%;
+  word-wrap: break-word;
+
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+#messages .message ul, #messages .message ol
+{
+  list-style-position: inside;
+}
+
+#message-container #messages .message:first-child
+{
+  border-top-left-radius: 1.4em;
+}
+
+#message-container #messages .message:last-child
+{
+  border-bottom-left-radius: 1.4em;
   margin-bottom: 10px;
+}
+
+#message-container #messages .message-option
+{
+  position: relative;
+  cursor: pointer;
+  border: 1px solid;
+  margin-top: 1px;
+  margin-bottom: -2px;
+  background-color: white;
+  color: rgb(35, 40, 45);
+}
+
+#message-container #messages .watson-message
+{
+  float: left;
+  background-color: rgb(35, 40, 45);
+  color: white;
+}
+
+#message-container #messages .user-message
+{
+  float: right;
+  background-color: white;
+  color: rgb(35, 40, 45);
 }
 
 #watson-box .message-form
@@ -312,55 +369,4 @@
   height: 1.8em;
   fill: white;
   stroke-width: 0;
-}
-
-#message-container #messages .message
-{
-  clear: both;
-  border-top-right-radius: 1.4em;
-  border-bottom-right-radius: 1.4em;
-  margin-bottom: 2px;
-  padding: 0.5em 0.8em;
-  max-width: 80%;
-  word-wrap: break-word;
-
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-}
-
-#message-container #messages .message:first-child
-{
-  border-top-left-radius: 1.4em;
-}
-
-#message-container #messages .message:last-child
-{
-  border-bottom-left-radius: 1.4em;
-  margin-bottom: 10px;
-}
-
-#message-container #messages .message-option
-{
-  position: relative;
-  cursor: pointer;
-  border: 1px solid;
-  margin-top: 1px;
-  margin-bottom: -2px;
-  background-color: white;
-  color: rgb(35, 40, 45);
-}
-
-#message-container #messages .watson-message
-{
-  float: left;
-  background-color: rgb(35, 40, 45);
-  color: white;
-}
-
-#message-container #messages .user-message
-{
-  float: right;
-  background-color: white;
-  color: rgb(35, 40, 45);
 }

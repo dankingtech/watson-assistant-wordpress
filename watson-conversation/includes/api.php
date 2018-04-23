@@ -120,7 +120,7 @@ class API {
                 MONTH_IN_SECONDS
             );
 
-            $client_list = get_transient('watsonconv_client_list', array());
+            $client_list = get_transient('watsonconv_client_list') ?: array();
             $client_list[$ip_addr] = true;
             set_transient('watsonconv_client_list', $client_list, DAY_IN_SECONDS);
 
@@ -186,11 +186,13 @@ class API {
     }
 
     public static function reset_client_usage() {
-        foreach (get_transient('watsonconv_client_list', array()) as $client_id => $val) {
-            delete_option("watsonconv_requests_$client_id");
-        };
+        if (get_transient('watsonconv_client_list')) {
+            foreach (get_transient('watsonconv_client_list') as $client_id => $val) {
+                delete_option("watsonconv_requests_$client_id");
+            };
 
-        delete_option('watsonconv_client_list');
+            delete_option('watsonconv_client_list');
+        }
     }
 
     public static function record_api_usage() {
@@ -202,23 +204,25 @@ class API {
 
         delete_transient('watsonconv_total_requests');
 
-        foreach (get_transient('watsonconv_client_list', array()) as $client_id => $val) {
+        if (get_transient('watsonconv_client_list')) {
+            foreach (get_transient('watsonconv_client_list') as $client_id => $val) {
+                update_option(
+                    "watsonconv_requests_$client_id",
+                    get_option("watsonconv_requests_$client_id", 0) +
+                        get_transient("watsonconv_requests_$client_id") ?: 0
+                );
+
+                delete_transient("watsonconv_requests_$client_id");
+            };
+
             update_option(
-                "watsonconv_requests_$client_id",
-                get_option("watsonconv_requests_$client_id", 0) +
-                    get_transient("watsonconv_requests_$client_id") ?: 0
+                'watsonconv_client_list',
+                get_option('watsonconv_client_list', array()) +
+                    get_transient('watsonconv_client_list')
             );
 
-            delete_transient("watsonconv_requests_$client_id");
-        };
-
-        update_option(
-            'watsonconv_client_list',
-            get_option('watsonconv_client_list', array()) +
-                get_transient('watsonconv_client_list') ?: array()
-        );
-
-        delete_transient('watsonconv_client_list');
+            delete_transient('watsonconv_client_list');
+        }
     }
 
     public static function init_rate_limit() {
