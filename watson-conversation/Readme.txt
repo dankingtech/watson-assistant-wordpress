@@ -13,7 +13,7 @@ This plugin allows you to easily add chatbots powered by IBM Watson Assistant to
 
 Add this plugin to your site and let IBM Watson help you better support your customers. In a few minutes, you can train Watson to answer frequently asked questions, provide useful information and help them navigate your website. And if they want to talk to a human, the plugin can connect them to a real operator via telephone.
 
-This plugin uses IBM Watson Assistant (formerly Watson Conversation) on the IBM Cloud. You can use it with an IBM Cloud Lite account free of charge and without a need to provide a credit card. If you take [this free course](https://cocl.us/build-a-chatbot) you may get a special offer of US$1200 of IBM Cloud usage to deploy chatbots for much higher usage. If you build web sites and chatbots as a business you may qualify for [a special ISV program](https://cocl.us/watson-assistant-isv).
+This plugin uses IBM Watson Assistant (formerly Watson Conversation) on the IBM Cloud. You can use it with an IBM Cloud Lite account free of charge and without a need to provide a credit card. If you take [this free course](https://cocl.us/build-a-chatbot) you may get a special offer of US$1200 of IBM Cloud usage to deploy chatbots for much higher usage. If you build web sites and chatbots as a business you may qualify for [a special ISV program](https://cocl.us/CB0103EN_WATR_WPP).
 
 Currently supported features:
 
@@ -46,7 +46,7 @@ If your WordPress site is hosted by WordPress (with a URL like `websitename.word
 
 1. Learn how to set up your Watson Assistant chatbot with [this quick free course](https://cocl.us/build-a-chatbot).
 
-1. [Sign up for a free IBM Cloud Lite account.](https://cocl.us/CB0103EN_WATR_WPP)
+1. [Sign up for a free IBM Cloud Lite account.](https://cocl.us/bluemix-registration)
 
 1. You can see [the Watson Assistant documentation](https://cocl.us/watson-conversation-help) for more information.
 
