@@ -46,7 +46,7 @@ If your WordPress site is hosted by WordPress (with a URL like `websitename.word
 
 1. Learn how to set up your Watson Assistant chatbot with [this quick free course](https://cocl.us/build-a-chatbot).
 
-1. [Sign up for a free IBM Cloud Lite account.](https://cocl.us/bluemix-registration)
+1. [Sign up for a free IBM Cloud Lite account.](https://cocl.us/CB0103EN_WATR_WPP)
 
 1. You can see [the Watson Assistant documentation](https://cocl.us/watson-conversation-help) for more information.
 

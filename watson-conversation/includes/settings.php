@@ -161,7 +161,7 @@ class Settings {
                     <a href="https://cocl.us/build-a-chatbot" rel="nofollow" target="_blank">this quick free course</a>.
                 </p></li>
                 <li><p>
-                    <a href="https://cocl.us/bluemix-registration" rel="nofollow" target="_blank">
+                    <a href="https://cocl.us/CB0103EN_WATR_WPP" rel="nofollow" target="_blank">
                         Sign up for a free IBM Cloud Lite account.</a>
                 </p></li>
                 <li><p>
@@ -248,7 +248,7 @@ class Settings {
         <p>
             This page contains all the configuration you need to get your chatbot working.<br>
             Before you get these credentials, you need to set up a chatbot on your 
-            <a href="https://cocl.us/bluemix-registration" rel="nofollow" target="_blank">free IBM Cloud account</a>.
+            <a href="https://cocl.us/CB0103EN_WATR_WPP" rel="nofollow" target="_blank">free IBM Cloud account</a>.
             See the Introduction tab for details.
         </p>
     <?php
