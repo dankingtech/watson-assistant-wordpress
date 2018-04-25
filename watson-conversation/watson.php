@@ -26,8 +26,9 @@ function watsonconv_check_php_compatibility() {
     if (version_compare( PHP_VERSION, $required, '<' )) {
         deactivate_plugins( basename( __FILE__ ) );
         wp_die(
-            "<p>The <strong>Watson Assistant</strong> plugin requires PHP version <b>$required</b> or greater. 
-                You have PHP version <b>". PHP_VERSION . '</b>. See <a href="https://wordpress.org/support/upgrade-php/">this page</a>
+            "<p>The <strong>Watson Assistant</strong> plugin requires PHP version <b>$required</b> 
+                or greater. You have PHP version <b>". PHP_VERSION . '</b>. See 
+                <a href="https://wordpress.org/support/upgrade-php/" target="_blank">this page</a>
                 for information on upgrading.</p>',
             'Plugin Activation Error',  
             array('response' => 200, 'back_link' => TRUE)
