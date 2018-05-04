@@ -13,13 +13,6 @@ define('WATSON_CONV_PATH', plugin_dir_path(__FILE__));
 define('WATSON_CONV_URL', plugin_dir_url(__FILE__));
 define('WATSON_CONV_BASENAME', plugin_basename(__FILE__));
 
-require_once(WATSON_CONV_PATH.'vendor/autoload.php');
-require_once(WATSON_CONV_PATH.'includes/settings.php');
-require_once(WATSON_CONV_PATH.'includes/frontend.php');
-require_once(WATSON_CONV_PATH.'includes/api.php');
-
-register_activation_hook(WATSON_CONV_FILE, 'watsonconv_check_php_compatibility');
-
 function watsonconv_check_php_compatibility() {
     $required = '5.3';
 
@@ -37,3 +30,10 @@ function watsonconv_check_php_compatibility() {
         return;
     }
 }
+
+register_activation_hook(WATSON_CONV_FILE, 'watsonconv_check_php_compatibility');
+
+require_once(WATSON_CONV_PATH.'vendor/autoload.php');
+require_once(WATSON_CONV_PATH.'includes/settings.php');
+require_once(WATSON_CONV_PATH.'includes/frontend.php');
+require_once(WATSON_CONV_PATH.'includes/api.php');
