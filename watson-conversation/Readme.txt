@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
 Tested up to: 4.9
-Stable tag: 0.6.5
+Stable tag: 0.6.6
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -17,6 +17,7 @@ This plugin uses IBM Watson Assistant (formerly Watson Conversation) on the IBM 
 
 Currently supported features:
 
+* **All New:** Use user's account data such as name in chatbot dialog
 * Easy VOIP calling powered by Twilio for users to contact a real person if they wish
 * Simple plugin setup to get your Watson Assistant chatbot available to users as soon as possible
 * Control usage of the Watson Assistant service directly from the plugin settings page
@@ -85,6 +86,11 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.6.6 =
+* New Context Variables Feature for using user account data in chat bot dialog
+* Added full-screen specific font size
+* Fixed chat box rendering bug
 
 = 0.6.5 =
 * Small UI improvements
