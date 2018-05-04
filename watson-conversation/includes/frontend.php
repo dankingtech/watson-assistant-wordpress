@@ -275,7 +275,7 @@ class Frontend {
     }
 
     public static function register_scripts() {
-        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array(), self::VERSION, true);
+        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array('jquery'), self::VERSION, true);
         wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::VERSION);
     }
 }

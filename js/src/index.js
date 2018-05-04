@@ -1,3 +1,5 @@
+/* global jQuery */
+
 import 'core-js/fn/symbol';
 import 'core-js/fn/promise';
 import 'core-js/fn/object';
@@ -18,25 +20,27 @@ if (typeof localStorage !== 'undefined') {
     }
 }
 
-let shortcodeDiv = document.getElementById('watsonconv-inline-box');
-let floatDiv = document.getElementById('watsonconv-floating-box');
-
-function renderFloatingBox() {
-  ReactDOM.render(
-    <App isMobile={window.matchMedia("(max-width:640px)").matches} />,
-    floatDiv
-  );
-}
-
-if (shortcodeDiv) {
-  ReactDOM.render(
-    <ChatBox isMinimized={false} />,
-    shortcodeDiv
-  );
-} else if (typeof(sessionStorage) !== 'undefined' &&
-    sessionStorage.getItem('chat_bot_state') !== null)
-{
-  renderFloatingBox();
-} else {
-  setTimeout(renderFloatingBox, watsonconvSettings.delay*1000);
-}
+jQuery(document).ready(function() {
+  let shortcodeDiv = document.getElementById('watsonconv-inline-box');
+  let floatDiv = document.getElementById('watsonconv-floating-box');
+  
+  function renderFloatingBox() {
+    ReactDOM.render(
+      <App isMobile={window.matchMedia("(max-width:640px)").matches} />,
+      floatDiv
+    );
+  }
+  
+  if (shortcodeDiv) {
+    ReactDOM.render(
+      <ChatBox isMinimized={false} />,
+      shortcodeDiv
+    );
+  } else if (typeof(sessionStorage) !== 'undefined' &&
+      sessionStorage.getItem('chat_bot_state') !== null)
+  {
+    renderFloatingBox();
+  } else {
+    setTimeout(renderFloatingBox, watsonconvSettings.delay*1000);
+  }
+})
