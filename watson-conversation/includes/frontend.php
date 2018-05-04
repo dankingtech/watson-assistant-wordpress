@@ -7,12 +7,13 @@ add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'chatbox_shortcode'));
 
 class Frontend {
-    const VERSION = '0.6.5';
+    const VERSION = '0.6.6';
 
     public static function enqueue_styles($force_full_screen = null) {
         wp_enqueue_style('watsonconv-chatbox');
 
         $font_size = get_option('watsonconv_font_size', 11);
+        $font_size_fs = get_option('watsonconv_font_size_fs', 14);
         $color_rgb = sscanf(get_option('watsonconv_color', '#23282d'), "#%02x%02x%02x");
         $messages_height = get_option('watsonconv_size', 200);
         $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
@@ -117,6 +118,11 @@ class Frontend {
                     #watson-box
                     {
                         max-width: 100%;
+                    }
+
+                    #watson-box .watson-font
+                    {
+                        font-size: '.$font_size_fs.'pt;
                     }
                 
                     #watson-float

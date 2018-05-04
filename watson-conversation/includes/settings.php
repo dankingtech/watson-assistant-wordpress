@@ -11,6 +11,7 @@ add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settin
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_credentials'));
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_show_on'));
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_full_screen'));
+add_action('upgrader_process_complete', array('WatsonConv\Settings', 'clear_css_cache'));
 
 class Settings {
     const SLUG = 'watsonconv';
@@ -1355,6 +1356,15 @@ class Settings {
             esc_html__('Font Size', self::SLUG)
         );
 
+        $font_size_fs_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'This changes the font size when the chat box is displaying in full screen mode.'
+                , self::SLUG
+            ),
+            esc_html__('Font Size in Full Screen', self::SLUG)
+        );
+
         $color_title = sprintf(
             '<span href="#" title="%s">%s</span>', 
             esc_html__(
@@ -1395,6 +1405,8 @@ class Settings {
             array(__CLASS__, 'render_message_prompt'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_font_size', $font_size_title,
             array(__CLASS__, 'render_font_size'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_font_size_fs', $font_size_fs_title,
+            array(__CLASS__, 'render_font_size_fs'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_color', $color_title,
             array(__CLASS__, 'render_color'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_size', $size_title,
@@ -1440,6 +1452,7 @@ class Settings {
         register_setting(self::SLUG, 'watsonconv_clear_text');
         register_setting(self::SLUG, 'watsonconv_message_prompt');
         register_setting(self::SLUG, 'watsonconv_font_size');
+        register_setting(self::SLUG, 'watsonconv_font_size_fs');
         register_setting(self::SLUG, 'watsonconv_color', array(__CLASS__,  'validate_color'));
         register_setting(self::SLUG, 'watsonconv_size');
 
@@ -1456,6 +1469,20 @@ class Settings {
                 the chat box to appear to your site visitor.', self::SLUG) ?>
         </p>
     <?php
+    }
+
+    public static function clear_css_cache() {
+        try {
+            $current_plugin_path_name = plugin_basename( __FILE__ );
+
+            if ($options['action'] == 'update' && $options['type'] == 'plugin' ) {
+                foreach($options['plugins'] as $each_plugin){
+                    if ($each_plugin == $current_plugin_path_name) {
+                        delete_option('watsonconv_css_cache');
+                    }
+                }
+            }
+        } catch (\Exception $e) {}
     }
 
     public static function render_minimized() {
@@ -1672,6 +1699,15 @@ class Settings {
         <input name="watsonconv_font_size" id="watsonconv_font_size"
             type="number" min=4 step=0.5 style="width: 4em"
             value="<?php echo get_option('watsonconv_font_size', 11) ?>" />
+        pt
+    <?php
+    }
+
+    public static function render_font_size_fs() {
+    ?>
+        <input name="watsonconv_font_size_fs" id="watsonconv_font_size_fs"
+            type="number" min=4 step=0.5 style="width: 4em"
+            value="<?php echo get_option('watsonconv_font_size_fs', 14) ?>" />
         pt
     <?php
     }
