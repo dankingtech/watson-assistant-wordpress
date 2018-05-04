@@ -60,3 +60,28 @@ pre {
   white-space: -o-pre-wrap;  
   word-wrap: break-word;     
  }
+ 
+ hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+#context-var-image {
+  text-align: right
+}
+
+@media screen and (max-width: 800px) {
+  td.responsive {
+    display: block;
+  }
+
+  #context-var-image {
+    padding-top: 1em;
+    text-align: left;
+  }
+}
+

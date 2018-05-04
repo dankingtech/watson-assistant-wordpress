@@ -18,10 +18,11 @@ export default class ChatBox extends Component {
         sessionStorage.getItem('watson_bot_state'))
     {
       this.state = JSON.parse(sessionStorage.getItem('watson_bot_state'));
+      Object.assign(this.state.context, watsonconvSettings.context);
     } else {
       this.state = {
         messages: [],
-        context: null,
+        context: watsonconvSettings.context,
         showCallInterface: false,
         mediaSecure: true,
         convStarted: false

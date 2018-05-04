@@ -8,8 +8,6 @@ add_action('admin_enqueue_scripts', array('WatsonConv\Settings', 'init_scripts')
 add_action('after_plugin_row_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'render_notice'), 10, 3);
 add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings', 'add_links'));
 
-add_action('admin_notices', array('WatsonConv\Settings', 'ibm_partner_banner'));
-
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_credentials'));
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_show_on'));
 add_action('plugins_loaded', array('WatsonConv\Settings', 'migrate_old_full_screen'));
@@ -32,6 +30,7 @@ class Settings {
         self::init_call_ui_settings();
         self::init_behaviour_settings();
         self::init_appearance_settings();
+        self::init_context_var_settings();
     }
 
     public static function unregister() {
@@ -77,25 +76,6 @@ class Settings {
         <?php
         }
     }
-    
-    public static function ibm_partner_banner() {
-        ?>
-        <div class="notice notice-info is-dismissible">
-            <p><?php esc_html_e('
-                Want to make money building chatbots for clients? Become an IBM Partner, registration is quick and free!
-                Get one year of Watson Assistant and 100,000 API calls, 10 workspaces or chatbots, 200 intents and 200 entities as your free starting bonus.'
-            , self::SLUG); ?></p>
-            <a
-                class='button button-primary' 
-                style='margin-bottom: 0.5em' 
-                href='https://cocl.us/CB0103EN_WATR_WPP' 
-                target="_blank"
-            >
-                Become a Partner
-            </a>
-        </div>
-        <?php
-    }
 
     public static function add_links($links) {
             $settings_link = '<a href="options-general.php?page='.self::SLUG.'">'
@@ -109,47 +89,92 @@ class Settings {
 
     public static function render_page() {
     ?>
-      <div class="wrap" style="max-width: 95em">
-          <h2><?php esc_html_e('Watson Assistant Settings', self::SLUG); ?></h2>
+        <div class="wrap" style="max-width: 95em">
+            <h2><?php esc_html_e('Watson Assistant Settings', self::SLUG); ?></h2>
+            
+            <div class="notice notice-info is-dismissible">
+                <p><?php esc_html_e('
+                    Want to make money building chatbots for clients? Become an IBM Partner, registration is quick and free!
+                    Get one year of Watson Assistant and 100,000 API calls, 10 workspaces or chatbots, 200 intents and 200 entities as your free starting bonus.'
+                , self::SLUG); ?></p>
+                <a
+                    class='button button-primary' 
+                    style='margin-bottom: 0.5em' 
+                    href='https://cocl.us/CB0103EN_WATR_WPP' 
+                    target="_blank"
+                >
+                    Become a Partner
+                </a>
+            </div>
 
-          <h2 class="nav-tab-wrapper">
-            <a onClick="switch_tab('intro')" class="nav-tab nav-tab-active intro_tab">Introduction</a>
-            <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">Main Setup</a>
-            <a onClick="switch_tab('advanced')" class="nav-tab advanced_tab">Advanced</a>
-            <a onClick="switch_tab('voice_call')" class="nav-tab voice_call_tab">Voice Calling</a>
-            <a onClick="switch_tab('usage_management')" class="nav-tab usage_management_tab">Usage Management</a>
-            <a onClick="switch_tab('behaviour')" class="nav-tab behaviour_tab">Behaviour</a>
-            <a onClick="switch_tab('appearance')" class="nav-tab appearance_tab">Appearance</a>
-          </h2>
+            <h2 class="nav-tab-wrapper">
+                <a onClick="switch_tab('intro')" class="nav-tab nav-tab-active intro_tab">Introduction</a>
+                <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">Main Setup</a>
+                <a onClick="switch_tab('advanced')" class="nav-tab advanced_tab">Advanced</a>
+                <a onClick="switch_tab('voice_call')" class="nav-tab voice_call_tab">Voice Calling</a>
+                <a onClick="switch_tab('usage_management')" class="nav-tab usage_management_tab">Usage Management</a>
+                <a onClick="switch_tab('behaviour')" class="nav-tab behaviour_tab">Behaviour</a>
+                <a onClick="switch_tab('appearance')" class="nav-tab appearance_tab">Appearance</a>
+                <a onClick="switch_tab('context_var')" class="nav-tab context_var_tab">Context Variables</a>
+            </h2>
 
-          <form action="options.php" method="POST">
-            <div class="tab-page intro_page"><?php self::render_intro(); ?></div>
-            <div class="tab-page advanced_page" style="display: none"><?php self::render_advanced(); ?></div>
-            <?php
-                settings_fields(self::SLUG); 
-
-                $tabs = array('workspace', 'voice_call', 'usage_management', 'behaviour', 'appearance');
-
-                foreach ($tabs as $tab_name) {
-                ?> 
-                    <div class="tab-page <?php echo $tab_name ?>_page" style="display: none">
-                        <?php do_settings_sections(self::SLUG.'_'.$tab_name) ?>
-                    </div>
+            <form action="options.php" method="POST">
+                <div class="tab-page intro_page"><?php self::render_intro(); ?></div>
+                <div class="tab-page advanced_page" style="display: none"><?php self::render_advanced(); ?></div>
                 <?php
-                }
-            ?>
+                    settings_fields(self::SLUG); 
 
-            <input type="hidden" value="" name="watsonconv_css_cache" />
+                    ?> 
+                        <div class="tab-page workspace_page" style="display: none">
+                            <?php do_settings_sections('watsonconv_workspace') ?>
+                        </div>
+                        <div class="tab-page voice_call_page" style="display: none">
+                            <?php do_settings_sections('watsonconv_voice_call') ?>
+                        </div>
+                        <div class="tab-page usage_management_page" style="display: none">
+                            <?php do_settings_sections('watsonconv_usage_management') ?>
+                        </div>
+                        <div class="tab-page behaviour_page" style="display: none">
+                            <?php do_settings_sections('watsonconv_behaviour') ?>
+                        </div>
+                        <div class="tab-page appearance_page" style="display: none">
+                            <?php do_settings_sections('watsonconv_appearance') ?>
+                        </div>
+                        <div class="tab-page context_var_page" style="display: none">
+                            <?php self::context_var_description() ?>
+                            <hr>
+                            <table width='100%'>
+                                <tr>
+                                    <td class="responsive">
+                                        <h2>Enter Context Variable Labels Here</h2>
+                                        <table class='form-table'>
+                                            <?php do_settings_fields('watsonconv_context_var', 'watsonconv_context_var') ?>
+                                        </table>
+                                    </td>
+                                    <td id='context-var-image' class="responsive">
+                                        <img 
+                                            class="drop-shadow" 
+                                            style="width: 40em" 
+                                            src="<?php echo WATSON_CONV_URL ?>/img/context_var.jpg"
+                                        >
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    <?php
+                ?>
 
-            <?php submit_button(); ?>
-            <p class="update-message notice inline notice-warning notice-alt"
-               style="padding-top: 0.5em; padding-bottom: 0.5em">
-                <b>Note:</b> If you have a server-side caching plugin installed such as
-                WP Super Cache, you may need to clear your cache after changing settings or
-                deactivating the plugin. Otherwise, your action may not take effect.
-            <p>
-          </form>
-      </div>
+                <input type="hidden" value="" name="watsonconv_css_cache" />
+
+                <?php submit_button(); ?>
+                <p class="update-message notice inline notice-warning notice-alt"
+                style="padding-top: 0.5em; padding-bottom: 0.5em">
+                    <b>Note:</b> If you have a server-side caching plugin installed such as
+                    WP Super Cache, you may need to clear your cache after changing settings or
+                    deactivating the plugin. Otherwise, your action may not take effect.
+                <p>
+            </form>
+        </div>
     <?php
     }
 
@@ -1813,6 +1838,163 @@ class Settings {
                 </label><br />
             </div>
         <?php
+        }
+    }
+    
+    // Context Variable Settings
+    
+    private static function init_context_var_settings() {
+        $settings_page = self::SLUG . '_context_var';
+
+        add_settings_section('watsonconv_context_var', '',
+            array(__CLASS__, 'context_var_description'), $settings_page);
+
+        // ---- Chat Box Appearance Section ------
+
+        $first_name_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'The first name of the user.'
+                , self::SLUG
+            ),
+            esc_html__('First Name', self::SLUG)
+        );
+
+        $last_name_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'The last name of the user.'
+                , self::SLUG
+            ),
+            esc_html__('Last Name', self::SLUG)
+        );
+
+        $nickname_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                "The user's nickname."
+                , self::SLUG
+            ),
+            esc_html__('Nickname', self::SLUG)
+        );
+
+        $email_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                "The user's email address."
+                , self::SLUG
+            ),
+            esc_html__('Email Address', self::SLUG)
+        );
+
+        $login_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                "The user's login username."
+                , self::SLUG
+            ),
+            esc_html__('Username', self::SLUG)
+        );
+        
+        add_settings_field('watsonconv_fname_var', $first_name_title,
+            array(__CLASS__, 'render_fname_var'), $settings_page, 'watsonconv_context_var');
+        add_settings_field('watsonconv_lname_var', $last_name_title,
+            array(__CLASS__, 'render_lname_var'), $settings_page, 'watsonconv_context_var');
+        add_settings_field('watsonconv_nname_var', $nickname_title,
+            array(__CLASS__, 'render_nname_var'), $settings_page, 'watsonconv_context_var');
+        add_settings_field('watsonconv_email_var', $email_title,
+            array(__CLASS__, 'render_email_var'), $settings_page, 'watsonconv_context_var');
+        add_settings_field('watsonconv_login_var', $login_title,
+            array(__CLASS__, 'render_login_var'), $settings_page, 'watsonconv_context_var');
+
+        register_setting(self::SLUG, 'watsonconv_fname_var', array(__CLASS__, 'validate_context_var'));
+        register_setting(self::SLUG, 'watsonconv_lname_var', array(__CLASS__, 'validate_context_var'));
+        register_setting(self::SLUG, 'watsonconv_nname_var', array(__CLASS__, 'validate_context_var'));
+        register_setting(self::SLUG, 'watsonconv_email_var', array(__CLASS__, 'validate_context_var'));
+        register_setting(self::SLUG, 'watsonconv_login_var', array(__CLASS__, 'validate_context_var'));
+    }
+
+    public static function context_var_description() {
+    ?>
+        <p>
+            Would you like to use a user's name or email in your chatbot's dialog? 
+            This page allows you to send user account information (such as first name, last name) to your
+            Watson Assistant chatbot as a "context variable". You can use this to customize
+            your dialog to say different things depending on the value of the context variable. 
+            To do this, follow these instructions:
+        </p>
+        <ol>
+            <li>Give labels to the values you want to use by filling out the fields below 
+                (e.g. 'fname' for First Name).</li>
+            <li>Navigate to you Watson Assistant workspace (the place where you create your chatbot's dialog).</li>
+            <li>Now you can type <strong>$fname</strong> in your chatbot dialog and this 
+                will be replaced with the user's first name.</li> 
+            <li>Sometimes a user may not specify their first name and so this context 
+                variable won't be sent. Because of this, you should check if the
+                chatbot recognizes the context variable first like in the example below.</li>
+        </ol>
+    <?php
+    } 
+
+    public static function render_fname_var() {
+    ?>
+        <input name="watsonconv_fname_var" id="watsonconv_fname_var"
+            type="text" style="width: 16em"
+            placeholder="e.g. fname"
+            value="<?php echo get_option('watsonconv_fname_var', '') ?>" 
+        />
+    <?php
+    }
+
+    public static function render_lname_var() {
+        ?>
+            <input name="watsonconv_lname_var" id="watsonconv_lname_var"
+                type="text" style="width: 16em"
+                placeholder="e.g. lname"
+                value="<?php echo get_option('watsonconv_lname_var', '') ?>" 
+            />
+        <?php
+    }
+
+    public static function render_nname_var() {
+        ?>
+            <input name="watsonconv_nname_var" id="watsonconv_nname_var"
+                type="text" style="width: 16em"
+                placeholder="e.g. nickname"
+                value="<?php echo get_option('watsonconv_nname_var', '') ?>" 
+            />
+        <?php
+    }
+
+    public static function render_email_var() {
+        ?>
+            <input name="watsonconv_email_var" id="watsonconv_email_var"
+                type="text" style="width: 16em"
+                placeholder="e.g. email"
+                value="<?php echo get_option('watsonconv_email_var', '') ?>" 
+            />
+        <?php
+    }
+
+    public static function render_login_var() {
+        ?>
+            <input name="watsonconv_login_var" id="watsonconv_login_var"
+                type="text" style="width: 16em"
+                placeholder="e.g. username"
+                value="<?php echo get_option('watsonconv_login_var', '') ?>" 
+            />
+        <?php
+    }
+
+    public static function validate_context_var($str) 
+    {
+        if (preg_match('/^[a-zA-Z0-9_]*$/',$str)) {
+            return $str;
+        } else {
+            add_settings_error('watsonconv', 'invalid-var-name', 
+                'A context variable name can only contain upper and lowercase alphabetic characters,
+                numeric characters (0-9), and underscores.');
+            return '';
         }
     }
 }

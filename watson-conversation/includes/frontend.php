@@ -161,7 +161,42 @@ class Frontend {
         return 0.2126 * $lin_rgb[0] + 0.7152 * $lin_rgb[1] + 0.0722 * $lin_rgb[2];
     }
 
-    public static function get_settings() {
+    private static function get_context_var() {
+        $context = new \stdClass();
+        $current_user = wp_get_current_user();
+        if ($current_user->ID != 0) {
+            $fname_label = get_option('watsonconv_fname_var');
+            $lname_label = get_option('watsonconv_lname_var');
+            $nname_label = get_option('watsonconv_nname_var');
+            $email_label = get_option('watsonconv_email_var');
+            $login_label = get_option('watsonconv_login_var');
+
+            $first_name = get_user_meta($current_user->ID, 'first_name', true);
+            $last_name = get_user_meta($current_user->ID, 'last_name', true);
+            $nickname = get_user_meta($current_user->ID, 'nickname', true);
+            
+            if ($fname_label && !empty($first_name)) {
+                $context->$fname_label = $first_name;
+            }
+            if ($lname_label && !empty($last_name)) {
+                $context->$lname_label = $last_name;
+            }
+            if ($nname_label && !empty($nickname)) {
+                $context->$nname_label = $nickname;
+            }
+
+            if ($email_label && $current_user->has_prop('user_email')) {
+                $context->$email_label = $current_user->get('user_email');
+            }
+            if ($login_label && $current_user->has_prop('user_login')) {
+                $context->$login_label = $current_user->get('user_login');
+            }
+        }
+
+        return $context;
+    }
+
+    private static function get_settings() {
         $twilio_config = get_option('watsonconv_twilio');
 
         $call_configured = (bool)(
@@ -192,7 +227,8 @@ class Frontend {
                 'callTooltip' => get_option('watsonconv_call_tooltip'),
                 'callButton' => get_option('watsonconv_call_button'),
                 'callingText' => get_option('watsonconv_calling_text')
-            )
+            ),
+            'context' => self::get_context_var()
         );
     }
 
