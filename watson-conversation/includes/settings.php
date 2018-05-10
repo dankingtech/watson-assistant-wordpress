@@ -148,6 +148,11 @@ class Settings {
                                 <tr>
                                     <td class="responsive">
                                         <h2>Enter Context Variable Labels Here</h2>
+                                        <p>
+                                            Enter your desired labels in the text boxes. Next to the 
+                                            text boxes, you can see the corresponding values of the 
+                                            fields which you have set in your Wordpress profile. 
+                                        </p>
                                         <table class='form-table'>
                                             <?php do_settings_fields('watsonconv_context_var', 'watsonconv_context_var') ?>
                                         </table>
@@ -1877,15 +1882,13 @@ class Settings {
         }
     }
     
-    // Context Variable Settings
+    // ---------- Context Variable Settings -------------
     
     private static function init_context_var_settings() {
         $settings_page = self::SLUG . '_context_var';
 
         add_settings_section('watsonconv_context_var', '',
             array(__CLASS__, 'context_var_description'), $settings_page);
-
-        // ---- Chat Box Appearance Section ------
 
         $first_name_title = sprintf(
             '<span href="#" title="%s">%s</span>', 
@@ -1979,6 +1982,8 @@ class Settings {
             placeholder="e.g. fname"
             value="<?php echo get_option('watsonconv_fname_var', '') ?>" 
         />
+        <span class='dashicons dashicons-arrow-right-alt'></span>
+        "<?php echo get_user_meta(get_current_user_id(), 'first_name', true); ?>"
     <?php
     }
 
@@ -1989,6 +1994,8 @@ class Settings {
                 placeholder="e.g. lname"
                 value="<?php echo get_option('watsonconv_lname_var', '') ?>" 
             />
+            <span class='dashicons dashicons-arrow-right-alt'></span>
+            "<?php echo get_user_meta(get_current_user_id(), 'last_name', true); ?>"
         <?php
     }
 
@@ -1999,6 +2006,8 @@ class Settings {
                 placeholder="e.g. nickname"
                 value="<?php echo get_option('watsonconv_nname_var', '') ?>" 
             />
+            <span class='dashicons dashicons-arrow-right-alt'></span>
+            "<?php echo get_user_meta(get_current_user_id(), 'nickname', true); ?>"
         <?php
     }
 
@@ -2009,6 +2018,8 @@ class Settings {
                 placeholder="e.g. email"
                 value="<?php echo get_option('watsonconv_email_var', '') ?>" 
             />
+            <span class='dashicons dashicons-arrow-right-alt'></span>
+            "<?php echo wp_get_current_user()->get('user_email'); ?>"
         <?php
     }
 
@@ -2019,6 +2030,8 @@ class Settings {
                 placeholder="e.g. username"
                 value="<?php echo get_option('watsonconv_login_var', '') ?>" 
             />
+            <span class='dashicons dashicons-arrow-right-alt'></span>
+            "<?php echo wp_get_current_user()->get('user_login'); ?>"
         <?php
     }
 

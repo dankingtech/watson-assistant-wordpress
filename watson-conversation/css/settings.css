@@ -70,6 +70,15 @@ pre {
   padding: 0;
 }
 
+span.dashicons {
+  line-height: 1.35;
+}
+
+span.dashicons-arrow-right-alt {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
 #context-var-image {
   text-align: right
 }
