@@ -151,7 +151,9 @@ class Settings {
                                         <p>
                                             Enter your desired labels in the text boxes. Next to the 
                                             text boxes, you can see the corresponding values of the 
-                                            fields which you have set in your Wordpress profile. 
+                                            fields which you have set in your Wordpress profile, as
+                                            an example of the information that will be provided to the 
+                                            chatbot.
                                         </p>
                                         <table class='form-table'>
                                             <?php do_settings_fields('watsonconv_context_var', 'watsonconv_context_var') ?>
