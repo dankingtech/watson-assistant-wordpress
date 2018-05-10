@@ -1339,10 +1339,11 @@ class Settings {
         $clear_text_title = sprintf(
             '<span href="#" title="%s">%s</span>', 
             esc_html__(
-                'This is the text the user can click to clear the conversation history and start over.'
+                'This is the tooltip for the button the user can click to clear the conversation 
+                history and start over.'
                 , self::SLUG
             ),
-            esc_html__('"Clear Messages" Text', self::SLUG)
+            esc_html__('"Clear Messages" Tooltip', self::SLUG)
         );
 
         $message_prompt_title = sprintf(

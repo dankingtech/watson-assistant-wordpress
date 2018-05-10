@@ -211,7 +211,7 @@ class Frontend {
             }
         }
 
-        return $current_user;
+        return $context;
     }
 
     private static function get_settings() {

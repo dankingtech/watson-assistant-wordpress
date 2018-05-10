@@ -132,28 +132,13 @@
   cursor: pointer;
 }
 
-#watson-box #watson-header .popup-control
-{
-  display: none
-}
-
-#watson-float #watson-box #watson-header .popup-control
-{
-  display: initial;
-
-  float: right;
-  font-size: 1.45em;
-  opacity: 0.6;
-  height: auto;
-  width: auto;
-}
-
 #watson-box #watson-header .header-button
 {
   float: right;
   font-size: 1.15em;
   margin-top: 0.15em;
-  margin-right: 0.2em;
+  margin-right: 0.5em;
+  margin-left: 0.3em;
   opacity: 0.6;
   height: auto;
   width: auto;
@@ -161,17 +146,46 @@
   cursor: pointer;
 }
 
-#watson-float #watson-header .header-button
+:not(#watson-float) > #watson-box #watson-header .minimize-button
 {
-  margin-right: 0.75em;
+  display: none;
 }
 
-#watson-box #watson-header:hover .popup-control, #watson-box #watson-header .header-button:hover
+#watson-box #watson-header .header-button:nth-child(1)
+{
+  margin-right: 0;
+}
+
+:not(#watson-float) > #watson-box #watson-header .header-button:nth-child(2)
+{
+  margin-right: 0.1em;
+}
+
+#watson-box #watson-header .minimize-button
+{
+  font-size: 1.45em;
+  margin-top: 0em;
+  margin-left: 0em;
+}
+
+#watson-box #watson-header .dashicons-phone
+{
+  font-size: 1.15em;
+  margin-top: 0.15em;
+}
+
+#watson-box #watson-header .dashicons-trash
+{
+  font-size: 1.3em;
+  margin-top: 0em;
+}
+
+#watson-box #watson-header:hover .minimize-button, #watson-box #watson-header .header-button:hover
 {
   opacity: 0.9;
 }
 
-#watson-box #watson-header .header-button:hover ~ .popup-control
+#watson-box #watson-header .header-button:hover ~ .minimize-button
 {
   opacity: 0.6;
 }

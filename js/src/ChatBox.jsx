@@ -157,9 +157,15 @@ export default class ChatBox extends Component {
           id='watson-header'
           className='watson-font'
         >
-          <span className={`dashicons dashicons-arrow-${
+          <span 
+          className={`dashicons dashicons-arrow-${
               position[0] == 'bottom' ? 'down' : 'up'
-            }-alt2 popup-control`}></span>
+            }-alt2 header-button minimize-button`}></span>
+          <span
+            onClick={this.reset.bind(this)} 
+            className={`dashicons dashicons-trash header-button`}
+            data-tip={clearText || 'Clear Messages'}>
+          </span>
           {hasNumber &&
             <span
               onClick={this.toggleCallInterface.bind(this)} 
@@ -175,9 +181,6 @@ export default class ChatBox extends Component {
             <CallInterface allowTwilio={allowTwilio} />}
           <div id='message-container'>
             <div id='messages' ref={div => {this.messageList = div}}>
-              <div style={{'text-align': 'right', margin: '-5 0 5 10'}} className='watson-font'>
-                <a style={{'font-size': '0.85em'}} onClick={this.reset.bind(this)}>{clearText}</a>
-              </div>
               {this.state.messages.map(
                 (message, index) => <Message message={message} key={index} sendMessage={this.sendMessage.bind(this)} />
               )}
