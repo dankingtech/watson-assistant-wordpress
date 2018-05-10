@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip-currenttarget';
 import webrtc from 'webrtcsupport';
+import jstz from 'jstz';
 
 import Message from './Message.jsx';
 import InputBox from './InputBox.jsx';
@@ -18,7 +19,7 @@ export default class ChatBox extends Component {
         sessionStorage.getItem('watson_bot_state'))
     {
       this.state = JSON.parse(sessionStorage.getItem('watson_bot_state'));
-      Object.assign(this.state.context, watsonconvSettings.context);
+      Object.assign(this.state.context, watsonconvSettings.context, {timezone: jstz.determine().name()});
     } else {
       this.state = {
         messages: [],
@@ -27,6 +28,7 @@ export default class ChatBox extends Component {
         mediaSecure: true,
         convStarted: false
       };
+      Object.assign(this.state.context, {timezone: jstz.determine().name()});
     }
   }
 

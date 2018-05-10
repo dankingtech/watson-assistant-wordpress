@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "core-js": "^2.5.3",
+    "jstz": "^2.0.0",
     "preact": "^8.1.0",
     "preact-compat": "^3.17.0",
     "querystringify": "^1.0.0",
