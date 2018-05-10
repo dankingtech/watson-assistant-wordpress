@@ -1446,6 +1446,10 @@ class Settings {
             array(__CLASS__, 'render_fab_icon_pos'), $settings_page, 'watsonconv_appearance_button');
         add_settings_field('watsonconv_fab_text', $fab_text_title,
             array(__CLASS__, 'render_fab_text'), $settings_page, 'watsonconv_appearance_button');
+        add_settings_field('watsonconv_fab_icon_size', esc_html__('Icon Size'),
+            array(__CLASS__, 'render_fab_icon_size'), $settings_page, 'watsonconv_appearance_button');
+        add_settings_field('watsonconv_fab_text_size', esc_html__('Text Size'),
+            array(__CLASS__, 'render_fab_text_size'), $settings_page, 'watsonconv_appearance_button');
         add_settings_field('watsonconv_fab_preview', esc_html__('Preview'),
             array(__CLASS__, 'render_fab_preview'), $settings_page, 'watsonconv_appearance_button');
 
@@ -1463,6 +1467,8 @@ class Settings {
 
         register_setting(self::SLUG, 'watsonconv_fab_icon_pos');
         register_setting(self::SLUG, 'watsonconv_fab_text');
+        register_setting(self::SLUG, 'watsonconv_fab_icon_size');
+        register_setting(self::SLUG, 'watsonconv_fab_text_size');
 
         register_setting(self::SLUG, 'watsonconv_css_cache');
     }
@@ -1848,6 +1854,24 @@ class Settings {
         <input name="watsonconv_fab_text" id="watsonconv_fab_text"
             type="text" style="width: 16em"
             value="<?php echo get_option('watsonconv_fab_text', '') ?>" />
+    <?php
+    }
+
+    public static function render_fab_icon_size() {
+    ?>
+        <input name="watsonconv_fab_icon_size" id="watsonconv_fab_icon_size"
+            type="number" min=4 step=0.5 style="width: 4em"
+            value="<?php echo get_option('watsonconv_fab_icon_size', 28) ?>" />
+        pt
+    <?php
+    }
+
+    public static function render_fab_text_size() {
+    ?>
+        <input name="watsonconv_fab_text_size" id="watsonconv_fab_text_size"
+            type="number" min=4 step=0.5 style="width: 4em"
+            value="<?php echo get_option('watsonconv_fab_text_size', 15) ?>" />
+        pt
     <?php
     }
 

@@ -246,4 +246,14 @@ jQuery(document).ready(function($) {
       }
     })
     .trigger('input');
+
+  $('#watsonconv_fab_icon_size')
+    .on('change', function() {
+      $('#watson-fab-icon').css('font-size', this.value + 'pt');
+    });
+
+  $('#watsonconv_fab_text_size')
+    .on('change', function() {
+      $('#watson-fab-text').css('font-size', this.value + 'pt');
+    });
 });

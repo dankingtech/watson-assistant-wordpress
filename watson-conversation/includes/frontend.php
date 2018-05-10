@@ -14,6 +14,8 @@ class Frontend {
 
         $font_size = get_option('watsonconv_font_size', 11);
         $font_size_fs = get_option('watsonconv_font_size_fs', 14);
+        $fab_text_size = get_option('watsonconv_fab_text_size', 15);
+        $fab_icon_size = get_option('watsonconv_fab_icon_size', 28);
         $color_rgb = sscanf(get_option('watsonconv_color', '#23282d'), "#%02x%02x%02x");
         $messages_height = get_option('watsonconv_size', 200);
         $position = explode('_', get_option('watsonconv_position', 'bottom_right'));
@@ -86,6 +88,16 @@ class Frontend {
                 {
                     '.$position[0].': 5vmin;
                     '.$position[1].': 5vmin;
+                }
+
+                #watson-fab-icon
+                {
+                    font-size: '.$fab_icon_size.'pt
+                }
+
+                #watson-fab-text
+                {
+                    font-size: '.$fab_text_size.'pt
                 }
 
                 #watson-box .watson-font
@@ -199,7 +211,7 @@ class Frontend {
             }
         }
 
-        return $context;
+        return $current_user;
     }
 
     private static function get_settings() {

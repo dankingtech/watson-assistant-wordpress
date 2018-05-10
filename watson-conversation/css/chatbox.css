@@ -31,8 +31,7 @@
 {
   cursor: pointer;
   min-width: 4em;
-  height: 4em;
-  border-radius: 2em;
+  border-radius: 1000px;
   text-align: left;
   background-color: rgb(35, 40, 45);
   color: white;
@@ -47,15 +46,17 @@
 #watson-fab-icon
 {
   display: table-cell;
-  font-size: 2.4em;
+  vertical-align: middle;
   line-height: 1.7em;
+  font-size: 28pt;
 }
 
 #watson-fab-text
 {
   display: table-cell;
   vertical-align: middle;
-  font-size: 1.25em;
+  line-height: 2.5em;
+  font-size: 15pt;
 }
 
 #watson-fab-icon:first-child
@@ -332,6 +333,7 @@
   border: 0;
   padding: 0 0.75em;
   background-color: #fff;
+  color: #333;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
