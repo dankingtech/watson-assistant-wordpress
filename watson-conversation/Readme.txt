@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
 Tested up to: 4.9
-Stable tag: 0.6.8
+Stable tag: 0.6.9
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -87,7 +87,11 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 
 == Changelog == 
 
-= 0.6.8
+= 0.6.9 =
+* Fixed chat box preview in Appearance settings page
+* Fixed issue with old credentials migration in some installations
+
+= 0.6.8 =
 * Fixed Context Variables bug
 * Moved Clear Messages button to header
 * Added timezone context variable
