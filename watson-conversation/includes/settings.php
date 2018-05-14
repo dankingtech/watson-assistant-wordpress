@@ -299,15 +299,17 @@ class Settings {
     // If an installation of this plugin has a credentials format from the versions before 0.3.0,
     // migrate them to the new format.
     public static function migrate_old_credentials() {
-        $credentials = get_option('watsonconv_credentials');
+        try {
+            $credentials = get_option('watsonconv_credentials');
 
-        if (!isset($credentials['workspace_url']) && isset($credentials['url']) && isset($credentials['id'])) {
-            $credentials['workspace_url'] = 
-                rtrim($credentials['url'], '/').'/workspaces/'.$credentials['id'].'/message/';
-        }
+            if (!isset($credentials['workspace_url']) && isset($credentials['url']) && isset($credentials['id'])) {
+                $credentials['workspace_url'] = 
+                    rtrim($credentials['url'], '/').'/workspaces/'.$credentials['id'].'/message/';
 
-        unset($credentials['url']);
-        update_option('watsonconv_credentials', $credentials);
+                unset($credentials['url']);
+                update_option('watsonconv_credentials', $credentials);
+            }
+        } catch (\Exception $e) {}
     }
 
     public static function init_workspace_settings() {
@@ -1113,35 +1115,37 @@ class Settings {
     }
 
     public static function migrate_old_show_on() {
-        $show_on = get_option('watsonconv_show_on');
-        $home_page = get_option('watsonconv_home_page', 'false') == true;
-        $pages = get_option('watsonconv_pages', array(-1));
-        $posts = get_option('watsonconv_posts', array(-1));
-        $cats = get_option('watsonconv_categories', array(-1));
+        try {
+            $show_on = get_option('watsonconv_show_on');
+            $home_page = get_option('watsonconv_home_page', 'false') == true;
+            $pages = get_option('watsonconv_pages', array(-1));
+            $posts = get_option('watsonconv_posts', array(-1));
+            $cats = get_option('watsonconv_categories', array(-1));
 
-        if ($show_on == 'all_except') {
-            if (!$home_page && $pages == array(-1) && $posts == array(-1) && $cats == array(-1)) {
-                update_option('watsonconv_show_on', 'all');
-            } else {
-                update_option('watsonconv_show_on', 'only');
-                update_option('watsonconv_home_page', $home_page ? 'false' : 'true');
+            if ($show_on == 'all_except') {
+                if (!$home_page && $pages == array(-1) && $posts == array(-1) && $cats == array(-1)) {
+                    update_option('watsonconv_show_on', 'all');
+                } else {
+                    update_option('watsonconv_show_on', 'only');
+                    update_option('watsonconv_home_page', $home_page ? 'false' : 'true');
 
-                update_option('watsonconv_pages', array_diff(
-                        array_map(function($page) {return $page->ID;}, get_pages()),
-                        $pages
-                ));
+                    update_option('watsonconv_pages', array_diff(
+                            array_map(function($page) {return $page->ID;}, get_pages()),
+                            $pages
+                    ));
 
-                update_option('watsonconv_posts', array_diff(
-                        array_map(function($post) {return $post->ID;}, get_posts()),
-                        $posts
-                ));
+                    update_option('watsonconv_posts', array_diff(
+                            array_map(function($post) {return $post->ID;}, get_posts()),
+                            $posts
+                    ));
 
-                update_option('watsonconv_categories', array_diff(
-                        array_map(function($cat) {return $cat->cat_ID;}, get_categories(array('hide_empty' => 0))),
-                        $cats
-                ));
+                    update_option('watsonconv_categories', array_diff(
+                            array_map(function($cat) {return $cat->cat_ID;}, get_categories(array('hide_empty' => 0))),
+                            $cats
+                    ));
+                }
             }
-        }
+        } catch (\Exception $e) {}
     }
 
     public static function render_home_page() {
@@ -1516,25 +1520,27 @@ class Settings {
     }
 
     public static function migrate_old_full_screen() {
-        if (get_option('watsonconv_full_screen') == 'yes') {
-            update_option(
-                'watsonconv_full_screen', 
-                array(
-                    'mode' => 'all',
-                    'max_width' => '640px',
-                    'query' => '%s'
-                )
-            );
-        } else if (get_option('watsonconv_full_screen') == 'no') {
-            update_option(
-                'watsonconv_full_screen', 
-                array(
-                    'mode' => 'mobile',
-                    'max_width' => '640px',
-                    'query' => '@media screen and (max-width:640px) { %s }'
-                )
-            );
-        }
+        try {
+            if (get_option('watsonconv_full_screen') == 'yes') {
+                update_option(
+                    'watsonconv_full_screen', 
+                    array(
+                        'mode' => 'all',
+                        'max_width' => '640px',
+                        'query' => '%s'
+                    )
+                );
+            } else if (get_option('watsonconv_full_screen') == 'no') {
+                update_option(
+                    'watsonconv_full_screen', 
+                    array(
+                        'mode' => 'mobile',
+                        'max_width' => '640px',
+                        'query' => '@media screen and (max-width:640px) { %s }'
+                    )
+                );
+            }
+        } catch (\Exception $e) {}
     }
 
     public static function parse_full_screen_settings($settings) {
@@ -1769,16 +1775,13 @@ class Settings {
         ?>
             <div id='watson-box' class='drop-shadow animated' style='display: block;'>
                 <div id='watson-header' class='watson-font' style='cursor: default;'>
-                    <span class='dashicons dashicons-arrow-down-alt2 popup-control'></span>
+                    <span class='dashicons dashicons-arrow-down-alt2 header-button'></span>
+                    <span class='dashicons dashicons-trash header-button'></span>
+                    <span class='dashicons dashicons-phone header-button'></span>
                     <div id='watson-title' class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
                 </div>
                 <div id='message-container'>
                     <div id='messages' class='watson-font'>
-                        <div style='text-align: right; margin: -5px 5px 5px 10px' className='watson-font'>
-                            <a id='watson-clear-messages' style='font-size: 0.85em'>
-                                <?php echo get_option('watsonconv_clear_text', 'Clear Messages') ?>
-                            </a>
-                        </div>
                         <div>
                             <div class='message watson-message'>
                                 This is a message from the chatbot.
