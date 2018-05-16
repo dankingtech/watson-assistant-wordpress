@@ -52,6 +52,11 @@ class Frontend {
                     color: '.$text_color.';
                 }
 
+                #message-container #messages .watson-message .typing-dot
+                {
+                    background-color: '.$text_color.';
+                }
+
                 #watson-box #message-send
                 {
                     background-color: '. $main_color .';
