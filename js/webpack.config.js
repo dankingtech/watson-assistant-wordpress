@@ -1,5 +1,3 @@
-var webpack = require('webpack')
-var fs = require('fs');
 var DashboardPlugin = require('webpack-dashboard/plugin');
 
 const config = {
