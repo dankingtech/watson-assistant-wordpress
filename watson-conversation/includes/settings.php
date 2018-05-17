@@ -1330,6 +1330,17 @@ class Settings {
             esc_html__('Show Send Message Button', self::SLUG)
         );
 
+        $typing_delay_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'When this is enabled, the plugin will display a "typing" animation for a short time
+                before displaying chatbot responses, to make it appear as if the chatbot is thinking
+                and typing like a real person.'
+                , self::SLUG
+            ),
+            esc_html__('Chatbot Typing Animation', self::SLUG)
+        );
+
         // Weird, I know
         $title_title = sprintf(
             '<span href="#" title="%s">%s</span>', 
@@ -1409,6 +1420,8 @@ class Settings {
             array(__CLASS__, 'render_position'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_send_btn', $send_btn_title,
                 array(__CLASS__, 'render_send_btn'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_typing_delay', $typing_delay_title,
+                array(__CLASS__, 'render_typing_delay'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_title', $title_title,
             array(__CLASS__, 'render_title'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_clear_text', $clear_text_title,
@@ -1464,6 +1477,7 @@ class Settings {
         register_setting(self::SLUG, 'watsonconv_full_screen', array(__CLASS__, 'parse_full_screen_settings'));
         register_setting(self::SLUG, 'watsonconv_position');
         register_setting(self::SLUG, 'watsonconv_send_btn');
+        register_setting(self::SLUG, 'watsonconv_typing_delay');
         register_setting(self::SLUG, 'watsonconv_title');
         register_setting(self::SLUG, 'watsonconv_clear_text');
         register_setting(self::SLUG, 'watsonconv_message_prompt');
@@ -1690,6 +1704,22 @@ class Settings {
         );
     }
 
+    public static function render_typing_delay() {
+        self::render_radio_buttons(
+            'watsonconv_typing_delay',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
+    }
+
     public static function render_title() {
     ?>
         <input name="watsonconv_title" id="watsonconv_title"
@@ -1800,6 +1830,16 @@ class Settings {
                         <div>
                             <div class='message user-message'>
                                 This message is a slightly longer message than the previous one from the user.
+                            </div>
+                        </div>
+                        <div>
+                            <div class='message watson-message'>
+                                Below is an example of the Chatbot Typing Animation setting.
+                            </div>
+                            <div class='message watson-message'>
+                                <div class='typing-dot'></div>
+                                <div class='typing-dot'></div>
+                                <div class='typing-dot'></div>
                             </div>
                         </div>
                     </div>

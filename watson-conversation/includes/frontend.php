@@ -239,6 +239,7 @@ class Frontend {
             'messagePrompt' => get_option('watsonconv_message_prompt', 'Type a Message'),
             'fullScreen' => get_option('watsonconv_full_screen', 'no'),
             'showSendBtn' => get_option('watsonconv_send_btn', 'no'),
+            'typingDelay' => get_option('watsonconv_typing_delay', 'no'),
             'fabConfig' => array(
                 'iconPos' => get_option('watsonconv_fab_icon_pos', 'left'),
                 'text' => get_option('watsonconv_fab_text', '')

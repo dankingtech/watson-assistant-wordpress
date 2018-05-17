@@ -5,7 +5,7 @@ import ReactTooltip from 'react-tooltip-currenttarget';
 import webrtc from 'webrtcsupport';
 import jstz from 'jstz';
 
-import Message from './Message.jsx';
+import MessageGroup from './MessageGroup';
 import InputBox from './InputBox.jsx';
 import CallInterface from './CallInterface.jsx';
 
@@ -116,7 +116,7 @@ export default class ChatBox extends Component {
           from: 'watson',
           text: Array.isArray(text) ? text : [text], 
           options: body.output.options,
-          loadedMessages: 0
+          loadedMessages: (watsonconvSettings.typingDelay === 'yes') ? 0 : text.length
         })
       });
     }).catch(error => {
@@ -190,7 +190,7 @@ export default class ChatBox extends Component {
             <div id='messages' ref={div => {this.messageList = div}}>
               {this.state.messages.map(
                 (message, index) => 
-                  <Message 
+                  <MessageGroup 
                     message={message}
                     key={index}
                     index={index}

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
-
-export default class Message extends Component {
+export default class DelayedGroup extends Component {
   componentDidMount() {
     if (this.props.message.loadedMessages < this.props.message.text.length) {
       this.simulateTyping();
