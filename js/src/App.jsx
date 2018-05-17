@@ -33,12 +33,10 @@ export default class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state != prevState && typeof(sessionStorage) !== 'undefined') {
-      sessionStorage.setItem('watson_bot_window_state', JSON.stringify(this.state));
+    this.saveState();
 
-      if (this.state.minimized != prevState.minimized && this.props.isMobile) {
-        document.body.style.overflow = this.state.minimized ? 'scroll' : 'hidden';
-      }
+    if (this.state.minimized != prevState.minimized && this.props.isMobile) {
+      document.body.style.overflow = this.state.minimized ? 'scroll' : 'hidden';
     }
   }
 
@@ -53,6 +51,12 @@ export default class App extends Component {
     this.setState({
       animated: true
     })
+  }
+
+  saveState() {
+    if (typeof(sessionStorage) !== 'undefined') {
+      sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
+    }
   }
 
   savePosition(e, data) {

@@ -70,9 +70,6 @@ export default class ChatBox extends Component {
     }
 
     if (prevState.messages.length !== this.state.messages.length) {
-      if (typeof(sessionStorage) !== 'undefined') {
-        sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
-      }
       // Ensure that chat box stays scrolled to bottom
       if (typeof(this.messageList) !== 'undefined') {
         this.scrollToBottom()
@@ -118,7 +115,7 @@ export default class ChatBox extends Component {
           options: body.output.options,
           loadedMessages: (watsonconvSettings.typingDelay === 'yes') ? 0 : text.length
         })
-      });
+      }, this.saveState.bind(this));
     }).catch(error => {
       console.log(error);
     });
@@ -142,7 +139,13 @@ export default class ChatBox extends Component {
   incLoadedMessages(index) {
     let messages = this.state.messages.slice();
     messages[index] = {...messages[index], loadedMessages: messages[index].loadedMessages + 1};
-    this.setState({messages: messages});
+    this.setState({messages: messages}, this.saveState.bind(this));
+  }
+
+  saveState() {
+    if (typeof(sessionStorage) !== 'undefined') {
+      sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
+    }
   }
 
   render() {
