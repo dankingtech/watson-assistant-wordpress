@@ -1834,12 +1834,13 @@ class Settings {
                         </div>
                         <div>
                             <div class='message watson-message'>
-                                Below is an example of the Chatbot Typing Animation setting.
+                                Below is an example of the Chatbot Typing Animation.
                             </div>
                             <div class='message watson-message'>
-                                <div class='typing-dot'></div>
-                                <div class='typing-dot'></div>
-                                <div class='typing-dot'></div>
+                                <div class='typing-dot'>
+                                </div><div class='typing-dot'>
+                                </div><div class='typing-dot'>
+                                </div>
                             </div>
                         </div>
                     </div>

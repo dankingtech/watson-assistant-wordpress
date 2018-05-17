@@ -36,9 +36,10 @@ export default class DelayedGroup extends Component {
       if (i == loadedMessages) {
         response.push(
           <div key={i} className='message watson-message watson-font'>
-            <div class='typing-dot'></div>
-            <div class='typing-dot'></div>
-            <div class='typing-dot'></div>
+            <div class='typing-dot'>
+            </div><div class='typing-dot'>
+            </div><div class='typing-dot'>
+            </div>
           </div>
         );
       } else {
