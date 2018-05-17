@@ -114,8 +114,9 @@ export default class ChatBox extends Component {
         context: body.context,
         messages: this.state.messages.concat({
           from: 'watson',
-          text: text, 
-          options: body.output.options
+          text: Array.isArray(text) ? text : [text], 
+          options: body.output.options,
+          loadedMessages: 0
         })
       });
     }).catch(error => {
@@ -124,7 +125,7 @@ export default class ChatBox extends Component {
 
     if (message) {
       this.setState({
-        messages: this.state.messages.concat({from: 'user', text: message})
+        messages: this.state.messages.concat({from: 'user', text: [message], loadedMessages: 1})
       });
     }
   }
@@ -136,6 +137,12 @@ export default class ChatBox extends Component {
     });
     
     this.sendMessage();
+  }
+
+  incLoadedMessages(index) {
+    let messages = this.state.messages.slice();
+    messages[index] = {...messages[index], loadedMessages: messages[index].loadedMessages + 1};
+    this.setState({messages: messages});
   }
 
   render() {
@@ -182,7 +189,15 @@ export default class ChatBox extends Component {
           <div id='message-container'>
             <div id='messages' ref={div => {this.messageList = div}}>
               {this.state.messages.map(
-                (message, index) => <Message message={message} key={index} sendMessage={this.sendMessage.bind(this)} />
+                (message, index) => 
+                  <Message 
+                    message={message}
+                    key={index}
+                    index={index}
+                    sendMessage={this.sendMessage.bind(this)}
+                    incLoaded={this.incLoadedMessages.bind(this)}
+                    scroll={this.scrollToBottom.bind(this)}
+                  />
               )}
             </div>
           </div>

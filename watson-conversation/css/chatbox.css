@@ -325,10 +325,56 @@
   color: rgb(35, 40, 45);
 }
 
+#message-container #messages .watson-message .typing-dot
+{
+  display: inline-block;
+
+  height: 5px;
+  width: 5px; 
+  border-radius: 50%;
+  margin-right: 4px;
+
+  -webkit-animation: jump 1.5s ease-in-out 0s infinite normal ;
+  animation: jump 1.5s ease-in-out 0s infinite normal ;
+}
+
+#message-container #messages .watson-message .typing-dot:nth-child(1)
+{
+  animation-delay: 100ms;
+  -moz-animation-delay: 100ms;
+  -o-animation-delay: 100ms;
+  -webkit-animation-delay: 100ms;
+}
+
+#message-container #messages .watson-message .typing-dot:nth-child(2)
+{
+  animation-delay: 200ms;
+  -moz-animation-delay: 200ms;
+  -o-animation-delay: 200ms;
+  -webkit-animation-delay: 200ms;
+}
+
+#message-container #messages .watson-message .typing-dot:nth-child(3)
+{
+  animation-delay: 300ms;
+  -moz-animation-delay: 300ms;
+  -o-animation-delay: 300ms;
+  -webkit-animation-delay: 300ms;
+}
+
+#message-container #messages .watson-message .typing-dot:last-child
+{
+  margin-right: 0px;
+}
+
 #watson-box .message-form
 {
+  display: -webkit-box;
   display: flex;
+  
+  -webkit-flex-direction: row;
   flex-direction: row;
+
   min-height: 2.75em;
   width: 100%;
   margin: 0;
@@ -340,9 +386,9 @@
 
 #watson-box .message-form .message-input
 {
-  /* height: 100%; */
   width: 100%;
   flex-grow: 1;
+  -webkit-flex-grow: 1;
   
   border: 0;
   padding: 0 0.75em;
@@ -365,6 +411,8 @@
 #watson-box #message-send
 { 
   display: flex;
+  display: -webkit-flex;
+
   justify-content: center;
   align-items: center; 
   width: auto;
@@ -387,4 +435,54 @@
   height: 1.8em;
   fill: white;
   stroke-width: 0;
+}
+
+@-webkit-keyframes jump {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  10% {
+    height: 5px;
+    width: 5px;
+  }
+  25% {
+    -webkit-transform: translateY(-8px);
+    transform: translateY(-8px);
+    height: 7px;
+    width: 7px;
+  }
+  40% {
+    height: 5px;
+    width: 5px;
+  }
+  50% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes jump {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  10% {
+    height: 5px;
+    width: 5px;
+  }
+  25% {
+    -webkit-transform: translateY(-8px);
+    transform: translateY(-8px);
+    height: 7px;
+    width: 7px;
+  }
+  40% {
+    height: 5px;
+    width: 5px;
+  }
+  50% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
 }
