@@ -32,5 +32,5 @@ This directory contains the UI component of the plugin: a chat box component imp
 ### watson-conversation
 When a user installs this plugin, this is the directory that is placed in the `wp-content/plugins` directory. Once the Javascript app has been built per the instructions above, this directory contains all the files necessary for Wordpress to run the plugin.
 
-### aux
-This directory contains the Readme.txt and plugin assets.
+### assets
+This directory contains the plugin banner and screenshots.
