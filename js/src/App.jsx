@@ -55,7 +55,7 @@ export default class App extends Component {
 
   saveState() {
     if (typeof(sessionStorage) !== 'undefined') {
-      sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
+      sessionStorage.setItem('watson_bot_window_state', JSON.stringify(this.state))
     }
   }
 
@@ -85,7 +85,7 @@ export default class App extends Component {
             class={!animated && 'animated'}
             style={minimized && {opacity: 0 , visibility: 'hidden'}}
           >
-            <ChatBox isMinimized={minimized} />
+            <ChatBox isMinimized={minimized} toggleMinimize={this.toggleMinimize.bind(this)} />
           </TransitionGroup>
         </Draggable>
         <TransitionGroup

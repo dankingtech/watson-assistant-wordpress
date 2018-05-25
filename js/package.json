@@ -1,6 +1,5 @@
 {
   "name": "watson-conversation",
-  "version": "0.4.2",
   "private": true,
   "dependencies": {
     "core-js": "^2.5.3",

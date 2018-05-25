@@ -168,9 +168,11 @@ export default class ChatBox extends Component {
           className='watson-font'
         >
           <span 
-          className={`dashicons dashicons-arrow-${
-              position[0] == 'bottom' ? 'down' : 'up'
-            }-alt2 header-button minimize-button`}></span>
+            className={`dashicons 
+              dashicons-arrow-${position[0] == 'bottom' ? 'down' : 'up'}-alt2 
+              header-button minimize-button`}
+            onClick={this.props.toggleMinimize}
+            ></span>
           <span
             onClick={this.reset.bind(this)} 
             className={`dashicons dashicons-trash header-button`}
