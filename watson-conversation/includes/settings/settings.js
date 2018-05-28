@@ -38,13 +38,13 @@ function switch_tab(tab_name) {
   jQuery('.nav-tab-wrapper .nav-tab-active').removeClass('nav-tab-active');
   jQuery(`.nav-tab-wrapper .${tab_name}_tab`).addClass('nav-tab-active');
 
-  sessionStorage.setItem('watsonconv_active_tab', tab_name);
+  sessionStorage.setItem('watsonconv_active_tab_' + page_data.hook_suffix, tab_name);
 }
 
 jQuery(document).ready(function($) {
   
-  if (sessionStorage.getItem('watsonconv_active_tab')) {
-    switch_tab(sessionStorage.getItem('watsonconv_active_tab'));
+  if (sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix)) {
+    switch_tab(sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix));
   }
 
   $(document).tooltip({

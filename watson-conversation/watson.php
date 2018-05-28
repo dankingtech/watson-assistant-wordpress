@@ -34,6 +34,6 @@ function watsonconv_check_php_compatibility() {
 register_activation_hook(WATSON_CONV_FILE, 'watsonconv_check_php_compatibility');
 
 require_once(WATSON_CONV_PATH.'vendor/autoload.php');
-require_once(WATSON_CONV_PATH.'includes/settings.php');
+require_once(WATSON_CONV_PATH.'includes/settings/main.php');
 require_once(WATSON_CONV_PATH.'includes/frontend.php');
 require_once(WATSON_CONV_PATH.'includes/api.php');
