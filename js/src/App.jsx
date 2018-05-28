@@ -71,6 +71,7 @@ export default class App extends Component {
   }
 
   render(props, {minimized, animated}) {
+    let fullScreen = window.matchMedia(watsonconvSettings.fullScreenQuery).matches;
 
     return (
       <div>
@@ -79,6 +80,7 @@ export default class App extends Component {
           cancel='#watson-header .header-button'
           onStart={this.startDragging.bind(this)}
           onStop={this.savePosition.bind(this)}
+          position={(fullScreen || minimized) ? {x: 0, y: 0} : this.state.position}
         >
           <TransitionGroup
             id='watson-float'

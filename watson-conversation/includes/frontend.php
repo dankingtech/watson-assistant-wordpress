@@ -230,6 +230,10 @@ class Frontend {
             get_option('watsonconv_call_recipient')
         );
 
+        $full_screen_settings = get_option('watsonconv_full_screen');
+        $full_screen_query = isset($full_screen_settings['query']) ?
+            $full_screen_settings['query'] : '@media screen and (max-width:640px) { %s }';
+
         return array(
             'delay' => (int) get_option('watsonconv_delay', 0),
             'minimized' => get_option('watsonconv_minimized', 'no'),
@@ -237,7 +241,7 @@ class Frontend {
             'title' => get_option('watsonconv_title', ''),
             'clearText' => get_option('watsonconv_clear_text', 'Clear Messages'),
             'messagePrompt' => get_option('watsonconv_message_prompt', 'Type a Message'),
-            'fullScreen' => get_option('watsonconv_full_screen', 'no'),
+            'fullScreenQuery' => $full_screen_query,
             'showSendBtn' => get_option('watsonconv_send_btn', 'no'),
             'typingDelay' => get_option('watsonconv_typing_delay', 'no'),
             'fabConfig' => array(
