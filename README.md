@@ -2,17 +2,28 @@
 A Wordpress plugin for Watson Assistant.
 
 ## Setup
-Before you can use this plugin, you need to build the Javascript app by running the following commands from the `js` directory:
+Before you can use this plugin, you need to do the following:
+
+1. Install [npm](https://www.npmjs.com/get-npm) and [composer](https://getcomposer.org/doc/00-intro.md).
+
+2. Build the Javascript app by running the following commands from the `js` directory:
 
 ```bash
 npm install
 npm run build
 ```
 
+3. Install required PHP libraries by running one of the following commands from the root project directory:
+
+```bash
+composer install            # UNIX executable
+php composer.phar install   # PHP executable
+```
+
 In order to build a minimized file, use `npm run prod` instead.
 
 ## Testing
-A Wordpress Docker Compose file has been provided for testing the plugin.
+A Wordpress Docker Compose file has been provided for running the plugin locally.
 Simply run the following in your shell from the `docker` directory:
 
 ```bash
