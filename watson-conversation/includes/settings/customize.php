@@ -11,7 +11,8 @@ class Customize {
 
     public static function init_settings() {
         self::init_behaviour_settings();
-        self::init_appearance_settings();
+        self::init_chat_box_settings();
+        self::init_fab_settings();
     }
 
     public static function render_page() {
@@ -26,7 +27,8 @@ class Customize {
 
             <h2 class="nav-tab-wrapper">
                 <a onClick="switch_tab('behaviour')" class="nav-tab nav-tab-active behaviour_tab">Behaviour</a>
-                <a onClick="switch_tab('appearance')" class="nav-tab appearance_tab">Appearance</a>
+                <a onClick="switch_tab('chat_box')" class="nav-tab chat_box_tab">Chat Box</a>
+                <a onClick="switch_tab('fab')" class="nav-tab fab_tab">Chat Button</a>
             </h2>
 
             <form action="options.php" method="POST">
@@ -37,8 +39,11 @@ class Customize {
                         <div class="tab-page behaviour_page">
                             <?php do_settings_sections(self::SLUG.'_behaviour') ?>
                         </div>
-                        <div class="tab-page appearance_page" style="display: none">
-                            <?php do_settings_sections(self::SLUG.'_appearance') ?>
+                        <div class="tab-page chat_box_page" style="display: none">
+                            <?php do_settings_sections(self::SLUG.'_chat_box') ?>
+                        </div>
+                        <div class="tab-page fab_page" style="display: none">
+                            <?php do_settings_sections(self::SLUG.'_fab') ?>
                         </div>
                     <?php
                 ?>
@@ -354,17 +359,13 @@ class Customize {
     <?php
     }
 
-    // ------------- Appearance Settings ----------------
+    // --------- Chat Box Appearance Settings -----------
 
-    public static function init_appearance_settings() {
-        $settings_page = self::SLUG . '_appearance';
+    public static function init_chat_box_settings() {
+        $settings_page = self::SLUG . '_chat_box';
 
         add_settings_section('watsonconv_appearance_chatbox', 'Chat Box',
-            array(__CLASS__, 'appearance_chatbox_description'), $settings_page);
-        add_settings_section('watsonconv_appearance_button', 'Chat Button',
-            array(__CLASS__, 'appearance_fab_description'), $settings_page);
-
-        // ---- Chat Box Appearance Section ------
+            array(__CLASS__, 'chatbox_description'), $settings_page);
 
         $minimized_title = sprintf(
             '<span href="#" title="%s">%s</span>', 
@@ -525,40 +526,6 @@ class Customize {
         add_settings_field('watsonconv_chatbox_preview', esc_html__('Preview'),
             array(__CLASS__, 'render_chatbox_preview'), $settings_page, 'watsonconv_appearance_chatbox');
 
-        // ---- FAB Appearance Section ------
-
-        $fab_icon_pos_title = sprintf(
-            '<span href="#" title="%s">%s</span>', 
-            esc_html__(
-                'If you want the chat button to have an icon and a text label, then you can specify whether
-                you want the icon to be on the left of the text or the right. If there is no text,
-                the position doesn\'t matter. Alternatively, you can hide the icon and just use text.'
-                , self::SLUG
-            ),
-            esc_html__('Icon Position', self::SLUG)
-        );
-
-        $fab_text_title = sprintf(
-            '<span href="#" title="%s">%s</span>', 
-            esc_html__(
-                'This is the label for the chat button that users click to open the chat box. This
-                can be left blank if you like.'
-                , self::SLUG
-            ),
-            esc_html__('Text Label', self::SLUG)
-        );
-        
-        add_settings_field('watsonconv_fab_icon_pos', $fab_icon_pos_title,
-            array(__CLASS__, 'render_fab_icon_pos'), $settings_page, 'watsonconv_appearance_button');
-        add_settings_field('watsonconv_fab_text', $fab_text_title,
-            array(__CLASS__, 'render_fab_text'), $settings_page, 'watsonconv_appearance_button');
-        add_settings_field('watsonconv_fab_icon_size', esc_html__('Icon Size'),
-            array(__CLASS__, 'render_fab_icon_size'), $settings_page, 'watsonconv_appearance_button');
-        add_settings_field('watsonconv_fab_text_size', esc_html__('Text Size'),
-            array(__CLASS__, 'render_fab_text_size'), $settings_page, 'watsonconv_appearance_button');
-        add_settings_field('watsonconv_fab_preview', esc_html__('Preview'),
-            array(__CLASS__, 'render_fab_preview'), $settings_page, 'watsonconv_appearance_button');
-
         register_setting(self::SLUG, 'watsonconv_minimized');
         register_setting(self::SLUG, 'watsonconv_full_screen', array(__CLASS__, 'parse_full_screen_settings'));
         register_setting(self::SLUG, 'watsonconv_position');
@@ -572,15 +539,10 @@ class Customize {
         register_setting(self::SLUG, 'watsonconv_color', array(__CLASS__,  'validate_color'));
         register_setting(self::SLUG, 'watsonconv_size');
 
-        register_setting(self::SLUG, 'watsonconv_fab_icon_pos');
-        register_setting(self::SLUG, 'watsonconv_fab_text');
-        register_setting(self::SLUG, 'watsonconv_fab_icon_size');
-        register_setting(self::SLUG, 'watsonconv_fab_text_size');
-
         register_setting(self::SLUG, 'watsonconv_css_cache');
     }
 
-    public static function appearance_chatbox_description($args) {
+    public static function chatbox_description($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
             <?php esc_html_e('This section allows you to specify how you want
@@ -888,73 +850,119 @@ class Customize {
     }
 
     public static function render_chatbox_preview() {
-        ?>
-            <div id='watson-box' class='drop-shadow animated' style='display: block;'>
-                <div id='watson-header' class='watson-font' style='cursor: default;'>
-                    <span class='dashicons dashicons-arrow-down-alt2 header-button'></span>
-                    <span class='dashicons dashicons-trash header-button'></span>
-                    <span class='dashicons dashicons-phone header-button'></span>
-                    <div id='watson-title' class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
-                </div>
-                <div id='message-container'>
-                    <div id='messages' class='watson-font'>
-                        <div>
-                            <div class='message watson-message'>
-                                This is a message from the chatbot.
-                            </div>
-                        </div>
-                        <div>
-                            <div class='message user-message'>
-                                This is a message from the user.
-                            </div>
-                        </div>
-                        <div>
-                            <div class='message watson-message'>
-                                This message is a slightly longer message than the previous one from the chatbot.
-                            </div>
-                        </div>
-                        <div>
-                            <div class='message user-message'>
-                                This message is a slightly longer message than the previous one from the user.
-                            </div>
-                        </div>
-                        <div>
-                            <div class='message watson-message'>
-                                Below is an example of the Chatbot Typing Animation.
-                            </div>
-                            <div class='message watson-message'>
-                                <div class='typing-dot'>
-                                </div><div class='typing-dot'>
-                                </div><div class='typing-dot'>
-                                </div>
-                            </div>
+    ?>
+        <div id='watson-box' class='drop-shadow animated' style='display: block;'>
+            <div id='watson-header' class='watson-font' style='cursor: default;'>
+                <span class='dashicons dashicons-arrow-down-alt2 header-button'></span>
+                <span class='dashicons dashicons-trash header-button'></span>
+                <span class='dashicons dashicons-phone header-button'></span>
+                <div id='watson-title' class='overflow-hidden' ><?php echo get_option('watsonconv_title', '') ?></div>
+            </div>
+            <div id='message-container'>
+                <div id='messages' class='watson-font'>
+                    <div>
+                        <div class='message watson-message'>
+                            This is a message from the chatbot.
                         </div>
                     </div>
-                </div>
-                <div class='message-form watson-font'>
-                    <input
-                        id='watson-message-input'
-                        class='message-input watson-font'
-                        type='text'
-                        placeholder='<?php echo get_option('watsonconv_message_prompt', 'Type a Message') ?>'
-                        disabled='true'
-                    />
-                    <div id='message-send'>
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" 
-                                viewBox="0 0 48 48" 
-                                fill="white"
-                            >
-                                <path d="M4.02 42L46 24 4.02 6 4 20l30 4-30 4z"/>
-                            </svg>
+                    <div>
+                        <div class='message user-message'>
+                            This is a message from the user.
+                        </div>
+                    </div>
+                    <div>
+                        <div class='message watson-message'>
+                            This message is a slightly longer message than the previous one from the chatbot.
+                        </div>
+                    </div>
+                    <div>
+                        <div class='message user-message'>
+                            This message is a slightly longer message than the previous one from the user.
+                        </div>
+                    </div>
+                    <div>
+                        <div class='message watson-message'>
+                            Below is an example of the Chatbot Typing Animation.
+                        </div>
+                        <div class='message watson-message'>
+                            <div class='typing-dot'>
+                            </div><div class='typing-dot'>
+                            </div><div class='typing-dot'>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        <?php
-        }
+            <div class='message-form watson-font'>
+                <input
+                    id='watson-message-input'
+                    class='message-input watson-font'
+                    type='text'
+                    placeholder='<?php echo get_option('watsonconv_message_prompt', 'Type a Message') ?>'
+                    disabled='true'
+                />
+                <div id='message-send'>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                            viewBox="0 0 48 48" 
+                            fill="white"
+                        >
+                            <path d="M4.02 42L46 24 4.02 6 4 20l30 4-30 4z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php
+    }
+    
+    // ----------- FAB Appearance Settings --------------
 
-    public static function appearance_fab_description($args) {
+    public static function init_fab_settings() {
+        $settings_page = self::SLUG . '_fab';
+
+        add_settings_section('watsonconv_appearance_button', 'Chat Button',
+            array(__CLASS__, 'fab_description'), $settings_page);
+
+        $fab_icon_pos_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'If you want the chat button to have an icon and a text label, then you can specify whether
+                you want the icon to be on the left of the text or the right. If there is no text,
+                the position doesn\'t matter. Alternatively, you can hide the icon and just use text.'
+                , self::SLUG
+            ),
+            esc_html__('Icon Position', self::SLUG)
+        );
+
+        $fab_text_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'This is the label for the chat button that users click to open the chat box. This
+                can be left blank if you like.'
+                , self::SLUG
+            ),
+            esc_html__('Text Label', self::SLUG)
+        );
+        
+        add_settings_field('watsonconv_fab_icon_pos', $fab_icon_pos_title,
+            array(__CLASS__, 'render_fab_icon_pos'), $settings_page, 'watsonconv_appearance_button');
+        add_settings_field('watsonconv_fab_text', $fab_text_title,
+            array(__CLASS__, 'render_fab_text'), $settings_page, 'watsonconv_appearance_button');
+        add_settings_field('watsonconv_fab_icon_size', esc_html__('Icon Size'),
+            array(__CLASS__, 'render_fab_icon_size'), $settings_page, 'watsonconv_appearance_button');
+        add_settings_field('watsonconv_fab_text_size', esc_html__('Text Size'),
+            array(__CLASS__, 'render_fab_text_size'), $settings_page, 'watsonconv_appearance_button');
+        add_settings_field('watsonconv_fab_preview', esc_html__('Preview'),
+            array(__CLASS__, 'render_fab_preview'), $settings_page, 'watsonconv_appearance_button');
+
+        register_setting(self::SLUG, 'watsonconv_fab_icon_pos');
+        register_setting(self::SLUG, 'watsonconv_fab_text');
+        register_setting(self::SLUG, 'watsonconv_fab_icon_size');
+        register_setting(self::SLUG, 'watsonconv_fab_text_size');
+    }
+
+    public static function fab_description($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
             <?php esc_html_e('This section allows you to customize the appearance of the button

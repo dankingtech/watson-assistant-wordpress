@@ -2,6 +2,12 @@ a:hover {
   cursor: pointer;
 }
 
+ul
+{
+  list-style-position: inside;
+  list-style-type: disc;
+}
+
 .inline
 {
   display: inline-block;

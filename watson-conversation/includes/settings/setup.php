@@ -25,26 +25,26 @@ class Setup {
             ?>
 
             <h2 class="nav-tab-wrapper">
-                <a onClick="switch_tab('intro')" class="nav-tab nav-tab-active intro_tab">Introduction</a>
-                <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">Main Setup</a>
+                <a onClick="switch_tab('build')" class="nav-tab nav-tab-active build_tab">1. Building a chatbot</a>
+                <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">2. Plugin Setup</a>
             </h2>
 
             <form action="options.php" method="POST">
-                <div class="tab-page intro_page"><?php self::render_intro(); ?></div>
+                <div class="tab-page build_page"><?php self::render_build(); ?></div>
 
                 <?php settings_fields(self::SLUG); ?> 
 
                 <div class="tab-page workspace_page" style="display: none">
                     <?php do_settings_sections(self::SLUG.'_workspace') ?>
                     <?php submit_button(); ?>
-                </div>
 
-                <p class="update-message notice inline notice-warning notice-alt"
-                style="padding-top: 0.5em; padding-bottom: 0.5em">
-                    <b>Note:</b> If you have a server-side caching plugin installed such as
-                    WP Super Cache, you may need to clear your cache after changing settings or
-                    deactivating the plugin. Otherwise, your action may not take effect.
-                <p>
+                    <p  class="update-message notice inline notice-warning notice-alt"
+                        style="padding-top: 0.5em; padding-bottom: 0.5em">
+                        <b>Note:</b> If you have a server-side caching plugin installed such as
+                        WP Super Cache, you may need to clear your cache after changing settings or
+                        deactivating the plugin. Otherwise, your action may not take effect.
+                    <p>
+                </div>
             </form>
         </div>
     <?php
@@ -53,51 +53,73 @@ class Setup {
     public static function render_intro() {
     ?>
         <p>
-            Watson Assistant, formerly known as Watson Conversation, is a chatbot service. This is
-            one of many AI services offered by IBM to help integrate cognitive computing into your 
-            applications. With the use of this plugin, you can easily add chatbots to your website 
-            created using the Watson Assistant service. The instructions below will help you get started:
-
-            <h4>Building Your Chatbot</h4>
-            <ol>
-                <li><p>
-                    Learn how to set up your Watson Assistant chatbot with 
-                    <a href="https://cocl.us/build-a-chatbot" rel="nofollow" target="_blank">this quick free course</a>.
-                </p></li>
-                <li><p>
-                    <a href="https://cocl.us/bluemix-registration" rel="nofollow" target="_blank">
-                        Sign up for a free IBM Cloud Lite account.</a>
-                </p></li>
-                <li><p>
-                    You can see 
-                    <a href="https://cocl.us/watson-conversation-help" rel="nofollow" target="_blank">
-                        the Watson Assistant documentation</a>
-                    for more information.
-                </p></li>
-            </ol>
-            <p>
-                Once you've created your workspace using the course or the link above, 
-                you must connect it to your Wordpress site.
-            </p>
-            <h4>Configuring the Plugin</h4>
-            <ol>
-                <li><p>
-                    From the Deploy tab of your workspace, you must obtain your username and password
-                    credentials in addition to the Workspace URL of your new workspace.
-                </p></li>
-                <li><p>
-                    Enter these  on the "Main Setup" tab of this settings page. Once you click 
-                    "Save Changes", the plugin will verify if the credentials are valid and notify 
-                    you of whether or not the configuration was successful. 
-                </p></li>
-                <li><p>
-                    (Optional) By default, the chatbot shows up on all pages of your website.
-                    In the Behaviour tab, you can choose which pages to show the chat bot on.
-                    You can also show the chat box inline within posts and pages using the shortcode
-                    <b>[watson-chat-box]</b>.
-                </p></li>
-            </ol>
+            Watson Assistant, formerly known as Watson Conversation, provides a clear and user-friendly
+            interface to build virtual assistants to speak with your users. With the use of this plugin, 
+            you can add these virtual assistants, or <b>chatbots</b>, to your website with minimal
+            technical knowledge or work.
         </p>
+        <p>
+            This diagram shows the overall architecture of a complete solution:
+            <img 
+                src="https://console.bluemix.net/docs/api/content/services/conversation/images/conversation_arch_overview.png?lang=en-US" 
+                alt="Flow diagram of the service" 
+                class="style-scope doc-content"
+                style="width:100%; border: 1px solid grey"
+            >
+        </p>
+        <p>
+            When you use this plugin, the <strong>Back-end system</strong> is Wordpress, while the 
+            <strong>Application</strong> and <strong>Interface</strong> are both included in this
+            plugin. Therefore, all you need to worry about is bulding your chatbot in your Watson
+            Assistant workspace and this plugin will take care of the rest.
+        </p>
+        <button type="button" class="button button-primary" onClick="switch_tab('build')">Next</button>
+    <?php
+    }
+
+    public static function render_build() {
+    ?>
+        <p>
+            Watson Assistant, formerly known as Watson Conversation, provides a clear and user-friendly
+            interface to build virtual assistants to speak with your users. With the use of this plugin, 
+            you can add these virtual assistants, or <b>chatbots</b>, to your website with minimal
+            technical knowledge or work.
+        </p>
+        <p>
+            Before you can use Watson Assistant on your website, you'll have to build your chatbot using
+            our user-friendly interface.
+        </p>
+        <p>
+            <a href="https://cocl.us/bluemix-registration" rel="nofollow" target="_blank">
+                Sign up here</a> 
+            for a free IBM Cloud Lite account to get started. If you have an account but have not started
+            with Watson Assistant yet,
+            <a href="https://console.bluemix.net/registration?target=/catalog/services/conversation">click here</a> 
+            to get started. Once you launch the Watson Assistant tool, you will be shown how to proceed
+            to create your chatbot. You may find the following resources helpful.
+        </p>
+        <ul>
+            <p><li>
+                This video provides an overview of the Watson Assistant tool:
+            </li></p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/sSfTcxDrmSI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <p><li>
+                You can also learn how to set up your Watson Assistant chatbot with 
+                <a href="https://cocl.us/build-a-chatbot" rel="nofollow" target="_blank">this quick free course</a>.
+                </li></p>
+            <p><li>
+                See 
+                <a href="https://cocl.us/watson-conversation-help" rel="nofollow" target="_blank">
+                    the Watson Assistant documentation</a>
+                for more information.
+            </li></p>
+        </ul>
+        <p>
+            Once you've created your workspace and built your chatbot using the outlined resources,
+            you're ready to connect it to your website!
+        </p>
+
+        <button type="button" class="button button-primary" onClick="switch_tab('workspace')">Next</button>
     <?php
     }
 
@@ -113,10 +135,22 @@ class Setup {
     public static function main_setup_description() {
     ?>
         <p>
-            This page contains all the configuration you need to get your chatbot working.<br>
-            Before you get these credentials, you need to set up a chatbot on your 
-            <a href="https://cocl.us/bluemix-registration" rel="nofollow" target="_blank">free IBM Cloud account</a>.
-            See the Introduction tab for details.
+            This is where you  get to finally connect the Watson Assistant chatbot you built to your
+            website. To do this, you need to get the Username, Password and Workspace URL of your
+            Watson Assistant workspace.
+        </p>
+        <p>
+            To find these values, navigate to the workspace where you built your chatbot. Then click
+            on the Deploy tab in the navigation bar on the left, as shown in this photo.
+        </p>
+        <img 
+            style="max-width: 100%; border: 1px solid rgb(29, 40, 51)" 
+            src="<?php echo WATSON_CONV_URL ?>/img/credentials.jpg"
+        >
+        <p>
+            Enter these values in their corresponding fields below. Once you click 
+            "Save Changes", the plugin will verify if the credentials are valid and notify 
+            you of whether or not the configuration was successful. 
         </p>
     <?php
     } 
@@ -261,9 +295,8 @@ class Setup {
     public static function workspace_description($args) {
     ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>">
-            <?php esc_html_e('Here, you can specify the Workspace ID for your Watson
-                Assistant Workspace in addition to the required credentials.', self::SLUG) ?> <br />
-            <?php esc_html_e('Note: These are not the same as your IBM Cloud Login Credentials.', self::SLUG) ?>
+            <?php esc_html_e('Specify the Workspace URL, username and password for your Watson
+                Assistant Workspace below.', self::SLUG) ?> <br />
         </p>
     <?php
     }
