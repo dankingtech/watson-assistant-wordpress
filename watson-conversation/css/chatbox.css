@@ -284,6 +284,11 @@
   -webkit-box-sizing: border-box;
 }
 
+#message-container #messages .message img
+{
+  max-width:100%;
+}
+
 #messages .message ul, #messages .message ol
 {
   list-style-position: inside;
