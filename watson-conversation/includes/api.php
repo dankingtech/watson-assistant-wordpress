@@ -4,6 +4,7 @@ namespace WatsonConv;
 register_activation_hook(WATSON_CONV_FILE, array('WatsonConv\API', 'init_rate_limit'));
 register_deactivation_hook(WATSON_CONV_FILE, array('WatsonConv\API', 'uninit_rate_limit'));
 
+add_action('watson_get_iam_token', array('WatsonConv\API', 'get_iam_token'));
 add_action('watson_save_to_disk', array('WatsonConv\API', 'record_api_usage'));
 add_action('watson_reset_total_usage', array('WatsonConv\API', 'reset_total_usage'));
 add_action('watson_reset_client_usage', array('WatsonConv\API', 'reset_client_usage'));
@@ -87,6 +88,36 @@ class API {
         die();
     }
 
+    public static function get_iam_token() {
+        $credentials = get_option('watsonconv_credentials');
+
+        if ($credentials['type'] == 'iam') {
+            $response = wp_remote_post(
+                'https://iam.bluemix.net/identity/token',
+                array(
+                    'timeout' => 20,
+                    'headers' => array(
+                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/x-www-form-urlencoded'
+                    ), 'body' => array(
+                        'grant_type' => 'urn:ibm:params:oauth:grant-type:apikey',
+                        'apikey' => $credentials['api_key']
+                    )
+                )
+            );
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        $token_type = empty($body['token_type']) ? 'Bearer' : $body['token_type'];
+        $credentials['auth_header'] = $token_type.' '.$body['access_token'];
+
+        update_option('token', array('body' => $body, 'type' => $token_type));
+
+        update_option('watsonconv_credentials', $credentials);
+        update_option('watsonconv_iam_expiry', 
+                empty($body['expires_in']) ? 3000 : ($body['expires_in'] - 600));
+    }
+
     public static function route_request(\WP_REST_Request $request) {
         $ip_addr = self::get_client_ip();
         $body = $request->get_json_params();
@@ -135,10 +166,6 @@ class API {
                 );
             }
 
-            $auth_token = 'Basic ' . base64_encode(
-                $credentials['username'].':'.
-                $credentials['password']);
-
             $send_body = apply_filters(
                 'watsonconv_user_message',
                 array( 
@@ -154,7 +181,7 @@ class API {
                 array(
                     'timeout' => 20,
                     'headers' => array(
-                        'Authorization' => $auth_token,
+                        'Authorization' => $credentials['auth_header'],
                         'Content-Type' => 'application/json'
                     ),
                     'body' => json_encode($send_body)
@@ -239,10 +266,16 @@ class API {
     }
 
     public static function add_cron_schedules($schedules) {
-      $schedules['monthly'] = array('interval' => MONTH_IN_SECONDS, 'display' => 'Once every month');
-      $schedules['weekly'] = array('interval' => WEEK_IN_SECONDS, 'display' => 'Once every week');
-      $schedules['minutely'] = array('interval' => MINUTE_IN_SECONDS, 'display' => 'Once every minute');
-      return $schedules;
+        $schedules['monthly'] = array('interval' => MONTH_IN_SECONDS, 'display' => 'Once every month');
+        $schedules['weekly'] = array('interval' => WEEK_IN_SECONDS, 'display' => 'Once every week');
+        $schedules['minutely'] = array('interval' => MINUTE_IN_SECONDS, 'display' => 'Once every minute');
+
+        $schedules['watson_token_interval'] = array(
+            'interval' => get_option('watsonconv_iam_expiry', 3300),
+            'display' => 'Once every '.get_option('watsonconv_iam_expiry', 3300).' seconds.'
+        );
+        
+        return $schedules;
     }
 
     public static function get_client_ip() {

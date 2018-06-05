@@ -41,13 +41,15 @@ class Main {
             wp_enqueue_style(
                 'watsonconv-settings', 
                 WATSON_CONV_URL.'css/settings.css', 
-                array('wp-color-picker')
+                array('wp-color-picker'),
+                '0.7.2'
             );
 
             wp_enqueue_script(
                 'watsonconv-settings', 
                 WATSON_CONV_URL.'includes/settings/settings.js',
-                array('wp-color-picker', 'jquery-ui-tooltip')
+                array('wp-color-picker', 'jquery-ui-tooltip'),
+                '0.7.2'
             );
 
             wp_localize_script('watsonconv-settings', 'page_data', array('hook_suffix' => $hook_suffix));

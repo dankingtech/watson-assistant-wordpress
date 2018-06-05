@@ -60,6 +60,20 @@ jQuery(document).ready(function($) {
     })
 
   // ---- Main Setup Section ----
+  $('input[name="watsonconv_credentials[type]"]')
+  .on('change', function() {
+    if (this.value == 'basic') {
+      $('#basic_cred').show();
+      $('#iam_cred').hide();
+    } else if (this.value == 'iam') {
+      $('#basic_cred').hide();
+      $('#iam_cred').show();
+    }
+  })
+  .filter('input:checked')
+  .trigger('change');
+
+
   $('#watsonconv_enabled')
     .on('change', function() {
       if (this.checked) {

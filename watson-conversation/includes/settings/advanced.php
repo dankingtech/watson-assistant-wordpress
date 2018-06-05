@@ -68,7 +68,7 @@ class Advanced {
                                     <td id='context-var-image' class="responsive">
                                         <img 
                                             class="drop-shadow" 
-                                            style="width: 40em" 
+                                            style="max-width: 40em" 
                                             src="<?php echo WATSON_CONV_URL ?>/img/context_var.jpg"
                                         >
                                     </td>

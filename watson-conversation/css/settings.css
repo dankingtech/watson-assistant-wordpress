@@ -8,6 +8,58 @@ ul
   list-style-type: disc;
 }
 
+img
+{
+  display: block;
+  max-width: 100%;
+}
+
+label
+{
+  vertical-align: middle;
+}
+
+input[type="radio"]~div
+{
+  position: relative;
+  margin: 6px 3px 3px 3px;
+}
+
+input[type="radio"]~div:hover
+{
+  outline: 3px solid rgba(51,123,187, 0.3);
+}
+
+input[type="radio"]:checked~div
+{
+  outline: 3px solid rgba(51,123,187, 0.8);
+}
+
+input[type="radio"]~div:before
+{
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgb(255, 255, 255);
+  opacity: 0;
+  border: none;
+
+  -webkit-transition: opacity 0.3s cubic-bezier(.13,.75,.55,1.01);
+  -moz-transition: opacity 0.3s cubic-bezier(.13,.75,.55,1.01);
+  -ms-transition: opacity 0.3s cubic-bezier(.13,.75,.55,1.01);
+  -o-transition: opacity 0.3s cubic-bezier(.13,.75,.55,1.01);
+  transition: opacity 0.3s cubic-bezier(.13,.75,.55,1.01);
+}
+
+input[type="radio"]~div:hover:before
+{
+  opacity: 0.3;
+}
+
 .inline
 {
   display: inline-block;
