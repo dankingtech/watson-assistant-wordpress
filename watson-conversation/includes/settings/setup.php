@@ -2,7 +2,7 @@
 namespace WatsonConv\Settings;
 
 class Setup {
-    const SLUG = Main::SLUG.'_setup';
+    const SLUG = 'watson_asst_setup';
 
     public static function init_page() {
         add_submenu_page(Main::SLUG, 'Watson Assistant Setup', 'Set Up Chatbot', 

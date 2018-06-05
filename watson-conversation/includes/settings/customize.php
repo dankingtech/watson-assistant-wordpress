@@ -2,7 +2,7 @@
 namespace WatsonConv\Settings;
 
 class Customize {
-    const SLUG = Main::SLUG.'_customize';
+    const SLUG = 'watson_asst_customize';
 
     public static function init_page() {
         add_submenu_page(Main::SLUG, 'Watson Assistant Plugin Customization', 
