@@ -14,7 +14,7 @@ add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settin
 add_action('plugins_loaded', array('WatsonConv\Settings\Setup', 'migrate_old_credentials'));
 add_action('plugins_loaded', array('WatsonConv\Settings\Customize', 'migrate_old_show_on'));
 add_action('plugins_loaded', array('WatsonConv\Settings\Customize', 'migrate_old_full_screen'));
-add_action('upgrader_process_complete', array('WatsonConv\Settings\Customize', 'clear_css_cache'));
+add_action('upgrader_process_complete', array('WatsonConv\Settings\Customize', 'clear_css_cache'), 10, 2);
 
 class Main {
     const SLUG = 'watson_asst';
@@ -119,14 +119,14 @@ class Main {
         foreach ($options as $option) {
         ?>
             <div style="<?php echo $div_style ?>" >
-                <input
-                    name=<?php echo $option_name ?>
-                    id="<?php echo $option_name.'_'.$option['value'] ?>"
-                    type="radio"
-                    value="<?php echo $option['value'] ?>"
-                    <?php checked($option['value'], get_option($option_name, $default_value)) ?>
-                >
                 <label for="<?php echo $option_name.'_'.$option['value'] ?>">
+                    <input
+                        name=<?php echo $option_name ?>
+                        id="<?php echo $option_name.'_'.$option['value'] ?>"
+                        type="radio"
+                        value="<?php echo $option['value'] ?>"
+                        <?php checked($option['value'], get_option($option_name, $default_value)) ?>
+                    >
                     <?php echo $option['label'] ?>
                 </label><br />
             </div>

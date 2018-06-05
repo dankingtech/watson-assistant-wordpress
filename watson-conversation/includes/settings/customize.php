@@ -551,7 +551,7 @@ class Customize {
     <?php
     }
 
-    public static function clear_css_cache() {
+    public static function clear_css_cache($upgrader_object, $options) {
         try {
             $current_plugin_path_name = plugin_basename( __FILE__ );
 
@@ -629,25 +629,25 @@ class Customize {
             '@media screen and (max-width:640px)';
 
         ?>
-            <input
-                name="watsonconv_full_screen[mode]"
-                id="watsonconv_full_screen_all"
-                type="radio"
-                value="all"
-                <?php checked('all', $mode) ?>
-            >
             <label for="watsonconv_full_screen_all">
+                <input
+                    name="watsonconv_full_screen[mode]"
+                    id="watsonconv_full_screen_all"
+                    type="radio"
+                    value="all"
+                    <?php checked('all', $mode) ?>
+                >
                 Always
             </label><br />
 
-            <input
-                name="watsonconv_full_screen[mode]"
-                id="watsonconv_full_screen_mobile"
-                type="radio"
-                value="mobile"
-                <?php checked('mobile', $mode) ?>
-            >
             <label for="watsonconv_full_screen_mobile">
+                <input
+                    name="watsonconv_full_screen[mode]"
+                    id="watsonconv_full_screen_mobile"
+                    type="radio"
+                    value="mobile"
+                    <?php checked('mobile', $mode) ?>
+                >
                 Only Small Devices
             </label><br />
             <div id="watsonconv_full_screen_max_width">
@@ -660,25 +660,25 @@ class Customize {
                 >
             </div>
 
-            <input
-                name="watsonconv_full_screen[mode]"
-                id="watsonconv_full_screen_never"
-                type="radio"
-                value="never"
-                <?php checked('never', $mode) ?>
-            >
             <label for="watsonconv_full_screen_never">
+                <input
+                    name="watsonconv_full_screen[mode]"
+                    id="watsonconv_full_screen_never"
+                    type="radio"
+                    value="never"
+                    <?php checked('never', $mode) ?>
+                >
                 Never (Not recommended)
             </label><br />
             
-            <input
-                name="watsonconv_full_screen[mode]"
-                id="watsonconv_full_screen_custom"
-                type="radio"
-                value="custom"
-                <?php checked('custom', $mode) ?>
-            >
             <label for="watsonconv_full_screen_custom">
+                <input
+                    name="watsonconv_full_screen[mode]"
+                    id="watsonconv_full_screen_custom"
+                    type="radio"
+                    value="custom"
+                    <?php checked('custom', $mode) ?>
+                >
                 Custom CSS query (Advanced)
             </label><br />
             <div id="watsonconv_full_screen_query">
