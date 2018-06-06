@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
 Tested up to: 4.9
-Stable tag: 0.7.3
+Stable tag: 0.7.4
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -87,6 +87,10 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 
 == Changelog == 
 
+= 0.7.4 =
+* Fixed issue with new users entering workspace URL with username/password credentials
+* Fixed "Enabled" setting bug
+
 = 0.7.3 =
 * Fixed compatibility issue with PHP versions lower than 5.6
 
@@ -95,7 +99,7 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 * Fixed small styling issues
 
 = 0.7.1 =
-* Fixed critical bug cause by missing files
+* Fixed critical bug caused by missing files
 
 = 0.7.0 =
 * Reorganized and moved settings to top-level menu
