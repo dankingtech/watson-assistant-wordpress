@@ -10,11 +10,7 @@ class Setup {
     }
 
     public static function init_settings() {
-        self::init_basic_cred_settings();
-        self::init_iam_cred_settings();
-
-        register_setting(self::SLUG, 'watsonconv_enabled');
-        register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
+        self::init_credential_settings();
     }
 
     public static function render_page() {
@@ -39,12 +35,7 @@ class Setup {
 
                 <div class="tab-page workspace_page" style="display: none">
                     <?php self::main_setup_description(); ?>
-                    <div id="basic_cred">
-                        <?php do_settings_sections(self::SLUG.'_basic_cred') ?>
-                    </div>
-                    <div id="iam_cred" style="display: none;">
-                        <?php do_settings_sections(self::SLUG.'_iam_cred') ?>
-                    </div>
+                    <?php do_settings_sections(self::SLUG) ?>
                     <?php submit_button(); ?>
 
                     <p  class="update-message notice inline notice-warning notice-alt"
@@ -214,34 +205,24 @@ class Setup {
         } catch (\Exception $e) {}
     }
 
-    public static function init_basic_cred_settings() {
-        $settings_page = self::SLUG . '_basic_cred';
+    public static function init_credential_settings() {
+        $settings_page = self::SLUG;
 
-        add_settings_section('watsonconv_basic_cred', 'Workspace Credentials',
+        add_settings_section('watsonconv_credentials', 'Workspace Credentials',
             array(__CLASS__, 'workspace_description'), $settings_page);
 
         add_settings_field('watsonconv_enabled', '', array(__CLASS__, 'render_enabled'),
-            $settings_page, 'watsonconv_basic_cred', array('id' => 'basic_enabled'));
+            $settings_page, 'watsonconv_credentials');
         add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'render_username'),
-            $settings_page, 'watsonconv_basic_cred');
+            $settings_page, 'watsonconv_credentials');
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'render_password'),
-            $settings_page, 'watsonconv_basic_cred');
-        add_settings_field('watsonconv_workspace_url', 'Workspace URL', array(__CLASS__, 'render_url'),
-            $settings_page, 'watsonconv_basic_cred', array('id' => 'basic_workspace_url'));
-    }
-
-    public static function init_iam_cred_settings() {
-        $settings_page = self::SLUG . '_iam_cred';
-
-        add_settings_section('watsonconv_iam_cred', 'Workspace Credentials',
-            array(__CLASS__, 'workspace_iam_description'), $settings_page);
-
-        add_settings_field('watsonconv_enabled', '', array(__CLASS__, 'render_enabled'),
-            $settings_page, 'watsonconv_iam_cred', array('id' => 'iam_enabled'));
+            $settings_page, 'watsonconv_credentials');
         add_settings_field('watsonconv_api_key', 'API Key', array(__CLASS__, 'render_api_key'),
-            $settings_page, 'watsonconv_iam_cred');
+            $settings_page, 'watsonconv_credentials');
         add_settings_field('watsonconv_workspace_url', 'Workspace URL', array(__CLASS__, 'render_url'),
-            $settings_page, 'watsonconv_iam_cred', array('id' => 'iam_workspace_url'));
+            $settings_page, 'watsonconv_credentials');
+
+        register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
 
     private static function get_debug_info($response) {
@@ -382,7 +363,7 @@ class Setup {
             return get_option('watsonconv_credentials');
         } else if ($response_code == 401) {
             add_settings_error('watsonconv_credentials', 'invalid-credentials', 
-                'Please ensure you entered a valid username/password and URL'.$response_code_string.'. ' . $debug_info);
+                'Please ensure you entered valid credentials and workspace URL'.$response_code_string.'. ' . $debug_info);
             return get_option('watsonconv_credentials');
         } else if ($response_code == 404 || $response_code == 400) {
             add_settings_error('watsonconv_credentials', 'invalid-id', 
@@ -415,29 +396,24 @@ class Setup {
 
     public static function workspace_description($args) {
     ?>
-        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+        <p id="<?php echo esc_attr( $args['id'] ); ?>" class="basic_cred">
             <?php esc_html_e('Specify the Workspace URL, username and password for your Watson
                 Assistant Workspace below.', self::SLUG) ?> <br />
         </p>
-    <?php
-    }
-
-    public static function workspace_iam_description($args) {
-    ?>
-        <p id="<?php echo esc_attr( $args['id'] ); ?>">
+        <p id="<?php echo esc_attr( $args['id'] ); ?>" class="iam_cred">
             <?php esc_html_e('Specify the Workspace URL and API key for your Watson
                 Assistant Workspace below.', self::SLUG) ?> <br />
         </p>
     <?php
     }
 
-    public static function render_enabled($args) {
+    public static function render_enabled() {
         $credentials = get_option('watsonconv_credentials');
         $enabled = (isset($credentials['enabled']) ? $credentials['enabled'] : 'true') == 'true';
     ?>
         <fieldset>
             <input
-                type="checkbox" id=<?php echo $args['id']; ?>
+                type="checkbox" id="watsonconv_enabled"
                 name="watsonconv_credentials[enabled]"
                 value="true"
                 <?php echo $enabled ? 'checked' : '' ?>
@@ -452,7 +428,7 @@ class Setup {
     public static function render_username() {
         $credentials = get_option('watsonconv_credentials');
     ?>
-        <input name="watsonconv_credentials[username]" class="watsonconv_credentials"
+        <input name="watsonconv_credentials[username]" class="watsonconv_credentials basic_cred"
             id="watsonconv_username" type="text"
             value="<?php echo empty($credentials['username']) ? '' : $credentials['username'] ?>"
             placeholder="e.g. xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -463,18 +439,18 @@ class Setup {
     public static function render_password() {
         $credentials = get_option('watsonconv_credentials');
     ?>
-        <input name="watsonconv_credentials[password]" class="watsonconv_credentials"
+        <input name="watsonconv_credentials[password]" class="watsonconv_credentials basic_cred"
             id="watsonconv_password" type="password"
             value="<?php echo empty($credentials['password']) ? '' : $credentials['password'] ?>"
             style="max-width: 8em; width: 100%;" />
     <?php
     }
 
-    public static function render_url($args) {
+    public static function render_url() {
         $credentials = get_option('watsonconv_credentials');
     ?>
         <input name="watsonconv_credentials[workspace_url]" class="watsonconv_credentials"
-            id=<?php echo $args['id']; ?> type="text"
+            id="watsonconv_workspace_url" type="text"
             value="<?php echo empty($credentials['workspace_url']) ? '' : $credentials['workspace_url']; ?>"
             placeholder='e.g. https://gateway.watsonplatform.net/conversation/api/v1/workspaces/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/message/'
             style="max-width: 60em; width: 100%;" />
@@ -484,7 +460,7 @@ class Setup {
     public static function render_api_key() {
         $credentials = get_option('watsonconv_credentials');
     ?>
-        <input name="watsonconv_credentials[api_key]" class="watsonconv_credentials"
+        <input name="watsonconv_credentials[api_key]" class="watsonconv_credentials iam_cred"
             id="watsonconv_api_key" type="text"
             value="<?php echo empty($credentials['api_key']) ? '' : $credentials['api_key']; ?>"
             placeholder="e.g. XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx"

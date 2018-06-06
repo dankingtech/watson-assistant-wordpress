@@ -63,11 +63,11 @@ jQuery(document).ready(function($) {
   $('input[name="watsonconv_credentials[type]"]')
   .on('change', function() {
     if (this.value == 'basic') {
-      $('#basic_cred').show();
-      $('#iam_cred').hide();
+      $('.basic_cred').closest('tr,p').show();
+      $('.iam_cred').closest('tr,p').hide();
     } else if (this.value == 'iam') {
-      $('#basic_cred').hide();
-      $('#iam_cred').show();
+      $('.basic_cred').closest('tr,p').hide();
+      $('.iam_cred').closest('tr,p').show();
     }
   })
   .filter('input:checked')
