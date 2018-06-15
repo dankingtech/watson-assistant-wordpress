@@ -90,10 +90,12 @@ export default class ChatBox extends Component {
       this.setState({convStarted: true});
     }
 
-    fetch('?rest_route=/watsonconv/v1/message', {
+    fetch(watsonconvSettings.apiUrl, {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-WP-Nonce': watsonconvSettings.nonce
       },
+      credentials: 'same-origin',
       method: 'POST',
       body: JSON.stringify({
         input: {text: message},

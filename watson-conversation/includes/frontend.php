@@ -256,7 +256,9 @@ class Frontend {
                 'callButton' => get_option('watsonconv_call_button'),
                 'callingText' => get_option('watsonconv_calling_text')
             ),
-            'context' => self::get_context_var()
+            'context' => self::get_context_var(),
+            'nonce' => wp_create_nonce('wp_rest'),
+            'apiUrl' => esc_url_raw(rest_url('watsonconv/v1/message')),
         );
     }
 
