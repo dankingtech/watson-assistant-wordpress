@@ -33,7 +33,7 @@ This plugin requires the [WordPress REST API Plugin](https://en-ca.wordpress.org
 = Installing the Plugin =
 
 1. Log in to your site’s Dashboard.
-1. Click on the `Plugins` tab in the left panel, then click `Add New`.
+1. Click on the `Plugins` tab in the left panel, then click the `Add New` button.
 1. Search for “Watson Assistant” and the latest version will appear at the top of the list of results.
 1. Install the plugin by clicking the `Install Now` link.
 1. When installation finishes, click `Activate Plugin`.
