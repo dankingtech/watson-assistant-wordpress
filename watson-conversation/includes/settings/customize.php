@@ -373,7 +373,7 @@ class Customize {
                 'This setting only affects how the chat box appears to the user the first time they
                 see it in a single browser session. On every page after the first one, the minimized
                 state will be controlled by the user. If you want to force the chat box to be minimized
-                on a specific page, you can add "chat_min=yes" to the end of the URL (without the quotes).'
+                on a specific page, you can add "?chat_min=yes" to the end of the URL (without the quotes).'
                 , self::SLUG
             ),
             esc_html__('Chat Box Minimized by Default', self::SLUG)
