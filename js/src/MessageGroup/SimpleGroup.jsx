@@ -5,7 +5,7 @@ export default class SimpleGroup extends Component {
     return false;
   }
 
-  render({sendMessage, message: {from, text, options}}) {
+  render({sendMessage, from, text, options}) {
     let response = [], responseOptions = '';
 
     response = text.map((message, index) => (

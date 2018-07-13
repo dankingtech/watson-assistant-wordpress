@@ -14,7 +14,7 @@ add_action('update_option_watsonconv_client_interval', array('WatsonConv\API', '
 add_filter('cron_schedules', array('WatsonConv\API', 'add_cron_schedules'));
 
 class API {
-    const API_VERSION = '2017-04-21';
+    const API_VERSION = '2018-07-10';
 
     public static function register_routes() {
         $credentials = get_option('watsonconv_credentials');

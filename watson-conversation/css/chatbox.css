@@ -284,9 +284,14 @@
   -webkit-box-sizing: border-box;
 }
 
+#message-container #messages .message p
+{
+  margin: 0;
+}
+
 #message-container #messages .message img
 {
-  max-width:100%;
+  max-width: 100%;
 }
 
 #messages .message ul, #messages .message ol
@@ -310,10 +315,13 @@
   position: relative;
   cursor: pointer;
   border: 1px solid;
-  margin-top: 1px;
-  margin-bottom: -2px;
   background-color: white;
   color: rgb(35, 40, 45);
+}
+
+#message-container #messages .message-option + .message-option
+{
+  margin-top: -3px;
 }
 
 #message-container #messages .watson-message

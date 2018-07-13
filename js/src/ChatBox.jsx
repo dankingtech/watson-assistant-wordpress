@@ -30,6 +30,8 @@ export default class ChatBox extends Component {
       };
       Object.assign(this.state.context, {timezone: jstz.determine().name()});
     }
+
+    this.loadedMessages = this.state.messages.length;
   }
 
   componentDidMount() {
@@ -85,9 +87,24 @@ export default class ChatBox extends Component {
     jQuery(this.messageList).stop().animate({scrollTop: this.messageList.scrollHeight});
   }
 
-  sendMessage(message) {
+  sendMessage(message, fullBody = false) {
     if (!this.state.convStarted) {
       this.setState({convStarted: true});
+    }
+
+    let sendBody;
+
+    if (fullBody) {
+      sendBody = message;
+
+      if (typeof sendBody.context === 'object') {
+        sendBody.context = {...this.state.context, ...sendBody.context};
+      }
+    } else {
+      sendBody = {
+        input: {text: message},
+        context: this.state.context
+      };
     }
 
     fetch(watsonconvSettings.apiUrl, {
@@ -97,25 +114,21 @@ export default class ChatBox extends Component {
       },
       credentials: 'same-origin',
       method: 'POST',
-      body: JSON.stringify({
-        input: {text: message},
-        context: this.state.context
-      })
+      body: JSON.stringify(sendBody)
     }).then(response => {
       if (!response.ok) {
           throw Error('Message could not be sent.');
       }
       return response.json();
     }).then(body => {
-      let { text } = body.output;
+      let { generic } = body.output;
 
       this.setState({
         context: body.context,
         messages: this.state.messages.concat({
           from: 'watson',
-          text: Array.isArray(text) ? text : [text], 
-          options: body.output.options,
-          loadedMessages: (watsonconvSettings.typingDelay === 'yes') ? 0 : text.length
+          content: generic, 
+          options: body.output.options
         })
       }, this.saveState.bind(this));
     }).catch(error => {
@@ -124,7 +137,10 @@ export default class ChatBox extends Component {
 
     if (message) {
       this.setState({
-        messages: this.state.messages.concat({from: 'user', text: [message], loadedMessages: 1})
+        messages: this.state.messages.concat({
+          from: 'user', 
+          text: [fullBody ? message.input.text : message]
+        })
       });
     }
   }
@@ -136,12 +152,6 @@ export default class ChatBox extends Component {
     });
     
     this.sendMessage();
-  }
-
-  incLoadedMessages(index) {
-    let messages = this.state.messages.slice();
-    messages[index] = {...messages[index], loadedMessages: messages[index].loadedMessages + 1};
-    this.setState({messages: messages}, this.saveState.bind(this));
   }
 
   saveState() {
@@ -198,11 +208,11 @@ export default class ChatBox extends Component {
               {this.state.messages.map(
                 (message, index) => 
                   <MessageGroup 
-                    message={message}
+                    {...message}
                     key={index}
                     index={index}
+                    showPauses={index >= this.loadedMessages}
                     sendMessage={this.sendMessage.bind(this)}
-                    incLoaded={this.incLoadedMessages.bind(this)}
                     scroll={this.scrollToBottom.bind(this)}
                   />
               )}
