@@ -5,32 +5,12 @@ export default class SimpleGroup extends Component {
     return false;
   }
 
-  render({sendMessage, from, text, options}) {
-    let response = [], responseOptions = '';
-
-    response = text.map((message, index) => (
-      <div
-        key={index}
-        className={`message ${from}-message watson-font`}
-        dangerouslySetInnerHTML={{__html: message}}
-      ></div>
-    ));
-
-
-    if (Array.isArray(options)) {
-      responseOptions = options.map((option, index) => (
-        <div 
-          key={text.length + index} className={`message message-option watson-font`} 
-          onClick={() => { sendMessage(option); }}
-        >
-          {option}
-        </div>
-      ));
-    }
-      
+  render({from, text}) {
     return <div>
-      {response}
-      {responseOptions}
+      <div
+        className={`message ${from}-message watson-font`}
+        dangerouslySetInnerHTML={{__html: text}}
+      ></div>
     </div>;
   }
 }

@@ -139,7 +139,7 @@ export default class ChatBox extends Component {
       this.setState({
         messages: this.state.messages.concat({
           from: 'user', 
-          text: [fullBody ? message.input.text : message]
+          text: fullBody ? message.input.text : message
         })
       });
     }

@@ -32,7 +32,6 @@ export default class DelayedGroup extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log(this.state);
     this.props.scroll();
     this.nextPause();
   }
