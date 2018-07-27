@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-export default class SimpleGroup extends Component {
+export default class UserMessage extends Component {
   shouldComponentUpdate() {
     return false;
   }

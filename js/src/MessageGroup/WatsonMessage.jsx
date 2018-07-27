@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-export default class DelayedGroup extends Component {
+export default class WatsonMessage extends Component {
   constructor(props) {
     super(props);
 

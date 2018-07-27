@@ -1,10 +1,10 @@
 import React from 'react';
-import DelayedGroup from './DelayedGroup.jsx';
-import SimpleGroup from './SimpleGroup.jsx';
+import WatsonMessage from './WatsonMessage.jsx';
+import UserMessage from './UserMessage.jsx';
 
 const MessageGroup = (props) => (
   (props.from == 'watson') 
-    ? <DelayedGroup {...props} /> : <SimpleGroup {...props} />
+    ? <WatsonMessage {...props} /> : <UserMessage {...props} />
 )
 
 export default MessageGroup;
