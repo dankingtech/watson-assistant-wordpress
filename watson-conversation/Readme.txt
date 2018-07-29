@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
 Tested up to: 4.9
-Stable tag: 0.7.4
+Stable tag: 0.7.5
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -17,6 +17,7 @@ This plugin uses IBM Watson Assistant (formerly Watson Conversation) on the IBM 
 
 Currently supported features:
 
+* **New:** Take advantage of [Rich responses](https://console.bluemix.net/docs/services/conversation/dialog-overview.html#multimedia) to add images, pauses, and clickable responses to your chatbot
 * Use user's account data such as name in chatbot dialog
 * Easy VOIP calling powered by Twilio for users to contact a real person if they wish
 * Simple plugin setup to get your Watson Assistant chatbot available to users as soon as possible
@@ -86,6 +87,9 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.7.5 =
+* Added support for new Watson response types (Images, Options and Pauses)
 
 = 0.7.4 =
 * Fixed issue with new users entering workspace URL with username/password credentials
