@@ -17,7 +17,7 @@ This plugin uses IBM Watson Assistant (formerly Watson Conversation) on the IBM 
 
 Currently supported features:
 
-* **New:** Take advantage of [Rich responses](https://console.bluemix.net/docs/services/conversation/dialog-overview.html#multimedia) to add images, pauses, and clickable responses to your chatbot
+* Take advantage of [Rich responses](https://console.bluemix.net/docs/services/conversation/dialog-overview.html#multimedia) to add images, pauses, and clickable responses to your chatbot
 * Use user's account data such as name in chatbot dialog
 * Easy VOIP calling powered by Twilio for users to contact a real person if they wish
 * Simple plugin setup to get your Watson Assistant chatbot available to users as soon as possible

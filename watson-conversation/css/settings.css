@@ -152,3 +152,20 @@ span.dashicons-arrow-right-alt {
   }
 }
 
+table.rows, .rows td  {
+  border-spacing: 15px;
+
+  border: 1px solid gray;
+  border-collapse: collapse;
+  border-left: none;
+  border-right: none;
+}
+
+.rows p {
+  margin: 10px 0;
+}
+
+.rows h3 {
+  margin-right: 20px;
+  color: #333;
+}

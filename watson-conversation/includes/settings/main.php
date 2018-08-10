@@ -108,7 +108,7 @@ class Main {
             <a
                 class='button button-primary' 
                 style='margin-bottom: 0.5em' 
-                href='https://cocl.us/CB0103EN_WATR_WPP' 
+                href='https://cocl.us/CB0103EN_WATR_WPP'
                 target="_blank"
             >
                 Become a Partner

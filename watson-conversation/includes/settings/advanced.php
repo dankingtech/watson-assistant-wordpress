@@ -29,54 +29,51 @@ class Advanced {
             ?>
 
             <h2 class="nav-tab-wrapper">
-                <a onClick="switch_tab('usage_management')" class="nav-tab nav-tab-active usage_management_tab">Usage Management</a>
-                <a onClick="switch_tab('predefined')" class="nav-tab predefined_tab">Pre-Defined Responses</a>
+                <a onClick="switch_tab('new_features')" class="nav-tab nav-tab-active new_features_tab">New Features</a>
+                <a onClick="switch_tab('usage_management')" class="nav-tab usage_management_tab">Usage Management</a>
                 <a onClick="switch_tab('voice_call')" class="nav-tab voice_call_tab">Voice Calling</a>
                 <a onClick="switch_tab('context_var')" class="nav-tab context_var_tab">Context Variables</a>
             </h2>
 
             <form action="options.php" method="POST">
-                <div class="tab-page predefined_page" style="display: none"><?php self::render_predefined(); ?></div>
-                <?php
-                    settings_fields(self::SLUG); 
-
-                    ?> 
-                        <div class="tab-page usage_management_page">
-                            <?php do_settings_sections(self::SLUG.'_usage_management') ?>
-                        </div>
-                        <div class="tab-page voice_call_page" style="display: none">
-                            <?php do_settings_sections(self::SLUG.'_voice_call') ?>
-                        </div>
-                        <div class="tab-page context_var_page" style="display: none">
-                            <?php self::context_var_description() ?>
-                            <hr>
-                            <table width='100%'>
-                                <tr>
-                                    <td class="responsive">
-                                        <h2>Enter Context Variable Labels Here</h2>
-                                        <p>
-                                            Enter your desired labels in the text boxes. Next to the 
-                                            text boxes, you can see the corresponding values of the 
-                                            fields which you have set in your Wordpress profile, as
-                                            an example of the information that will be provided to the 
-                                            chatbot.
-                                        </p>
-                                        <table class='form-table'>
-                                            <?php do_settings_fields(self::SLUG.'_context_var', 'watsonconv_context_var') ?>
-                                        </table>
-                                    </td>
-                                    <td id='context-var-image' class="responsive">
-                                        <img 
-                                            class="drop-shadow" 
-                                            style="max-width: 40em" 
-                                            src="<?php echo WATSON_CONV_URL ?>/img/context_var.jpg"
-                                        >
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    <?php
-                ?>
+                <?php settings_fields(self::SLUG); ?> 
+                <div class="tab-page new_features_page">
+                    <?php self::render_new_features(); ?>
+                </div>
+                <div class="tab-page usage_management_page" style="display: none">
+                    <?php do_settings_sections(self::SLUG.'_usage_management') ?>
+                </div>
+                <div class="tab-page voice_call_page" style="display: none">
+                    <?php do_settings_sections(self::SLUG.'_voice_call') ?>
+                </div>
+                <div class="tab-page context_var_page" style="display: none">
+                    <?php self::context_var_description() ?>
+                    <hr>
+                    <table width='100%'>
+                        <tr>
+                            <td class="responsive">
+                                <h2>Enter Context Variable Labels Here</h2>
+                                <p>
+                                    Enter your desired labels in the text boxes. Next to the 
+                                    text boxes, you can see the corresponding values of the 
+                                    fields which you have set in your Wordpress profile, as
+                                    an example of the information that will be provided to the 
+                                    chatbot.
+                                </p>
+                                <table class='form-table'>
+                                    <?php do_settings_fields(self::SLUG.'_context_var', 'watsonconv_context_var') ?>
+                                </table>
+                            </td>
+                            <td id='context-var-image' class="responsive">
+                                <img 
+                                    class="drop-shadow" 
+                                    style="max-width: 40em" 
+                                    src="<?php echo WATSON_CONV_URL ?>/img/context_var.jpg"
+                                >
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
                 <?php submit_button(); ?>
                 <p class="update-message notice inline notice-warning notice-alt"
@@ -89,40 +86,45 @@ class Advanced {
         </div>
     <?php
     }
-    public static function render_predefined() {
-    ?>
-    <div class="wrap" style="max-width: 60em; ">
-        <p><?php esc_html_e('This page contains information on advanced features supported by this plugin.
-            If you have not yet created your chatbot, you should see the Introduction tab first.'); ?></p>
-        <h2> <?php esc_html_e('Preset Response Options'); ?></h2>
-        <p><?php esc_html_e('Using this feature, you can create predefined message buttons that users can use to
-            quickly and easily respond to messages from your chatbot as shown here.'); ?></p>
-        <img class="drop-shadow" style="height: 24em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/result.png">
-        <p><?php esc_html_e('The following instructions will guide you through the process of using this feature.') ?></p>
 
-        <h4><?php esc_html_e('1. Open your chatbot workspace in Watson Assistant and go to the Dialog tab.') ?>
-        <h4><?php esc_html_e('2. Select the node you want to create predefined messages for.') ?></h4>
-        <img class="drop-shadow" style="width: 60em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/2_full_page_highlighted.jpg">
-        <h4><?php esc_html_e('3. Click the 3 dots at the top-right of this section to get the following dropdown.
-            Click the "Open JSON Editor" button.') ?></h4>
-        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/4_json_dropdown.png">
-        <h4><?php esc_html_e('A box should open up containing text resembling the picture below.') ?></h4>
-        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/5_json_initial.png">
-        <h4><?php esc_html_e('4. Find the line containing "text". In this case it\'s line 3. You will
-             notice this line has an opening curly bracket at the end.') ?></h4>
-        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/6_json_text_open.png">
-        <h4><?php esc_html_e('5. Look below the word "text" to find the matching closing bracket.') ?></h4>
-        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/7_json_text_close.png">
-        <h4><?php esc_html_e('6. Add the following text after this closing bracket. The empty line 
-            under "options" is where you\'ll put your predefined messages.') ?></h4>
-        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/8_json_options_added.png">
-        <h4><?php esc_html_e('7. Write your message options in the space below "options", with one message per line.
-            Surround each message with double quotes and put a comma at the end of each line except for the last,
-            as shown in the picture below.  ') ?></h4>
-        <img class="drop-shadow" style="width: 44em" src="<?php echo WATSON_CONV_URL ?>/img/options_instructions/9_json_options_filled.png">
-        <h4><?php esc_html_e('If done correctly, the chatbox on your Wordpress site should now show
-            these response options as buttons like in the picture at the top of this page.') ?></h4>
-    </div>
+    public static function render_new_features() {
+    ?>
+        <p>
+            The Watson Assistant service has recently been updated to support new types of responses called 
+            <a href="https://console.bluemix.net/docs/services/conversation/dialog-overview.html#multimedia">Rich Responses</a>.
+            This adds three new types of responses in additional to the default <strong>Text</strong> response:
+        </p>
+        <table class="rows">
+            <tr>
+                <td><h3>Image</h3></td>
+                <td><p>Embeds an image into the response. The source image file must be 
+                hosted somewhere and have a URL that you can use to reference it.</p></td>
+            </tr>
+            <tr>
+                <td><h3>Option</h3></td>
+                <td><p>Adds a list of one or more options. When a user clicks one of the 
+                options, an associated user input value is sent to the service. How options are rendered can 
+                differ depending on where you deploy the dialog. For example, in one integration channel the 
+                options might be displayed as clickable buttons, but in another they might be displayed as a 
+                dropdown list.</p></td>
+            </tr>
+            <tr>
+                <td><h3>Pause</h3></td>
+                <td><p>Forces the application to wait for a specified number of milliseconds 
+                before continuing with processing. You can choose to show an indicator that the dialog is 
+                working on typing a response. Use this response type if you need to perform an action that 
+                might take some time. For example, a parent node makes a Cloud Function call and displays 
+                the result in a child node. You could use this response type as the response for the parent 
+                node to give the programmatic call time to complete, and then jump to the child node to show 
+                the result. This response type does not render in the "Try it out" pane. You must access a 
+                node that uses this response type from a test deployment to see how your users will experience 
+                it.</p></td>
+            </tr>
+        </table>
+        <br>
+
+        Use Rich Responses to enrich your chatbot dialog and enhance user experience.
+        </p>
     <?php
     }
 
