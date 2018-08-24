@@ -286,51 +286,10 @@ class Setup {
         }
 
         if ($credentials['type'] == 'iam') {
-            $token_response = wp_remote_post(
-                'https://iam.bluemix.net/identity/token',
-                array(
-                    'timeout' => 20,
-                    'headers' => array(
-                        'Accept' => 'application/json',
-                        'Content-Type' => 'application/x-www-form-urlencoded'
-                    ), 'body' => array(
-                        'grant_type' => 'urn:ibm:params:oauth:grant-type:apikey',
-                        'apikey' => $credentials['api_key']
-                    )
-                )
+            $auth_header = 'Basic ' . base64_encode(
+                'apikey:'.
+                $credentials['api_key']
             );
-
-            $token_response_code = wp_remote_retrieve_response_code($token_response);
-            $token_code_string = empty($response_code) ? '' : ' ('.$response_code.')';
-            $token_debug_info = self::get_debug_info($token_response);
-
-            if (is_wp_error($token_response)) {
-                add_settings_error('watsonconv_credentials', 'token-error', 
-                    'Unable to connect to Watson IAM server'.$token_code_string.'. ' . $token_debug_info);
-                return get_option('watsonconv_credentials');
-            } else if ($token_response_code == 400) {
-                add_settings_error('watsonconv_credentials', 'invalid-api-key', 
-                    'Please ensure you entered a valid API key'.$token_code_string.'. ' . $token_debug_info);
-                return get_option('watsonconv_credentials');
-            } else if ($token_response_code != 200) {
-                add_settings_error('watsonconv_credentials', 'token-error',
-                    'Unable to retrieve IAM token'.$token_code_string.'. ' . $token_debug_info);
-                return get_option('watsonconv_credentials');
-            }
-
-            $token_body = json_decode(wp_remote_retrieve_body($token_response), true);
-
-            if (empty($token_body['access_token'])) {
-                add_settings_error('watsonconv_credentials', 'token-error',
-                    'Unable to retrieve IAM token'.$token_code_string.'. ' . $debug_info);
-                return get_option('watsonconv_credentials');
-            }
-
-            update_option('watsonconv_iam_expiry', 
-                empty($token_body['expires_in']) ? 3000 : ($token_body['expires_in'] - 600));
-
-            $token_type = empty($token_body['token_type']) ? 'Bearer' : $token_body['token_type'];
-            $auth_header = $token_type.' '.$token_body['access_token'];
         } else {
             $auth_header = 'Basic ' . base64_encode(
                 $credentials['username'].':'.
@@ -376,12 +335,6 @@ class Setup {
         }
 
         $credentials['auth_header'] = $auth_header;
-        
-        wp_clear_scheduled_hook('watson_get_iam_token');
-
-        if ($credentials['type'] == 'iam') {
-            wp_schedule_event(time(), 'watson_token_interval', 'watson_get_iam_token');
-        }
 
         add_settings_error(
             'watsonconv_credentials', 
