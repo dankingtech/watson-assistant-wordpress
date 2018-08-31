@@ -77,7 +77,7 @@ class Main {
                      style="padding:0.5em; padding-left:1em; margin:0">
                     <span style='color:orange; margin-right:0.3em'
                           class='dashicons dashicons-admin-settings'></span>
-                    <a href="options-general.php?page=<?php echo Setup::SLUG ?>">
+                    <a href="admin.php?page=<?php echo Setup::SLUG ?>">
                         <?php esc_html_e('Please fill in your Watson Assistant Workspace Credentials.', self::SLUG) ?>
                     </a>
                 </div>
