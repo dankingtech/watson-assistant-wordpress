@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
 Tested up to: 4.9
-Stable tag: 0.7.5
+Stable tag: 0.7.6
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -87,6 +87,10 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog == 
+
+= 0.7.6 =
+* Fixed issue with API key authentication on some Wordpress installations
+* Fixed “Please fill in your Watson Assistant Workspace Credentials” link
 
 = 0.7.5 =
 * Added support for new Watson response types (Images, Options and Pauses)
