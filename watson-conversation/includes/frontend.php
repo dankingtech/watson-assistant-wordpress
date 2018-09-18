@@ -290,7 +290,7 @@ class Frontend {
             self::enqueue_styles();
             $settings = self::get_settings();
             
-            if ($settings['callConfig']['useTwilio'] == 'yes' && $settings['callConfig']['callConfigured']) {
+            if ($settings['callConfig']['useTwilio'] == 'yes' && $settings['callConfig']['configured']) {
                 wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
             }
 
@@ -320,7 +320,7 @@ class Frontend {
                 self::enqueue_styles();
                 $settings = self::get_settings();
                 
-                if ($settings['callConfig']['useTwilio'] == 'yes' && $settings['callConfig']['callConfigured']) {
+                if ($settings['callConfig']['useTwilio'] == 'yes' && $settings['callConfig']['configured']) {
                     wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
                 }
     
