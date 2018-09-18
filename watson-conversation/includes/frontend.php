@@ -7,7 +7,7 @@ add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'chatbox_shortcode'));
 
 class Frontend {
-    const VERSION = '0.7.5';
+    const VERSION = '0.7.7';
 
     public static function enqueue_styles($force_full_screen = null) {
         wp_enqueue_style('watsonconv-chatbox');
@@ -241,7 +241,7 @@ class Frontend {
             'title' => get_option('watsonconv_title', ''),
             'clearText' => get_option('watsonconv_clear_text', 'Clear Messages'),
             'messagePrompt' => get_option('watsonconv_message_prompt', 'Type a Message'),
-            'fullScreenQuery' => $full_screen_query,
+            'fullScreenQuery' => substr($full_screen_query, 7, -7),
             'showSendBtn' => get_option('watsonconv_send_btn', 'no'),
             'typingDelay' => get_option('watsonconv_typing_delay', 'no'),
             'fabConfig' => array(

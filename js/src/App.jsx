@@ -15,8 +15,11 @@ export default class App extends Component {
     {
       this.state = JSON.parse(sessionStorage.getItem('watson_bot_window_state'));
     } else {
+      let isFullScreen = window.matchMedia(watsonconvSettings.fullScreenQuery).matches;
+
       this.state = {
-        minimized: props.isMobile || (watsonconvSettings.minimized === 'yes'),
+        minimized: watsonconvSettings.minimized === 'yes'
+          || watsonconvSettings.minimized === (isFullScreen ? 'fullscreen' : 'window'),
         position: {x: 0, y: 0}
       };
     }
@@ -71,7 +74,7 @@ export default class App extends Component {
   }
 
   render(props, {minimized, animated}) {
-    let fullScreen = window.matchMedia(watsonconvSettings.fullScreenQuery).matches;
+    let isFullScreen = window.matchMedia(watsonconvSettings.fullScreenQuery).matches;
 
     return (
       <div>
@@ -80,7 +83,7 @@ export default class App extends Component {
           cancel='#watson-header .header-button'
           onStart={this.startDragging.bind(this)}
           onStop={this.savePosition.bind(this)}
-          position={(fullScreen || minimized) ? {x: 0, y: 0} : this.state.position}
+          position={(isFullScreen || minimized) ? {x: 0, y: 0} : this.state.position}
         >
           <TransitionGroup
             id='watson-float'

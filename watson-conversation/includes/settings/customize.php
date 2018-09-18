@@ -367,18 +367,6 @@ class Customize {
         add_settings_section('watsonconv_appearance_chatbox', 'Chat Box',
             array(__CLASS__, 'chatbox_description'), $settings_page);
 
-        $minimized_title = sprintf(
-            '<span href="#" title="%s">%s</span>', 
-            esc_html__(
-                'This setting only affects how the chat box appears to the user the first time they
-                see it in a single browser session. On every page after the first one, the minimized
-                state will be controlled by the user. If you want to force the chat box to be minimized
-                on a specific page, you can add "?chat_min=yes" to the end of the URL (without the quotes).'
-                , self::SLUG
-            ),
-            esc_html__('Chat Box Minimized by Default', self::SLUG)
-        );
-
         $full_screen_title = sprintf(
             '<span href="#" title="%s">%s</span>', 
             esc_html__(
@@ -392,6 +380,18 @@ class Customize {
                 , self::SLUG
             ),
             esc_html__('Full Screen', self::SLUG)
+        );
+
+        $minimized_title = sprintf(
+            '<span href="#" title="%s">%s</span>', 
+            esc_html__(
+                'This setting only affects how the chat box appears to the user the first time they
+                see it in a single browser session. On every page after the first one, the minimized
+                state will be controlled by the user. If you want to force the chat box to be minimized
+                on a specific page, you can add "?chat_min=yes" to the end of the URL (without the quotes).'
+                , self::SLUG
+            ),
+            esc_html__('Chat Box Minimized by Default', self::SLUG)
         );
 
         $position_title = sprintf(
@@ -499,10 +499,10 @@ class Customize {
         );
         
 
-        add_settings_field('watsonconv_minimized', $minimized_title,
-            array(__CLASS__, 'render_minimized'), $settings_page, "watsonconv_appearance_chatbox");
         add_settings_field('watsonconv_full_screen', $full_screen_title,
             array(__CLASS__, 'render_full_screen'), $settings_page, 'watsonconv_appearance_chatbox');
+        add_settings_field('watsonconv_minimized', $minimized_title,
+            array(__CLASS__, 'render_minimized'), $settings_page, "watsonconv_appearance_chatbox");
         add_settings_field('watsonconv_position', $position_title,
             array(__CLASS__, 'render_position'), $settings_page, 'watsonconv_appearance_chatbox');
         add_settings_field('watsonconv_send_btn', $send_btn_title,
@@ -571,10 +571,16 @@ class Customize {
             'no',
             array(
                 array(
-                    'label' => esc_html__('Yes', self::SLUG),
+                    'label' => esc_html__('Always', self::SLUG),
                     'value' => 'yes'
                 ), array(
-                    'label' => esc_html__('No', self::SLUG),
+                    'label' => esc_html__('When Chat Box is Windowed', self::SLUG),
+                    'value' => 'window'
+                ), array(
+                    'label' => esc_html__('When Chat Box is Full Screen', self::SLUG),
+                    'value' => 'fullscreen'
+                ), array(
+                    'label' => esc_html__('Never', self::SLUG),
                     'value' => 'no'
                 )
             )
