@@ -234,6 +234,12 @@ class Frontend {
         $full_screen_query = isset($full_screen_settings['query']) ?
             $full_screen_settings['query'] : '@media screen and (max-width:640px) { %s }';
 
+        $url = trailingslashit( get_home_url( NULL, '', 'rest' ) );
+        if ( 'index.php' !== substr( $url, 9 ) ) {
+            $url .= 'index.php';
+        }
+        $url = add_query_arg( 'rest_route', '/watsonconv/v1/message', $url );
+
         return array(
             'delay' => (int) get_option('watsonconv_delay', 0),
             'minimized' => get_option('watsonconv_minimized', 'no'),
@@ -258,7 +264,7 @@ class Frontend {
             ),
             'context' => self::get_context_var(),
             'nonce' => wp_create_nonce('wp_rest'),
-            'apiUrl' => esc_url_raw(rest_url('watsonconv/v1/message')),
+            'apiUrl' => $url,
         );
     }
 
