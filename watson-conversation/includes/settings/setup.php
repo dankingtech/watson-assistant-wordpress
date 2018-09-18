@@ -26,6 +26,7 @@ class Setup {
             <h2 class="nav-tab-wrapper">
                 <a onClick="switch_tab('build')" class="nav-tab nav-tab-active build_tab">1. Building a chatbot</a>
                 <a onClick="switch_tab('workspace')" class="nav-tab workspace_tab">2. Plugin Setup</a>
+                <a onClick="switch_tab('errors')" class="nav-tab errors_tab">Having Issues?</a>
             </h2>
 
             <form action="options.php" method="POST">
@@ -44,6 +45,9 @@ class Setup {
                         WP Super Cache, you may need to clear your cache after changing settings or
                         deactivating the plugin. Otherwise, your action may not take effect.
                     <p>
+                </div>
+                <div class="tab-page errors_page" style="display: none">
+                    <?php self::errors_page(); ?>
                 </div>
             </form>
         </div>
@@ -178,6 +182,23 @@ class Setup {
     <?php
     } 
 
+    public static function errors_page() {
+    ?>
+        <p>
+            If you have successfully connected your chatbot to the website on the previous page,
+            but your chatbot doesn't seem to be working on your website, then you can create a support
+            post <a href="https://wordpress.org/support/plugin/conversation-watson" target="_blank">
+            in this forum</a>. If the following box is populated with text, then please copy that and
+            include it in your support post.
+        </p>
+        <div class="watson-settings-box">
+            <pre><?php 
+                    echo json_encode(get_option('watsonconv_error_log'), defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 128); 
+            ?></pre>
+        </div>
+    <?php
+    }
+
     // ------------ Workspace Credentials ---------------
 
     // If an installation of this plugin has a credentials format from the versions before 0.3.0,
@@ -225,7 +246,7 @@ class Setup {
         register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
 
-    private static function get_debug_info($response) {
+    private static function get_debug_string($response) {
         $response_body = wp_remote_retrieve_body($response);
 
         $json_data = @json_decode($response_body);
@@ -314,7 +335,7 @@ class Setup {
         $response_code = wp_remote_retrieve_response_code($response);
         $response_code_string = empty($response_code) ? '' : ' ('.$response_code.')';
 
-        $debug_info = self::get_debug_info($response);
+        $debug_info = self::get_debug_string($response);
 
         if (is_wp_error($response)) {
             add_settings_error('watsonconv_credentials', 'invalid-credentials', 

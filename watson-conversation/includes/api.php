@@ -166,6 +166,10 @@ class API {
             $response_body = apply_filters('watsonconv_bot_message', $response_body);
 
             if ($response_code !== 200) {
+                $error_log = get_option('watsonconv_error_log', array());
+                $error_log[] = self::get_debug_info($response);
+                update_option('watsonconv_error_log', array_slice($error_log, -3, 3));
+
                 return new \WP_Error(
                     'watson_error',
                     $response_body,
@@ -259,5 +263,27 @@ class API {
             $ip_addr = $_SERVER['REMOTE_ADDR'];
 
         return $ip_addr;
+    }
+
+    public static function get_debug_info($response) {
+        $response_body = wp_remote_retrieve_body($response);
+
+        $json_data = @json_decode($response_body);
+
+        if (empty($response_body)) {
+            $response = var_export($response, true);
+        } else if (!is_null($json_data) && json_last_error() === JSON_ERROR_NONE) {
+            $response = $json_data;
+        } else if (is_array($response_body) || is_string($response_body)) {
+            $response = $response_body;
+        } else {
+            $response = var_export($response_body, true);
+        }
+
+        if (is_string($response)) {
+            $response = str_replace('\\/', '/', $response);
+        }
+
+        return $response;
     }
 }
