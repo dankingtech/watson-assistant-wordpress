@@ -12,6 +12,7 @@ add_action('after_plugin_row_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings\
 add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings\Main', 'add_links'));
 
 add_action('plugins_loaded', array('WatsonConv\Settings\Setup', 'migrate_old_credentials'));
+add_action('plugins_loaded', array('WatsonConv\Settings\Setup', 'change_credentials_to_basic'));
 add_action('plugins_loaded', array('WatsonConv\Settings\Customize', 'migrate_old_show_on'));
 add_action('plugins_loaded', array('WatsonConv\Settings\Customize', 'migrate_old_full_screen'));
 add_action('upgrader_process_complete', array('WatsonConv\Settings\Customize', 'clear_css_cache'), 10, 2);

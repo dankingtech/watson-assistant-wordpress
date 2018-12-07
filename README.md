@@ -37,7 +37,7 @@ The website can then be accessed at localhost:8000.
 You must first have a Wordpress.org account with commit access to the plugin's Wordpress [SVN repository](https://developer.wordpress.org/plugins/wordpress-org/how-to-use-subversion/). To release updates to the plugin, you must do the following
 
 1. Build the Javascript `app.js` file by running `npm run prod` as explained above. 
-2. Increment the version number in `watson.php` and the `Stable Tag` in `Readme.txt`.
+2. Increment the version number in `watson.php`, `Frontend::VERSION` in `frontend.php`, and the `Stable Tag` in `Readme.txt`.
 3. Add the new version to the changelog in `Readme.txt`.
 4. Copy the contents of the `watson-conversation` directory into the `trunk` or `tags\X.X.X` directory outlined in the [SVN repository documentation](https://developer.wordpress.org/plugins/wordpress-org/how-to-use-subversion/).
 

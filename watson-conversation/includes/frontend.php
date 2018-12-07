@@ -7,7 +7,7 @@ add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'chatbox_shortcode'));
 
 class Frontend {
-    const VERSION = '0.7.7';
+    const VERSION = '0.8.3';
 
     public static function enqueue_styles($force_full_screen = null) {
         wp_enqueue_style('watsonconv-chatbox');
@@ -216,7 +216,26 @@ class Frontend {
             }
         }
 
-        return $context;
+        $plugin_label = get_option('watsonconv_plugin_version_var');
+        $plugin_version = self::VERSION;
+
+        if ($plugin_label && !empty($plugin_version)) {
+            $context->$plugin_label = $plugin_version;
+        }
+
+
+        // Ensure user_defined is not passed as an empty object
+        if (count((array)$context) > 0) {
+            return array(
+                'skills' => array(
+                    'main skill' => array(
+                        'user_defined' => $context
+                    )
+                )
+            );
+        } else {
+            return new \stdClass();
+        }
     }
 
     private static function get_settings() {

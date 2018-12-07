@@ -177,3 +177,20 @@ table.rows, .rows td  {
   margin: 5px 15px 2px;
   padding: 1px 12px;
 }
+
+#watsonconv_credentials_description{
+  display: none;
+}
+
+#watsonconv_credentials_description code{
+  padding: .2rem .4rem;
+  color: #333;
+  background-color: #f8f8f8;
+  border-radius: .2rem;
+  border: solid ;
+  border-width: .1rem;
+}
+
+#watsonconv_credentials_description strong{
+  font-weight:bold;
+}

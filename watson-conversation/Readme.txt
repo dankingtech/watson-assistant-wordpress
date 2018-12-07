@@ -2,8 +2,8 @@
 Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
-Tested up to: 4.9
-Stable tag: 0.7.7
+Tested up to: 5.0
+Stable tag: 0.8.3
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -86,7 +86,26 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 == Screenshots ==
 1. An example of your chatbot greeting a website visitor.
 
-== Changelog == 
+== Changelog ==
+
+= 0.8.3 =
+* Added context variable option with Plug-in version
+* Switched to User/Password credentials
+
+= 0.8.2 =
+* Fixed dialog context integration
+
+= 0.8.1 =
+* Made Watson Assistant API version 2 default
+
+= 0.8.0 =
+* Updated instructions on plugin configuration
+
+= 0.7.9 =
+* Added support for Watson Assistant API v2
+
+= 0.7.8 =
+* Fixed issue with Watson Dialog Options integration
 
 = 0.7.7 =
 * Fixed issue with chatbot not responding in certain Wordpress environments

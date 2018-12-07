@@ -11,3 +11,6 @@
 js/node_modules/
 watson-conversation/app.js
 watson-conversation/vendor/
+
+.idea/
+test/plugin

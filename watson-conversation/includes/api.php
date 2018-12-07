@@ -14,7 +14,11 @@ add_action('update_option_watsonconv_client_interval', array('WatsonConv\API', '
 add_filter('cron_schedules', array('WatsonConv\API', 'add_cron_schedules'));
 
 class API {
-    const API_VERSION = '2018-07-10';
+    const API_VERSION = '2018-07-10';  // Workspace/Skill API (version 1)
+    const API_VERSION_2 = '2018-11-08';  // Assistant API (version 2)
+
+    const API_V1_URL_RE = '/\/api\/v1\/workspaces\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\/message/';
+    const API_V2_URL_RE = '/\/api\/v2\/assistants\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\/sessions/';
 
     public static function register_routes() {
         $credentials = get_option('watsonconv_credentials');
@@ -89,26 +93,80 @@ class API {
     }
 
     public static function route_request(\WP_REST_Request $request) {
-        $ip_addr = self::get_client_ip();
-        $body = $request->get_json_params();
+        $usage_res = self::check_usage_allowed();
+        if ($usage_res['allowed']) {
+            $credentials = get_option('watsonconv_credentials');
+            switch (self::detect_api_version($credentials['workspace_url'])) {
+                case 'v1':
+                    return self::route_request_v1($request);
+                    break;
+                case 'v2':
+                    return self::route_request_v2($request);
+                    break;
+                default:
+                    return new \WP_Error(
+                        'config_error',
+                        'Unable to determine Watson service endpoint version.',
+                        503
+                    );
+            }
+        } else {
+            # reply with error message to client
+            return self::reply_with_text($usage_res['message']);
+        }
+    }
 
+    /**
+     * Composes chat-bot reply text message
+     *
+     * @param string $message
+     * @return array
+     */
+    private static function reply_with_text($message) {
+        return array('output' => array(
+            'generic' => array(
+                array(
+                    'response_type' => 'text',
+                    'text' => $message
+                )
+            )
+        ));
+    }
+
+    /**
+     * Check if client have exceed the requests limit, if not update counters
+     *
+     * @return array|\WP_Error { (bool) allowed, (string) message }
+     */
+    private static function check_usage_allowed() {
+        $is_allowed = false;
+        $message = null;
+        $ip_addr = self::get_client_ip();
         $total_requests = get_option('watsonconv_total_requests', 0) +
-            get_transient('watsonconv_total_requests') ?: 0;
+        get_transient('watsonconv_total_requests') ?: 0;
         $client_requests = get_option("watsonconv_requests_$ip_addr", 0) +
-            get_transient("watsonconv_requests_$ip_addr") ?: 0;
+        get_transient("watsonconv_requests_$ip_addr") ?: 0;
 
         if (get_option('watsonconv_use_limit', 'no') == 'yes' &&
-                $total_requests > get_option('watsonconv_limit', INF)) 
+            $total_requests > get_option('watsonconv_limit', INF))
         {
-            return array('output' => array('text' => 
-                get_option('watsonconv_limit_message', "Sorry, I can't talk right now. Try again later.")
-            ));
+//            return array('output' => array('text' =>
+//                get_option('watsonconv_limit_message', "Sorry, I can't talk right now. Try again later.")
+//            ));
+            $message = get_option('watsonconv_limit_message');
+            if (empty($message)) {
+                $message = "Sorry, I can't talk right now. Try again later.";
+            }
         } else if (get_option('watsonconv_use_client_limit', 'no') == 'yes' &&
-            $client_requests > get_option('watsonconv_client_limit', INF)) 
+            $client_requests > get_option('watsonconv_client_limit', INF))
         {
-            return array('output' => array('text' => 
-                get_option('watsonconv_client_limit_message', "Sorry, I can't talk right now. Try again later.")
-            ));
+//            return array('output' => array('text' =>
+//                get_option('watsonconv_client_limit_message', "Sorry, I can't talk right now. Try again later.")
+//            ));
+            $message = get_option('watsonconv_client_limit_message');
+            if (empty($message)) {
+                $message = "Sorry, I can't talk right now. Try again later.";
+            }
         } else {
             set_transient(
                 'watsonconv_total_requests',
@@ -135,51 +193,170 @@ class API {
                     503
                 );
             }
+            $is_allowed = true;
+        }
+        return array(
+            'allowed' => $is_allowed,
+            'message' => $message
+        );
+    }
 
-            $send_body = apply_filters(
-                'watsonconv_user_message',
-                array( 
-                    'input' => empty($body['input']) ? new \stdClass() : $body['input'], 
-                    'context' => empty($body['context']) ? new \stdClass() : $body['context']
-                )
-            );
-            
-            do_action('watsonconv_message_pre_send', $send_body);
+    /**
+     * Routes client request to Workspace/Skill API endpoint (v1)
+     *
+     * @param \WP_REST_Request $request
+     * @return mixed|\WP_Error -- reply
+     */
+    private static function route_request_v1(\WP_REST_Request $request) {
+        $body = $request->get_json_params();
+        $credentials = get_option('watsonconv_credentials');
 
-            $response = wp_remote_post(
-                $credentials['workspace_url'].'?version='.self::API_VERSION,
-                array(
-                    'timeout' => 20,
-                    'headers' => array(
-                        'Authorization' => $credentials['auth_header'],
-                        'Content-Type' => 'application/json'
-                    ),
-                    'body' => json_encode($send_body)
-                )
-            );
+        $send_body = apply_filters(
+            'watsonconv_user_message',
+            array(
+                'input' => empty($body['input']) ? new \stdClass() : $body['input'],
+                'context' => empty($body['context']) ? new \stdClass() : $body['context']
+            )
+        );
 
-            do_action('watsonconv_message_received', $response);
+        do_action('watsonconv_message_pre_send', $send_body);
 
-            $response_body = json_decode(wp_remote_retrieve_body($response), true);
-            $response_code = wp_remote_retrieve_response_code($response);
+        $response = wp_remote_post(
+            $credentials['workspace_url'].'?version='.self::API_VERSION,
+            array(
+                'timeout' => 20,
+                'headers' => array(
+                    'Authorization' => $credentials['auth_header'],
+                    'Content-Type' => 'application/json'
+                ),
+                'body' => json_encode($send_body)
+            )
+        );
 
-            $response_body = apply_filters('watsonconv_bot_message', $response_body);
+        do_action('watsonconv_message_received', $response);
 
-            if ($response_code !== 200) {
-                $error_log = get_option('watsonconv_error_log', array());
-                $error_log[] = self::get_debug_info($response);
-                update_option('watsonconv_error_log', array_slice($error_log, -3, 3));
+        $response_body = json_decode(wp_remote_retrieve_body($response), true);
+        $response_code = wp_remote_retrieve_response_code($response);
 
-                return new \WP_Error(
-                    'watson_error',
-                    $response_body,
-                    empty($response_code) ? array() : array('status' => $response_code)
-                );
-            } else {
-                do_action('watsonconv_message_parsed', $response_body);
-                return $response_body;
+        $response_body = apply_filters('watsonconv_bot_message', $response_body);
+
+        if ($response_code !== 200) {
+            return self::reply_with_response_error($response);
+        } else {
+            do_action('watsonconv_message_parsed', $response_body);
+            return $response_body;
+        }
+    }
+
+    /**
+     * Routes client request to Assistant API endpoint (v2)
+     *
+     * @param \WP_REST_Request $request
+     * @return mixed|\WP_Error -- reply
+     */
+    private static function route_request_v2(\WP_REST_Request $request) {
+        $body = $request->get_json_params();
+        $session_id = array_key_exists('session_id', $body) ? $body['session_id'] : null;
+
+        if (empty($session_id)) {
+            # create new session
+            $session_id = self::create_session();
+            if (!is_string($session_id)) {
+                return $session_id;  // reply with response error
             }
         }
+
+        $credentials = get_option('watsonconv_credentials');
+        $endpoint_url = $credentials['workspace_url'];
+        $send_body = apply_filters(
+            'watsonconv_user_message',
+            array(
+                'input' => empty($body['input']) ? new \stdClass() : $body['input'],
+                'context' => empty($body['context']) ? new \stdClass() : $body['context']
+            )
+        );
+
+        do_action('watsonconv_message_pre_send', $send_body);
+
+        $url_tpl = $endpoint_url.'/%s/message?version='.self::API_VERSION_2;
+        $post_args = array(
+            'timeout' => 20,
+            'headers' => array(
+                'Authorization' => $credentials['auth_header'],
+                'Content-Type' => 'application/json'
+            ),
+            'body' => json_encode($send_body)
+        );
+
+        $response = wp_remote_post(sprintf($url_tpl, $session_id), $post_args);
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code === 404) {
+            // session is expired, recreate
+            $session_id = self::create_session();
+            // try again
+            $response = wp_remote_post(sprintf($url_tpl, $session_id), $post_args);
+            $response_code = wp_remote_retrieve_response_code($response);
+        }
+
+        $response_body = json_decode(wp_remote_retrieve_body($response), true);
+        do_action('watsonconv_message_received', $response);
+        $response_body = apply_filters('watsonconv_bot_message', $response_body);
+
+        if ($response_code !== 200) {
+            return self::reply_with_response_error($response);
+        } else {
+            $response_body['session_id'] = $session_id;  # inject session_id
+            do_action('watsonconv_message_parsed', $response_body);
+            return $response_body;
+        }
+    }
+
+    /**
+     * Creates Assistant Session
+     *
+     * @return string|\WP_Error -- session id
+     */
+    private static function create_session() {
+        $credentials = get_option('watsonconv_credentials');
+        $endpoint_url = $credentials['workspace_url'];
+        $response = wp_remote_post(
+            $endpoint_url.'?version='.self::API_VERSION_2,
+            array(
+                'timeout' => 20,
+                'headers' => array(
+                    'Authorization' => $credentials['auth_header'],
+                    'Content-Type' => 'application/json'
+                ),
+                'body' => new \stdClass()
+            )
+        );
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 201) {
+            return self::reply_with_response_error($response);
+        }
+        $response_body = json_decode(wp_remote_retrieve_body($response), true);
+        if (empty($response_body) || empty($response_body['session_id'])) {
+            return self::reply_with_response_error($response);
+        }
+        return $response_body['session_id'];
+    }
+
+    /**
+     * Save error message into DB and reply with WP_Error object
+     *
+     * @param $response
+     * @return \WP_Error
+     */
+    private static function reply_with_response_error($response) {
+        $response_body = json_decode(wp_remote_retrieve_body($response), true);
+        $error_log = get_option('watsonconv_error_log', array());
+        $error_log[] = self::get_debug_info($response);
+        update_option('watsonconv_error_log', array_slice($error_log, -3, 3));
+        return new \WP_Error(
+            'watson_error',
+            $response_body,
+            empty($response_code) ? array() : array('status' => $response_code)
+        );
     }
 
     public static function reset_total_usage() {
@@ -285,5 +462,20 @@ class API {
         }
 
         return $response;
+    }
+
+    /**
+     * Detect provided endpoint URL service version
+     * @param string $endpoint_url
+     * @return string | false - 'v1' | 'v2' | false
+     */
+    public static function detect_api_version($endpoint_url) {
+        if (preg_match(self::API_V1_URL_RE, $endpoint_url)) {
+            return 'v1';
+        } else /*if (preg_match(self::API_V2_URL_RE, $endpoint_url))*/ {
+            return 'v2';
+        } /*else {
+            return false;
+        } */
     }
 }

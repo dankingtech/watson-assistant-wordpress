@@ -1,6 +1,8 @@
 <?php
 namespace WatsonConv\Settings;
 
+use WatsonConv\Frontend;
+
 class Advanced {
     const SLUG = 'watson_asst_advanced';
 
@@ -660,6 +662,15 @@ class Advanced {
             ),
             esc_html__('Username', self::SLUG)
         );
+
+        $plugin_version_title = sprintf(
+            '<span href="#" title="%s">%s</span>',
+            esc_html__(
+                "The plugin version."
+                , self::SLUG
+            ),
+            esc_html__('Plug-in Version', self::SLUG)
+        );
         
         add_settings_field('watsonconv_fname_var', $first_name_title,
             array(__CLASS__, 'render_fname_var'), $settings_page, 'watsonconv_context_var');
@@ -671,12 +682,15 @@ class Advanced {
             array(__CLASS__, 'render_email_var'), $settings_page, 'watsonconv_context_var');
         add_settings_field('watsonconv_login_var', $login_title,
             array(__CLASS__, 'render_login_var'), $settings_page, 'watsonconv_context_var');
+        add_settings_field('watsonconv_plugin_version_var', $plugin_version_title,
+            array(__CLASS__, 'render_plugin_version_var'), $settings_page, 'watsonconv_context_var');
 
         register_setting(self::SLUG, 'watsonconv_fname_var', array(__CLASS__, 'validate_context_var'));
         register_setting(self::SLUG, 'watsonconv_lname_var', array(__CLASS__, 'validate_context_var'));
         register_setting(self::SLUG, 'watsonconv_nname_var', array(__CLASS__, 'validate_context_var'));
         register_setting(self::SLUG, 'watsonconv_email_var', array(__CLASS__, 'validate_context_var'));
         register_setting(self::SLUG, 'watsonconv_login_var', array(__CLASS__, 'validate_context_var'));
+        register_setting(self::SLUG, 'watsonconv_plugin_version_var', array(__CLASS__, 'validate_context_var'));
     }
 
     public static function context_var_description() {
@@ -758,6 +772,18 @@ class Advanced {
             />
             <span class='dashicons dashicons-arrow-right-alt'></span>
             "<?php echo wp_get_current_user()->get('user_login'); ?>"
+        <?php
+    }
+
+    public static function render_plugin_version_var() {
+        ?>
+        <input name="watsonconv_plugin_version_var" id="watsonconv_plugin_version_var"
+               type="text" style="width: 16em"
+               placeholder="e.g. plug-in version"
+               value="<?php echo get_option('watsonconv_plugin_version_var', '') ?>"
+        />
+        <span class='dashicons dashicons-arrow-right-alt'></span>
+        "<?php echo Frontend::VERSION; ?>"
         <?php
     }
 

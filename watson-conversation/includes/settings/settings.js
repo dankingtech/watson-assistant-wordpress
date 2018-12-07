@@ -270,4 +270,10 @@ jQuery(document).ready(function($) {
     .on('change', function() {
       $('#watson-fab-text').css('font-size', this.value + 'pt');
     });
+
+  $('#watsonconv_credentials_link')
+      .on('click', function () {
+         $('#watsonconv_credentials_description').css('display', 'block');
+         return false;
+      });
 });

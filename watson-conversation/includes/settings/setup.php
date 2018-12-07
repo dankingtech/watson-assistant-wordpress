@@ -5,7 +5,7 @@ class Setup {
     const SLUG = 'watson_asst_setup';
 
     public static function init_page() {
-        add_submenu_page(Main::SLUG, 'Watson Assistant Setup', 'Set Up Chatbot', 
+        add_submenu_page(Main::SLUG, 'Watson Assistant Setup', 'Set Up Chatbot',
             'manage_options', self::SLUG, array(__CLASS__, 'render_page'));
     }
 
@@ -14,13 +14,13 @@ class Setup {
     }
 
     public static function render_page() {
-    ?>
+        ?>
         <div class="wrap" style="max-width: 95em">
             <h2><?php esc_html_e('Set Up Your Chatbot', self::SLUG); ?></h2>
 
-            <?php 
-                Main::render_isv_banner(); 
-                settings_errors(); 
+            <?php
+            Main::render_isv_banner();
+            settings_errors();
             ?>
 
             <h2 class="nav-tab-wrapper">
@@ -32,7 +32,7 @@ class Setup {
             <form action="options.php" method="POST">
                 <div class="tab-page build_page"><?php self::render_build(); ?></div>
 
-                <?php settings_fields(self::SLUG); ?> 
+                <?php settings_fields(self::SLUG); ?>
 
                 <div class="tab-page workspace_page" style="display: none">
                     <?php self::main_setup_description(); ?>
@@ -51,41 +51,41 @@ class Setup {
                 </div>
             </form>
         </div>
-    <?php
+        <?php
     }
 
     public static function render_intro() {
-    ?>
+        ?>
         <p>
             Watson Assistant, formerly known as Watson Conversation, provides a clear and user-friendly
-            interface to build virtual assistants to speak with your users. With the use of this plugin, 
+            interface to build virtual assistants to speak with your users. With the use of this plugin,
             you can add these virtual assistants, or <b>chatbots</b>, to your website with minimal
             technical knowledge or work.
         </p>
         <p>
             This diagram shows the overall architecture of a complete solution:
-            <img 
-                src="https://console.bluemix.net/docs/api/content/services/conversation/images/conversation_arch_overview.png?lang=en-US" 
-                alt="Flow diagram of the service" 
-                class="style-scope doc-content"
-                style="width:100%; border: 1px solid grey"
+            <img
+                    src="https://console.bluemix.net/docs/api/content/services/conversation/images/conversation_arch_overview.png?lang=en-US"
+                    alt="Flow diagram of the service"
+                    class="style-scope doc-content"
+                    style="width:100%; border: 1px solid grey"
             >
         </p>
         <p>
-            When you use this plugin, the <strong>Back-end system</strong> is Wordpress, while the 
+            When you use this plugin, the <strong>Back-end system</strong> is Wordpress, while the
             <strong>Application</strong> and <strong>Interface</strong> are both included in this
             plugin. Therefore, all you need to worry about is bulding your chatbot in your Watson
             Assistant workspace and this plugin will take care of the rest.
         </p>
         <button type="button" class="button button-primary" onClick="switch_tab('build')">Next</button>
-    <?php
+        <?php
     }
 
     public static function render_build() {
-    ?>
+        ?>
         <p>
             Watson Assistant, formerly known as Watson Conversation, provides a clear and user-friendly
-            interface to build virtual assistants to speak with your users. With the use of this plugin, 
+            interface to build virtual assistants to speak with your users. With the use of this plugin,
             you can add these virtual assistants, or <b>chatbots</b>, to your website with minimal
             technical knowledge or work.
         </p>
@@ -95,10 +95,10 @@ class Setup {
         </p>
         <p>
             <a href="https://cocl.us/bluemix-registration" rel="nofollow" target="_blank">
-                Sign up here</a> 
+                Sign up here</a>
             for a free IBM Cloud Lite account to get started. If you have an account but have not started
             with Watson Assistant yet,
-            <a href="https://console.bluemix.net/registration?target=/catalog/services/conversation">click here</a> 
+            <a href="https://console.bluemix.net/registration?target=/catalog/services/conversation">click here</a>
             to get started. Once you launch the Watson Assistant tool, you will be shown how to proceed
             to create your chatbot. You may find the following resources helpful.
         </p>
@@ -108,11 +108,11 @@ class Setup {
             </li></p>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/sSfTcxDrmSI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             <p><li>
-                You can also learn how to set up your Watson Assistant chatbot with 
+                You can also learn how to set up your Watson Assistant chatbot with
                 <a href="https://cocl.us/build-a-chatbot" rel="nofollow" target="_blank">this quick free course</a>.
-                </li></p>
+            </li></p>
             <p><li>
-                See 
+                See
                 <a href="https://cocl.us/watson-conversation-help" rel="nofollow" target="_blank">
                     the Watson Assistant documentation</a>
                 for more information.
@@ -124,25 +124,55 @@ class Setup {
         </p>
 
         <button type="button" class="button button-primary" onClick="switch_tab('workspace')">Next</button>
-    <?php
+        <?php
     }
 
     public static function main_setup_description() {
         $credentials = get_option('watsonconv_credentials');
         $cred_type = empty($credentials['type']) ? 'basic' : $credentials['type'];
-    ?>
+        ?>
         <p>
             This is where you  get to finally connect the Watson Assistant chatbot you built to your
-            website. To do this, you need to get the URL and credentials of your Watson Assistant
-            workspace. To find these values, navigate to the workspace where you built your chatbot. Then click
-            on the Deploy tab in the navigation bar on the left to reach one of these two pages.
-        </p>
-        <p>
-            If your page has a Username and Password, you may proceed to enter them in the fields below.
-            If you have an API key instead of a Username and Password, please click on the second
-            image before proceeding.
+            website. To do this, you need to get the URL and credentials of your Watson Assistant.
+            To find these values, navigate to the Assistant you've built and activate <b>View API Details</b> link.
         </p>
         <table width="100%"><tr>
+                <td class="responsive" style="padding: 10px; text-align: center;">
+                    <div>
+                        <img src="<?php echo WATSON_CONV_URL ?>/img/credentials_v2_1.png">
+                    </div>
+                </td>
+                <td class="responsive" style="padding: 10px; text-align: center;">
+                    <div>
+                        <img src="<?php echo WATSON_CONV_URL ?>/img/credentials_v2_2.png">
+                    </div>
+                </td>
+            </tr></table>
+        <!--<p>
+            Please select what kind of credentials do you have:<br>
+            <label for="watsonconv_credentials_basic">
+                <input
+                        type="radio"
+                        id="watsonconv_credentials_basic"
+                        name="watsonconv_credentials[type]"
+                        value="basic"
+                    <?php checked($cred_type, 'basic'); ?>
+                >
+                <strong>Username/Password</strong>
+            </label>
+            <br>
+            <label for="watsonconv_credentials_iam">
+                <input
+                        type="radio"
+                        id="watsonconv_credentials_iam"
+                        name="watsonconv_credentials[type]"
+                        value="iam"
+                    <?php checked($cred_type, 'iam'); ?>
+                >
+                <strong>API Key</strong>
+            </label>
+        </p>-->
+        <!--<table width="100%"><tr>
             <td class="responsive" style="padding: 10px; text-align: center;">
                 <label for="watsonconv_credentials_basic">
                     <input 
@@ -173,30 +203,34 @@ class Setup {
                     </div>
                 </label>
             </td>
-        </tr></table>
+        </tr></table>-->
         <p>
-            Enter these values in their corresponding fields below. Once you click 
-            "Save Changes", the plugin will verify if the credentials are valid and notify 
-            you of whether or not the configuration was successful. 
+            Enter these values in their corresponding fields below. Once you click
+            "Save Changes", the plugin will verify if the credentials are valid and notify
+            you of whether or not the configuration was successful.
         </p>
-    <?php
-    } 
+        <?php
+    }
 
     public static function errors_page() {
-    ?>
+        ?>
         <p>
             If you have successfully connected your chatbot to the website on the previous page,
             but your chatbot doesn't seem to be working on your website, then you can create a support
             post <a href="https://wordpress.org/support/plugin/conversation-watson" target="_blank">
-            in this forum</a>. If the following box is populated with text, then please copy that and
+                in this forum</a>. If the following box is populated with text, then please copy that and
             include it in your support post.
         </p>
+        <p>
+            Please don't post your credentials (password/API key) on the public forum. Instead, if required, use the following
+            e-mail box for private communication: <a href="mailto:help@intela.io">help@intela.io</a>
+        </p>
         <div class="watson-settings-box">
-            <pre><?php 
-                    echo json_encode(get_option('watsonconv_error_log'), defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 128); 
-            ?></pre>
+            <pre><?php
+                echo json_encode(get_option('watsonconv_error_log'), defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 128);
+                ?></pre>
         </div>
-    <?php
+        <?php
     }
 
     // ------------ Workspace Credentials ---------------
@@ -208,7 +242,7 @@ class Setup {
             $credentials = get_option('watsonconv_credentials');
 
             if (!isset($credentials['workspace_url']) && isset($credentials['url']) && isset($credentials['id'])) {
-                $credentials['workspace_url'] = 
+                $credentials['workspace_url'] =
                     rtrim($credentials['url'], '/').'/workspaces/'.$credentials['id'].'/message/';
 
                 unset($credentials['url']);
@@ -217,9 +251,9 @@ class Setup {
 
             if (!isset($credentials['auth_header']) && isset($credentials['username']) && isset($credentials['password'])) {
                 $credentials['auth_header'] = 'Basic ' . base64_encode(
-                    $credentials['username'].':'.
-                    $credentials['password']
-                );
+                        $credentials['username'].':'.
+                        $credentials['password']
+                    );
 
                 update_option('watsonconv_credentials', $credentials);
             }
@@ -229,19 +263,19 @@ class Setup {
     public static function init_credential_settings() {
         $settings_page = self::SLUG;
 
-        add_settings_section('watsonconv_credentials', 'Workspace Credentials',
+        add_settings_section('watsonconv_credentials', 'Assistant Details and Service Credentials',
             array(__CLASS__, 'workspace_description'), $settings_page);
 
         add_settings_field('watsonconv_enabled', '', array(__CLASS__, 'render_enabled'),
+            $settings_page, 'watsonconv_credentials');
+        add_settings_field('watsonconv_workspace_url', 'Assistant URL', array(__CLASS__, 'render_url'),
             $settings_page, 'watsonconv_credentials');
         add_settings_field('watsonconv_username', 'Username', array(__CLASS__, 'render_username'),
             $settings_page, 'watsonconv_credentials');
         add_settings_field('watsonconv_password', 'Password', array(__CLASS__, 'render_password'),
             $settings_page, 'watsonconv_credentials');
-        add_settings_field('watsonconv_api_key', 'API Key', array(__CLASS__, 'render_api_key'),
-            $settings_page, 'watsonconv_credentials');
-        add_settings_field('watsonconv_workspace_url', 'Workspace URL', array(__CLASS__, 'render_url'),
-            $settings_page, 'watsonconv_credentials');
+        /*add_settings_field('watsonconv_api_key', 'API Key', array(__CLASS__, 'render_api_key'),
+            $settings_page, 'watsonconv_credentials');*/
 
         register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
@@ -271,6 +305,7 @@ class Setup {
 
     public static function validate_credentials($credentials) {
         $old_credentials = get_option('watsonconv_credentials');
+        $credentials['type'] = 'basic';
 
         if (!isset($credentials['enabled'])) {
             $old_credentials['enabled'] = 'false';
@@ -278,7 +313,7 @@ class Setup {
         }
 
         if (empty($credentials['workspace_url'])) {
-            add_settings_error('watsonconv_credentials', 'invalid-id', 'Please enter a Workspace URL.');
+            add_settings_error('watsonconv_credentials', 'invalid-id', 'Please enter an Assistant URL.');
             $empty = true;
         }
 
@@ -308,27 +343,102 @@ class Setup {
 
         if ($credentials['type'] == 'iam') {
             $auth_header = 'Basic ' . base64_encode(
-                'apikey:'.
-                $credentials['api_key']
-            );
+                    'apikey:'.
+                    $credentials['api_key']
+                );
         } else {
             $auth_header = 'Basic ' . base64_encode(
-                $credentials['username'].':'.
-                $credentials['password']
-            );
+                    $credentials['username'].':'.
+                    $credentials['password']
+                );
         }
 
+        // Detect endpoint URL API version and validate credentials
+        $is_success = false;
+        switch (\WatsonConv\API::detect_api_version($credentials['workspace_url'])) {
+            case 'v1':
+                $is_success = self::check_api_v1($credentials['workspace_url'], $auth_header);
+                break;
+            case 'v2':
+                $is_success = self::check_api_v2($credentials['workspace_url'], $auth_header);
+                break;
+            default:
+                add_settings_error('watsonconv_credentials', 'invalid-credentials',
+                    'Unable to determine endpoint URL version. Please ensure you entered valid Assistant URL (v2) or Workspace URL (v1)');
+        }
+        if (!$is_success) {
+            return get_option('watsonconv_credentials');
+        }
+
+//        $response = wp_remote_post(
+//            $credentials['workspace_url'].'?version='.\WatsonConv\API::API_VERSION,
+//            array(
+//                'timeout' => 20,
+//                'headers' => array(
+//                    'Authorization' => $auth_header,
+//                    'Content-Type' => 'application/json'
+//                ), 'body' => json_encode(array(
+//                    'input' => new \stdClass,
+//                    'context' => new \stdClass()
+//                ))
+//            )
+//        );
+//
+//        $response_code = wp_remote_retrieve_response_code($response);
+//        $response_code_string = empty($response_code) ? '' : ' ('.$response_code.')';
+//
+//        $debug_info = self::get_debug_string($response);
+//
+//        if (is_wp_error($response)) {
+//            add_settings_error('watsonconv_credentials', 'invalid-credentials',
+//                'Unable to connect to Watson server'.$response_code_string.'. ' . $debug_info);
+//            return get_option('watsonconv_credentials');
+//        } else if ($response_code == 401) {
+//            add_settings_error('watsonconv_credentials', 'invalid-credentials',
+//                'Please ensure you entered valid credentials and workspace URL'.$response_code_string.'. ' . $debug_info);
+//            return get_option('watsonconv_credentials');
+//        } else if ($response_code == 404 || $response_code == 400) {
+//            add_settings_error('watsonconv_credentials', 'invalid-id',
+//                'Please ensure you entered a valid workspace URL'.$response_code_string.'. ' . $debug_info);
+//            return get_option('watsonconv_credentials');
+//        } else if ($response_code != 200) {
+//            add_settings_error('watsonconv_credentials', 'invalid-url',
+//                'Please ensure you entered a valid workspace URL'.$response_code_string.'. ' . $debug_info);
+//            return get_option('watsonconv_credentials');
+//        }
+
+        $credentials['auth_header'] = $auth_header;
+
+        add_settings_error(
+            'watsonconv_credentials',
+            'valid-credentials',
+            'Your chatbot has been successfully connected to your Wordpress site. <a href="'
+            .get_site_url().'">Browse your website</a> to see it in action.',
+            'updated'
+        );
+
+        return $credentials;
+    }
+
+    /**
+     * Assuming Workspace/Skill URL (v1) is provided, try to sign in
+     *
+     * @param string $endpoint_url - Workspace/Skill URL
+     * @param string $auth_header - HTTP Auth header
+     * @return bool - true if API v1 service accepts credentials
+     */
+    private static function check_api_v1($endpoint_url, $auth_header) {
         $response = wp_remote_post(
-            $credentials['workspace_url'].'?version='.\WatsonConv\API::API_VERSION,
+            $endpoint_url.'?version='.\WatsonConv\API::API_VERSION,
             array(
                 'timeout' => 20,
                 'headers' => array(
                     'Authorization' => $auth_header,
                     'Content-Type' => 'application/json'
                 ), 'body' => json_encode(array(
-                    'input' => new \stdClass, 
-                    'context' => new \stdClass()
-                ))
+                'input' => new \stdClass,
+                'context' => new \stdClass()
+            ))
             )
         );
 
@@ -336,109 +446,180 @@ class Setup {
         $response_code_string = empty($response_code) ? '' : ' ('.$response_code.')';
 
         $debug_info = self::get_debug_string($response);
-
         if (is_wp_error($response)) {
-            add_settings_error('watsonconv_credentials', 'invalid-credentials', 
+            add_settings_error('watsonconv_credentials', 'invalid-credentials',
                 'Unable to connect to Watson server'.$response_code_string.'. ' . $debug_info);
-            return get_option('watsonconv_credentials');
+            return false;
         } else if ($response_code == 401) {
-            add_settings_error('watsonconv_credentials', 'invalid-credentials', 
+            add_settings_error('watsonconv_credentials', 'invalid-credentials',
                 'Please ensure you entered valid credentials and workspace URL'.$response_code_string.'. ' . $debug_info);
-            return get_option('watsonconv_credentials');
+            return false;
         } else if ($response_code == 404 || $response_code == 400) {
-            add_settings_error('watsonconv_credentials', 'invalid-id', 
+            add_settings_error('watsonconv_credentials', 'invalid-id',
                 'Please ensure you entered a valid workspace URL'.$response_code_string.'. ' . $debug_info);
-            return get_option('watsonconv_credentials');
+            return false;
         } else if ($response_code != 200) {
             add_settings_error('watsonconv_credentials', 'invalid-url',
                 'Please ensure you entered a valid workspace URL'.$response_code_string.'. ' . $debug_info);
-            return get_option('watsonconv_credentials');
+            return false;
+        } else {
+            return true; // success
         }
+    }
 
-        $credentials['auth_header'] = $auth_header;
-
-        add_settings_error(
-            'watsonconv_credentials', 
-            'valid-credentials', 
-            'Your chatbot has been successfully connected to your Wordpress site. <a href="'
-                .get_site_url().'">Browse your website</a> to see it in action.', 
-            'updated'
+    /**
+     * Assuming Assistant URL (v2) is provided, try to sign in
+     *
+     * @param string $endpoint_url - Workspace/Skill URL
+     * @param string $auth_header - HTTP Auth header
+     * @return bool - true if API v2 service accepts credentials
+     */
+    private static function check_api_v2($endpoint_url, $auth_header) {
+        $response = wp_remote_post(
+            $endpoint_url.'?version='.\WatsonConv\API::API_VERSION_2,
+            array(
+                'timeout' => 20,
+                'headers' => array(
+                    'Authorization' => $auth_header,
+                    'Content-Type' => 'application/json'
+                ), 'body' => json_encode(array(
+                'input' => new \stdClass,
+                'context' => new \stdClass()
+            ))
+            )
         );
 
-        return $credentials;
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code == 201) {
+            # Note, that according to Watson Assistant documentation successful response code here should be 200
+            $response_body = json_decode(wp_remote_retrieve_body($response), true);
+            if (isset($response_body) && isset($response_body['session_id']) &&
+                preg_match('/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/', $response_body['session_id'])) {
+                return true;  // success
+            }
+        }
+
+        // something went wrong, get more info
+        $debug_info = self::get_debug_string($response);
+        $response_code_string = empty($response_code) ? '' : ' ('.$response_code.')';
+        if (is_wp_error($response)) {
+            add_settings_error('watsonconv_credentials', 'invalid-credentials',
+                'Unable to connect to Watson Assistant service'.$response_code_string.'. ' . $debug_info);
+        } else if ($response_code == 401) {
+            add_settings_error('watsonconv_credentials', 'invalid-credentials',
+                'Please ensure you entered valid Assistant URL and credentials'.$response_code_string.'. ' . $debug_info);
+        } else if ($response_code == 404 || $response_code == 400) {
+            add_settings_error('watsonconv_credentials', 'invalid-id',
+                'Please ensure you entered a valid Assistant URL'.$response_code_string.'. ' . $debug_info);
+        } else {
+            add_settings_error('watsonconv_credentials', 'invalid-url',
+                'Please ensure you entered a valid Assistant URL'.$response_code_string.'. ' . $debug_info);
+        }
+        return false;
+
+//        var_dump($response_body);
+//        die();
+//        return false;
     }
 
     public static function workspace_description($args) {
-    ?>
+        ?>
         <p id="<?php echo esc_attr( $args['id'] ); ?>" class="basic_cred">
-            <?php esc_html_e('Specify the Workspace URL, username and password for your Watson
-                Assistant Workspace below.', self::SLUG) ?> <br />
+            <?php esc_html_e('Specify the Assistant URL, username and password for your Watson
+                Assistant below.', self::SLUG) ?> <br />
         </p>
         <p id="<?php echo esc_attr( $args['id'] ); ?>" class="iam_cred">
-            <?php esc_html_e('Specify the Workspace URL and API key for your Watson
-                Assistant Workspace below.', self::SLUG) ?> <br />
+            <?php esc_html_e('Specify the Assistant URL and API key for your Watson
+                Assistant below.', self::SLUG) ?> <br />
         </p>
-    <?php
+        <a href="" id="<?php echo esc_attr( $args['id'] ); ?>_link">
+            <?php esc_html_e("I don't see a username and password in my credentials") ?>
+        </a>
+        <div id="<?php echo esc_attr( $args['id'] ); ?>_description">
+            <p>
+                If you have API Key only, please fill Username field with <code>apikey</code> word, and put API Key value into the Password field.
+                <br>
+                Like following:
+            </p>
+            <p>
+                <strong>Username</strong>: apikey
+                <br>
+                <strong>Password</strong>: XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx
+            </p>
+        </div>
+        <?php
     }
 
     public static function render_enabled() {
         $credentials = get_option('watsonconv_credentials');
         $enabled = (isset($credentials['enabled']) ? $credentials['enabled'] : 'true') == 'true';
-    ?>
+        ?>
         <fieldset>
             <input
-                type="checkbox" id="watsonconv_enabled"
-                name="watsonconv_credentials[enabled]"
-                value="true"
+                    type="checkbox" id="watsonconv_enabled"
+                    name="watsonconv_credentials[enabled]"
+                    value="true"
                 <?php echo $enabled ? 'checked' : '' ?>
             />
             <label for="watsonconv_enabled">
                 Enable Chatbot
             </label>
         </fieldset>
-    <?php
+        <?php
     }
 
     public static function render_username() {
         $credentials = get_option('watsonconv_credentials');
-    ?>
+        ?>
         <input name="watsonconv_credentials[username]" class="watsonconv_credentials basic_cred"
-            id="watsonconv_username" type="text"
-            value="<?php echo empty($credentials['username']) ? '' : $credentials['username'] ?>"
-            placeholder="e.g. xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-            style="max-width: 24em; width: 100%;"/>
-    <?php
+               id="watsonconv_username" type="text"
+               value="<?php echo empty($credentials['username']) ? '' : $credentials['username'] ?>"
+               placeholder="e.g. xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+               style="max-width: 24em; width: 100%;"/>
+        <?php
     }
 
     public static function render_password() {
         $credentials = get_option('watsonconv_credentials');
-    ?>
+        ?>
         <input name="watsonconv_credentials[password]" class="watsonconv_credentials basic_cred"
-            id="watsonconv_password" type="password"
-            value="<?php echo empty($credentials['password']) ? '' : $credentials['password'] ?>"
-            style="max-width: 8em; width: 100%;" />
-    <?php
+               id="watsonconv_password" type="password"
+               value="<?php echo empty($credentials['password']) ? '' : $credentials['password'] ?>"
+               style="max-width: 24em; width: 100%;" />
+        <?php
     }
 
     public static function render_url() {
         $credentials = get_option('watsonconv_credentials');
-    ?>
+        ?>
         <input name="watsonconv_credentials[workspace_url]" class="watsonconv_credentials"
-            id="watsonconv_workspace_url" type="text"
-            value="<?php echo empty($credentials['workspace_url']) ? '' : $credentials['workspace_url']; ?>"
-            placeholder='e.g. https://gateway.watsonplatform.net/conversation/api/v1/workspaces/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/message/'
-            style="max-width: 60em; width: 100%;" />
-    <?php
+               id="watsonconv_workspace_url" type="text"
+               value="<?php echo empty($credentials['workspace_url']) ? '' : $credentials['workspace_url']; ?>"
+               placeholder='e.g. https://gateway.watsonplatform.net/assistant/api/v2/assistants/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/sessions'
+               style="max-width: 60em; width: 100%;" />
+        <?php
     }
 
     public static function render_api_key() {
         $credentials = get_option('watsonconv_credentials');
-    ?>
+        ?>
         <input name="watsonconv_credentials[api_key]" class="watsonconv_credentials iam_cred"
-            id="watsonconv_api_key" type="text"
-            value="<?php echo empty($credentials['api_key']) ? '' : $credentials['api_key']; ?>"
-            placeholder="e.g. XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx"
-            style="max-width: 30em; width: 100%;"/>
-    <?php
+               id="watsonconv_api_key" type="text"
+               value="<?php echo empty($credentials['api_key']) ? '' : $credentials['api_key']; ?>"
+               placeholder="e.g. XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx"
+               style="max-width: 30em; width: 100%;"/>
+        <?php
+    }
+
+    public static function change_credentials_to_basic(){
+        try{
+            $credentials = get_option('watsonconv_credentials');
+            if (isset($credentials['type']) && $credentials['type'] == 'iam'){
+                $credentials['type'] = 'basic';
+                $credentials['username'] = 'apikey';
+                $credentials['password'] = $credentials['api_key'];
+                update_option('watsonconv_credentials', $credentials);
+            }
+        } catch (\Exception $e) {}
     }
 }
