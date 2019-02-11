@@ -16,6 +16,14 @@ export default class ChatBox extends Component {
     constructor(props) {
         super(props);
 
+        this.bc = new BroadcastChannel('watson_bot_channel');
+
+        window.addEventListener('storage', function (ev) {
+            if (ev.key == 'watson_bot_request_state') {
+                this.saveState();
+            }
+        }.bind(this));
+
         if (typeof(sessionStorage) !== 'undefined' && sessionStorage.getItem('watson_bot_state')) {
             this.state = JSON.parse(sessionStorage.getItem('watson_bot_state'));
             if (!this.state.context) {
@@ -30,12 +38,17 @@ export default class ChatBox extends Component {
                 convStarted: false
             };
         }
+
         this.state.context = merge(
             this.state.context,
             this.getInitialContext()
         );
 
         this.loadedMessages = this.state.messages.length;
+    }
+
+    componentWillUnmount() {
+        this.bc.close();
     }
 
     getInitialContext() {
@@ -65,7 +78,31 @@ export default class ChatBox extends Component {
         }
 
         if (!this.state.convStarted && !this.props.isMinimized) {
-            this.sendMessage();
+            new Promise(
+                (resolve, reject) => {
+                    this.bc.onmessage = function (ev) {
+                        resolve(ev.data);
+                    }.bind(this);
+
+                    setTimeout(function() {
+                        reject("Done waiting");
+                    }.bind(this), 250);
+
+                    localStorage.setItem('watson_bot_request_state', Date.now());
+                }
+            )
+                .then((state) => {
+                    this.setState(state);
+                })
+                .catch(() => {
+                    this.sendMessage();
+                })
+                .finally(() => {
+                    this.bc.onmessage = function (ev) {
+                        this.setState(ev.data);
+                    }.bind(this);
+                });
+
         }
 
         if (webrtc.support && 'https:' !== document.location.protocol) {
@@ -193,6 +230,7 @@ export default class ChatBox extends Component {
     }
 
     saveState() {
+        this.bc.postMessage(this.state);
         if (typeof(sessionStorage) !== 'undefined') {
             sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
         }
