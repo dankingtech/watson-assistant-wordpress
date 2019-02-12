@@ -30,7 +30,7 @@ function luminance(hex) {
   });
 
   return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-} 
+}
 
 function switch_tab(tab_name) {
   jQuery('.tab-page').hide();
@@ -42,7 +42,7 @@ function switch_tab(tab_name) {
 }
 
 jQuery(document).ready(function($) {
-  
+
   if (sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix)) {
     switch_tab(sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix));
   }
@@ -111,6 +111,58 @@ jQuery(document).ready(function($) {
     .filter('input:checked')
     .trigger('change');
 
+  // ---- Sending Context Variables Section ----
+
+    $('input[name="watsonconv_smtp_setting_enabled"]')
+        .on('change', function () {
+            if (this.value == 1) {
+                $('#watsonconv_mail_vars_smtp_host').closest('table').show();
+            } else {
+                $('#watsonconv_mail_vars_smtp_host').closest('table').hide();
+            }
+        })
+        .filter('input:checked')
+        .trigger('change');
+
+    $('input[name="watsonconv_mail_vars_smtp_authentication"]')
+        .on('change', function () {
+            if (this.value == 1) {
+                $('input[id="watsonconv_mail_vars_smtp_username"]').closest('tr').show();
+                $('input[id="watsonconv_mail_vars_smtp_password"]').closest('tr').show();
+            } else {
+                $('input[id="watsonconv_mail_vars_smtp_username"]').closest('tr').hide();
+                $('input[id="watsonconv_mail_vars_smtp_password"]').closest('tr').hide();
+            }
+        })
+        .filter('input:checked')
+        .trigger('change');
+
+    $('#watsonconv_button_check_email_sending')
+        .on('click', function () {
+            var email = $('#watsonconv_mail_vars_email_address_to').val();
+            var siteUrl = window.location.origin;
+            var restRoute = "/index.php?rest_route=/watsonconv/v1/test-email";
+            var fullUrl = siteUrl + restRoute;
+            $.ajax({
+                type: "POST",
+                url: fullUrl,
+                data: {email: email},
+                beforeSend: function ( xhr ) {
+                    xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce);
+                },
+                success: function( response ) {
+                    $(".notice-info").after(response);
+                },
+                error: function(message) {
+                    // console.log(message.responseText);
+                    $(".notice-info").after(
+                        '<div class="error settings-error notice is-dismissible"><p>Error occurred:<br>' + message.responseText + '</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Hide this notice</span></button></div>');
+                }
+            })
+            // $.post( fullUrl, {email: email}, function( response ) {
+            //     $(".notice-info").after(response);
+            // });
+        });
 
   // ---- Rate Limiting Section ----
 
@@ -127,6 +179,66 @@ jQuery(document).ready(function($) {
     })
     .filter('input:checked')
     .trigger('change');
+
+  // ----- Chat history collection section -----
+
+  // Elements of chat history collection settings
+  const historyFields = {
+    // history collection on/off
+    main: 'input[name="watsonconv_history_enabled"]',
+    // debug information collection on/off
+    debug: 'input[name="watsonconv_history_debug_enabled"]',
+    // history limit on/off
+    limit: 'input[name="watsonconv_history_limit_enabled"]',
+    // history limit number
+    limitNumber: 'input[name="watsonconv_history_limit"]'
+  };
+
+  // History collection switch
+  $(historyFields.main)
+    .on('change', function() {
+      const valueEnabled = (this.value === "yes");
+      if(valueEnabled) {
+        $(historyFields.debug).closest('tr').show();
+        $(historyFields.limit).closest('tr').show();
+        $(historyFields.limitNumber).closest('tr').show();
+      }
+      else {
+        $(historyFields.debug).closest('tr').hide();
+        $(historyFields.limit).closest('tr').hide();
+        $(historyFields.limitNumber).closest('tr').hide();
+      }
+    })
+    .filter('input:checked')
+    .trigger('change');
+
+  // History limit switch
+  $(historyFields.limit)
+    .on('change', function() {
+      $(historyFields.limitNumber).prop('disabled', this.value === 'no');
+    })
+    .filter('input:checked')
+    .trigger('change');
+
+
+    // ------ Notification section ------
+    $('input[name="watsonconv_notification_enabled"]')
+        .on('change', function () {
+            const valueEnabled = this.value === "yes";
+            const ctrls = $(
+                'input[name="watsonconv_notification_email_to"] ,' +
+                'input[name="watsonconv_notification_summary_interval"] ,' +
+                'input[name="watsonconv_notification_send_test"]'
+            );
+            // ctrls.prop('disabled', !valueEnabled);
+            if (valueEnabled) {
+                ctrls.closest('tr').show();
+            } else {
+                ctrls.closest('tr').hide();
+            }
+        })
+        .filter('input:checked')
+        .trigger('change');
 
   // ------ Behaviour section ------
 
@@ -213,7 +325,7 @@ jQuery(document).ready(function($) {
     .on('change', function() {
       if (this.value == 'no') {
         $('#message-send').hide();
-      } else { 
+      } else {
         $('#message-send').show();
       }
     })
@@ -234,7 +346,7 @@ jQuery(document).ready(function($) {
     .on('input', function() {
       $('#watson-message-input').attr('placeholder', this.value)
     });
-  
+
   $('input[name="watsonconv_fab_icon_pos"]')
     .on('change', function() {
       if (this.value == 'left') {
@@ -276,4 +388,9 @@ jQuery(document).ready(function($) {
          $('#watsonconv_credentials_description').css('display', 'block');
          return false;
       });
+
+    $('#wpbody-content')
+        .on('click', '.notice-dismiss', function () {
+            $(this).parent().remove();
+        });
 });

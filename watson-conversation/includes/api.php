@@ -12,6 +12,8 @@ add_action('rest_api_init', array('WatsonConv\API', 'register_routes'));
 add_action('update_option_watsonconv_interval', array('WatsonConv\API', 'init_rate_limit'));
 add_action('update_option_watsonconv_client_interval', array('WatsonConv\API', 'init_rate_limit'));
 add_filter('cron_schedules', array('WatsonConv\API', 'add_cron_schedules'));
+add_action( 'phpmailer_init', array('WatsonConv\API', 'on_before_mail_send'));
+add_action( 'wp_mail_failed', array('WatsonConv\API', 'on_mail_error'));
 
 class API {
     const API_VERSION = '2018-07-10';  // Workspace/Skill API (version 1)
@@ -19,6 +21,8 @@ class API {
 
     const API_V1_URL_RE = '/\/api\/v1\/workspaces\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\/message/';
     const API_V2_URL_RE = '/\/api\/v2\/assistants\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\/sessions/';
+
+    const ACTION_TO_SEND_CONTEXT_VARS = 'mail_context_vars';
 
     public static function register_routes() {
         $credentials = get_option('watsonconv_credentials');
@@ -55,6 +59,18 @@ class API {
                 )
             );
         }
+
+//        if(isset($_POST['testEmail']) && $_POST['testEmail'] == 'send email'){
+//        }
+        if ($is_enabled) {
+            register_rest_route('watsonconv/v1', '/test-email',
+                array(
+                    'methods' => 'post',
+                    'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_email')
+                )
+            );
+        }
+
     }
 
     public static function twilio_get_token(\WP_REST_Request $request) {
@@ -266,6 +282,17 @@ class API {
             }
         }
 
+        // Array with input and output representation for further
+        // database insertion
+        $watson_request_array = array();
+        // History collection options
+        $history_options = array(
+            // Enables chat history collection functionality
+            "enabled" => get_option("watsonconv_history_enabled") == "yes",
+            // Enables getting extended information and debug data
+            "debug" => get_option("watsonconv_history_debug_enabled") == "yes"
+        );
+
         $credentials = get_option('watsonconv_credentials');
         $endpoint_url = $credentials['workspace_url'];
         $send_body = apply_filters(
@@ -275,6 +302,14 @@ class API {
                 'context' => empty($body['context']) ? new \stdClass() : $body['context']
             )
         );
+        // If enabled, request extended data and debut output
+        if($history_options["debug"]) {
+            $send_body["input"]["options"]["debug"] = true;
+            $send_body["input"]["options"]["alternate_intents"] = true;
+            $send_body["input"]["options"]["return_context"] = true;
+        }
+        // Adding request data to array
+        $watson_request_array['user_request'] = $send_body;
 
         do_action('watsonconv_message_pre_send', $send_body);
 
@@ -299,8 +334,33 @@ class API {
         }
 
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
+        $watson_request_array['watson_response'] = $response_body;
+        $watson_request_array['session_id'] = $session_id;
         do_action('watsonconv_message_received', $response);
         $response_body = apply_filters('watsonconv_bot_message', $response_body);
+
+        
+
+        if(isset($response_body['output']["actions"])
+            && !empty($response_body['output']["actions"])
+            && get_option('watsonconv_mail_vars_enabled')){
+
+            $response_actions  = $response_body['output']["actions"];
+
+            for($i = 0; $i < count($response_actions); $i++){
+                if($response_actions[$i]['name'] != self::ACTION_TO_SEND_CONTEXT_VARS){
+                    continue;
+                }else{
+                    self::mail_context_vars($response_actions[$i]);
+                    unset($response_body['output']["actions"][$i]);
+                }
+            }
+        }
+
+        // Writing to database
+        if($history_options["enabled"]) {
+            Storage::insert("requests", $watson_request_array);
+        }
 
         if ($response_code !== 200) {
             return self::reply_with_response_error($response);
@@ -338,6 +398,20 @@ class API {
         if (empty($response_body) || empty($response_body['session_id'])) {
             return self::reply_with_response_error($response);
         }
+
+        // Writing new session to database if history collection is enabled
+        $history_enabled = get_option("watsonconv_history_enabled") == "yes";
+        if($history_enabled) {
+            // Filling data array for further saving to database
+            $data_array = array(
+                "id" => $response_body["session_id"]
+            );
+            // Writing to database
+            Storage::insert("sessions", $data_array);
+            // Checking database storage limits
+            Background_Task_Runner::new_task("session_storage_check");
+        }
+
         return $response_body['session_id'];
     }
 
@@ -477,5 +551,53 @@ class API {
         } /*else {
             return false;
         } */
+    }
+
+    public static function mail_context_vars($request)
+    {
+        if (isset($request) && !empty($request)){
+
+            $data = [];
+
+            foreach ($request['parameters'] as $key => $val){
+                $parameters = $key . ': ' . $val;
+                array_push($data, $parameters);
+            }
+            $data = implode("\n", $data);
+
+            $emailTo = get_option('watsonconv_mail_vars_email_address_to');
+            $subject = "Watson Assistant plug-in for WordPress: Mail Action";
+            $message = "Following is data collected by Watson Assistant.\n" . $data;
+
+            try{
+                wp_mail($emailTo, $subject, $message);
+            }catch (\Exception $e){}
+        }
+    }
+
+
+    public static function on_before_mail_send( $phpmailer )
+    {
+
+        $enabledUserSmtpSettings = get_option('watsonconv_smtp_setting_enabled');
+        if($enabledUserSmtpSettings){
+            $phpmailer->isSMTP();
+            $phpmailer->Host       = get_option('watsonconv_mail_vars_smtp_host');
+            $phpmailer->SMTPAuth   = get_option('watsonconv_mail_vars_smtp_authentication');
+            $phpmailer->Port       = get_option('watsonconv_mail_vars_smtp_port');
+            $phpmailer->SMTPSecure = get_option('watsonconv_mail_vars_smtp_secure');
+            $phpmailer->Username   = get_option('watsonconv_mail_vars_smtp_username');
+            $phpmailer->Password   = get_option('watsonconv_mail_vars_smtp_password');
+            $phpmailer->From       = '';
+            /*$phpmailer->FromName   = '';*/
+        }
+    }
+
+    //works if errors occur while sending messages
+    public static function on_mail_error( $wp_error )
+    {
+        $error_log = get_option('watsonconv_error_log', array());
+        $error_log[] = $wp_error;
+        update_option('watsonconv_error_log', array_slice($error_log, -3, 3));
     }
 }

@@ -18,6 +18,10 @@ class Advanced {
         self::init_twilio_cred_settings();
         self::init_call_ui_settings();
         self::init_context_var_settings();
+        self::init_history_settings();
+        // self::init_mail_settings();
+        self::init_smtp_mail_settings();
+        self::init_notification_settings();
     }
 
     public static function render_page() {
@@ -35,10 +39,14 @@ class Advanced {
                 <a onClick="switch_tab('usage_management')" class="nav-tab usage_management_tab">Usage Management</a>
                 <a onClick="switch_tab('voice_call')" class="nav-tab voice_call_tab">Voice Calling</a>
                 <a onClick="switch_tab('context_var')" class="nav-tab context_var_tab">Context Variables</a>
+                <a onClick="switch_tab('history')" class="nav-tab history_tab">Chat History</a>
+                <a onClick="switch_tab('notification')" class="nav-tab notification_tab">Notification</a>
+<!--                <a onClick="switch_tab('mail')" class="nav-tab mail_tab">Mail Action</a>-->
+                <a onClick="switch_tab('smtp_mail')" class="nav-tab smtp_mail_tab">Mail Settings</a>
             </h2>
 
             <form action="options.php" method="POST">
-                <?php settings_fields(self::SLUG); ?> 
+                <?php settings_fields(self::SLUG); ?>
                 <div class="tab-page new_features_page">
                     <?php self::render_new_features(); ?>
                 </div>
@@ -75,6 +83,19 @@ class Advanced {
                             </td>
                         </tr>
                     </table>
+                </div>
+                <div class="tab-page history_page" style="display: none">
+                    <?php do_settings_sections(self::SLUG.'_history') ?>
+                </div>
+                <div class="tab-page notification_page" style="display: none">
+                    <?php do_settings_sections(self::SLUG.'_notification') ?>
+                </div>
+                <div class="tab-page mail_page" style="display: none">
+                    <?php do_settings_sections(self::SLUG.'_email') ?>
+                </div>
+
+                <div class="tab-page smtp_mail_page" style="display: none">
+                    <?php do_settings_sections(self::SLUG.'_smtp_mail') ?>
                 </div>
 
                 <?php submit_button(); ?>
@@ -783,7 +804,7 @@ class Advanced {
                value="<?php echo get_option('watsonconv_plugin_version_var', '') ?>"
         />
         <span class='dashicons dashicons-arrow-right-alt'></span>
-        "<?php echo Frontend::VERSION; ?>"
+        "<?php echo Frontend::get_version(); ?>"
         <?php
     }
 
@@ -797,5 +818,650 @@ class Advanced {
                 numeric characters (0-9), and underscores.');
             return '';
         }
+    }
+
+    // ---------- Mail Settings -------------
+
+    public static function init_mail_settings(){
+        $settings_page = self::SLUG . '_email';
+
+
+        add_settings_section('watsonconv_email', '<span class="email_settings">About Mail Action</span>',
+            array(__CLASS__, 'email_description'), $settings_page);
+        add_settings_field('watsonconv_mail_vars_enabled', 'Enable Mail Action',
+            array(__CLASS__, 'render_mail_vars_enabled'), $settings_page, 'watsonconv_email');
+
+        register_setting(self::SLUG, 'watsonconv_mail_vars_enabled');
+    }
+
+    public static function email_description(){
+        ?>
+        <p>
+            This section allows you to configure Mail Action feature.
+        </p>
+        <p>
+            This feature allows you to send data collected with Watson Assistant to the predefined e-mail box.
+        </p>
+        <p>
+            To trigger Mail Action you need to issue Client request from the desired Dialog Node. Below is an example request:
+        <pre>
+{
+  "output": {
+    < skipped >
+  },
+  "actions": [
+    {
+      "name": "<?php echo \WatsonConv\Api::ACTION_TO_SEND_CONTEXT_VARS;?>",
+      "type": "client",
+      "parameters": {
+        "var1": "$variable1",
+        "var2": "$variable2",
+        ...
+      },
+      "result_variable": "result"
+    }
+  ]
+}            </pre>
+        Please refer Watson Assistant documentation for details on:
+        <a href="https://console.bluemix.net/docs/services/assistant/dialog-actions.html" target="_blank">
+            making programmatic calls from a dialog node
+        </a>.<br>
+        Create an action with the following parameters:
+        </pre>
+        <p>
+            <strong>name</strong>: <?php echo \WatsonConv\Api::ACTION_TO_SEND_CONTEXT_VARS;?>
+            <br>
+            <strong>type</strong>: client
+            <br>
+            <strong>parameters</strong>: {your context variables}
+            <br>
+            <strong>result_variable</strong>: result
+        </p>
+        <h2>Settings</h2>
+        <?php
+    }
+
+    public static function render_mail_vars_enabled() {
+        Main::render_radio_buttons(
+            'watsonconv_mail_vars_enabled',
+            0,
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 1
+                ), array(
+                'label' => esc_html__('No', self::SLUG),
+                'value' => 0
+            )
+            )
+        );
+    }
+
+    // ---------- SMTP Mail Settings -------------
+
+    public static function init_smtp_mail_settings(){
+        $settings_page = self::SLUG . '_smtp_mail';
+
+        add_settings_section('watsonconv_mail_settings', '<span class="email_settings">Mail Settings</span>',
+            array(__CLASS__, 'smtp_mail_description'), $settings_page);
+        add_settings_field('watsonconv_mail_vars_email_address_to', 'Recipient email address',
+            array(__CLASS__, 'render_mail_vars_email_address_to'), $settings_page, 'watsonconv_mail_settings');
+        add_settings_field('watsonconv_button_check_email_sending', '',
+            array(__CLASS__, 'render_button_check_email_sending'), $settings_page, 'watsonconv_mail_settings');
+
+        add_settings_field('watsonconv_smtp_setting_enabled', 'Configure Advanced Email Settings',
+            array(__CLASS__, 'render_smtp_setting_enabled'), $settings_page, 'watsonconv_mail_settings');
+
+
+        add_settings_section('watsonconv_smtp_settings', '',
+            '', $settings_page);
+        add_settings_field('watsonconv_mail_vars_smtp_host', 'Outbound SMTP host',
+            array(__CLASS__, 'render_mail_vars_smtp_host'), $settings_page, 'watsonconv_smtp_settings');
+        add_settings_field('watsonconv_mail_vars_smtp_authentication', 'Authentication',
+            array(__CLASS__, 'render_mail_vars_smtp_authentication'), $settings_page, 'watsonconv_smtp_settings');
+        add_settings_field('watsonconv_mail_vars_smtp_username', 'SMTP Username',
+            array(__CLASS__, 'render_mail_vars_smtp_username'), $settings_page, 'watsonconv_smtp_settings');
+        add_settings_field('watsonconv_mail_vars_smtp_password', 'SMTP Password',
+            array(__CLASS__, 'render_mail_vars_smtp_password'), $settings_page, 'watsonconv_smtp_settings');
+        add_settings_field('watsonconv_mail_vars_smtp_port', 'SMTP Port',
+            array(__CLASS__, 'render_mail_vars_smtp_port'), $settings_page, 'watsonconv_smtp_settings');
+        add_settings_field('watsonconv_mail_vars_smtp_secure', 'SMTP Encryption',
+            array(__CLASS__, 'render_mail_vars_smtp_secure'), $settings_page, 'watsonconv_smtp_settings');
+
+
+        register_setting(self::SLUG, 'watsonconv_smtp_setting_enabled');
+        register_setting(self::SLUG, 'watsonconv_mail_vars_smtp_host');
+        register_setting(self::SLUG, 'watsonconv_mail_vars_smtp_authentication');
+        register_setting(self::SLUG, 'watsonconv_mail_vars_smtp_port');
+        register_setting(self::SLUG, 'watsonconv_mail_vars_smtp_secure');
+        register_setting(self::SLUG, 'watsonconv_mail_vars_smtp_username');
+        register_setting(self::SLUG, 'watsonconv_mail_vars_smtp_password');
+        register_setting(self::SLUG, 'watsonconv_mail_vars_email_address_to', array(__CLASS__, 'validate_email'));
+    }
+
+    public static function smtp_mail_description(){
+        ?>
+        <p>
+            This section allows you to configure E-mail Settings.
+        </p>
+        <p>
+            Please use "Send a Test Email" button to make sure plug-in is able to deliver messages to your mailbox.
+        </p>
+        <?php
+    }
+
+    public static function validate_email($email) {
+        if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            add_settings_error(
+                'watsonconv_email',
+                'invalid-email',
+                'Please use valid format for email (e.g. email@example.com).'
+            );
+
+            return get_option('watsonconv_mail_vars_email_address_to');
+        }
+
+        return $email;
+    }
+
+    public static function render_mail_vars_email_address_to(){
+        ?>
+        <input name="watsonconv_mail_vars_email_address_to" id="watsonconv_mail_vars_email_address_to"
+               type="text" style="width: 16em"
+               placeholder="e.g. email@example.com"
+               value="<?php echo get_option('watsonconv_mail_vars_email_address_to', '') ?>"
+        />
+        <?php
+    }
+
+    public static function render_mail_vars_smtp_host(){
+        ?>
+        <input name="watsonconv_mail_vars_smtp_host" id="watsonconv_mail_vars_smtp_host"
+               type="text" style="width: 16em"
+               placeholder="e.g. smtp.gmail.com"
+               value="<?php echo get_option('watsonconv_mail_vars_smtp_host', '') ?>"
+        />
+        <?php
+    }
+
+    public static function render_mail_vars_smtp_authentication(){
+        Main::render_radio_buttons(
+            'watsonconv_mail_vars_smtp_authentication',
+            '1',
+            array(
+                array(
+                    'label' => esc_html__('On', self::SLUG),
+                    'value' => 1
+                ), array(
+                'label' => esc_html__('Off', self::SLUG),
+                'value' => 0
+            )
+            )
+        );
+    }
+
+    public static function render_mail_vars_smtp_port(){
+        ?>
+        <input name="watsonconv_mail_vars_smtp_port" id="watsonconv_mail_vars_smtp_port"
+               type="text" style="width: 16em"
+               placeholder="e.g. 465"
+               value="<?php echo get_option('watsonconv_mail_vars_smtp_port', '') ?>"
+        />
+        <?php
+    }
+
+    public static function render_mail_vars_smtp_secure(){
+        Main::render_radio_buttons(
+            'watsonconv_mail_vars_smtp_secure',
+            'none',
+            array(
+                array(
+                    'label' => esc_html__('None', self::SLUG),
+                    'value' => 'none'
+                ), array(
+                'label' => esc_html__('SSL', self::SLUG),
+                'value' => 'ssl'
+            ),array(
+                'label' => esc_html__('TLS', self::SLUG),
+                'value' => 'tls'
+            )
+            )
+        );
+    }
+
+    public static function render_mail_vars_smtp_username(){
+        ?>
+        <input name="watsonconv_mail_vars_smtp_username" id="watsonconv_mail_vars_smtp_username"
+               type="text" style="width: 16em"
+               placeholder="e.g. email@example.com"
+               value="<?php echo get_option('watsonconv_mail_vars_smtp_username', '') ?>"
+        />
+        <?php
+    }
+
+    public static function render_mail_vars_smtp_password(){
+        ?>
+        <input name="watsonconv_mail_vars_smtp_password" id="watsonconv_mail_vars_smtp_password"
+               type="password" style="width: 16em"
+               placeholder="e.g. secret"
+               value="<?php echo get_option('watsonconv_mail_vars_smtp_password', '') ?>"
+        />
+        <?php
+    }
+
+    public static function render_button_check_email_sending(){
+        ?>
+        <button type="button" id="watsonconv_button_check_email_sending"
+                class="button-primary">
+            Send a Test Email
+        </button>
+        <?php
+    }
+
+    public static function render_smtp_setting_enabled() {
+        Main::render_radio_buttons(
+            'watsonconv_smtp_setting_enabled',
+            0,
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 1
+                ), array(
+                'label' => esc_html__('No', self::SLUG),
+                'value' => 0
+            )
+            )
+        );
+    }
+
+    public static function render_test_email_success_message(){
+        return  '<div id="setting-error-settings_updated" class="updated settings-error notice is-dismissible">'
+                    .'<p>'
+                        .'<strong>Test Email has been sent. Please check your mailbox</strong>'
+                    .'</p>'
+                    .'<button type="button" class="notice-dismiss">'
+                        .'<span class="screen-reader-text">Hide this notice.</span>'
+                    .'</button>'
+                .'</div>';
+    }
+
+    public static function render_test_email_error_message(){
+        return  '<div id="setting-error-settings_error" class="error settings-error notice is-dismissible">'
+            .'<p>'
+            .'<strong>Unable to send a Test Email: ' . $GLOBALS['phpmailer']->ErrorInfo .'</strong>'
+            .'</p>'
+            . '<p>Please consider enabling Advanced Mail Settings</p>'
+            .'<button type="button" class="notice-dismiss">'
+            .'<span class="screen-reader-text">Hide this notice.</span>'
+            .'</button>'
+            .'</div>';
+    }
+
+    public static function set_recipient_email_address($request)
+    {
+        if(get_option('watsonconv_mail_vars_email_address_to') == $request){
+            return true;
+        }elseif(get_option('watsonconv_mail_vars_email_address_to') || get_option('watsonconv_mail_vars_email_address_to') != $request){
+            update_option('watsonconv_mail_vars_email_address_to', $request);
+        }else{
+            add_option('watsonconv_mail_vars_email_address_to', $request);
+        }
+    }
+
+    public static function send_test_email()
+    {
+        // Check if current user is permitted to control plugins
+        if(!current_user_can('edit_plugins')) {
+            return new \WP_REST_Response('Not Authorized', 403);
+        }
+
+        self::set_recipient_email_address($_POST['email']);
+        $user = wp_get_current_user()->get('user_login');
+        $emailTo = get_option('watsonconv_mail_vars_email_address_to');
+        $subject = "Watson Assistant plug-in for WordPress: test e-mail";
+        $message = "Hello " . $user . ", this is a test email!";
+
+        try{
+            if (wp_mail($emailTo, $subject, $message)){
+                return self::render_test_email_success_message();
+            }else{
+                return self::render_test_email_error_message();
+            }
+        }catch (\Exception $e){}
+    }
+
+    // ---------- Chat History Settings ----------
+
+    // Initializing chat history collection settings
+    public static function init_history_settings(){
+        // Wordpress settings page name
+        $settings_page = self::SLUG . '_history';
+
+        // GENERAL DESCRIPTION
+        // Section id
+        $general_id = 'watsonconv_history_description';
+        // Section title
+        $general_title = '<span class="history_settings">Chat History</span>';
+        // Callback for description rendering
+        $general_callback = array(__CLASS__, 'render_history_description');
+        // Adding section to page
+        add_settings_section($general_id, $general_title, $general_callback, $settings_page);
+
+        // ENABLING/DISABLING CHAT HISTORY COLLECTION
+        // Setting id
+        $history_id = 'watsonconv_history_enabled';
+        // Setting title
+        $history_title = 'Enable chat history collection';
+        // Setting rendering callback
+        $history_callback = array(__CLASS__, 'render_history_enabled');
+        // Adding setting to page
+        add_settings_field($history_id, $history_title, $history_callback, $settings_page, $general_id);
+        // Registering setting in Wordpress
+        register_setting(self::SLUG, $history_id);
+
+        // ENABLING/DISABLING ADDITIONAL (DEBUG) INFORMATION COLLECTION
+        // Setting id
+        $debug_id = 'watsonconv_history_debug_enabled';
+        // Setting title
+        $debug_title = 'Enable extended information collection';
+        // Setting rendering callback
+        $debug_callback = array(__CLASS__, 'render_history_debug_enabled');
+        // Adding setting to page
+        add_settings_field($debug_id, $debug_title, $debug_callback, $settings_page, $general_id);
+        // Registering setting in Wordpress
+        register_setting(self::SLUG, $debug_id);
+
+        // ENABLING/DISABLING MAXIMUM AMOUNT OF SAVED SESSIONS
+        // Setting id
+        $limit_id = 'watsonconv_history_limit_enabled';
+        // Setting title
+        $limit_title = 'Set maximum amount of stored chat sessions';
+        // Setting rendering callback
+        $limit_callback = array(__CLASS__, 'render_history_limit_enabled');
+        // Adding setting to page
+        add_settings_field($limit_id, $limit_title, $limit_callback, $settings_page, $general_id);
+        // Registering setting in Wordpress
+        register_setting(self::SLUG, $limit_id);
+
+        // SETTING A MAXIMUM AMOUNT OF SAVED SESSIONS
+        $amount_id = 'watsonconv_history_limit';
+        // Setting title
+        $amount_title = 'Maximum number of saved sessions';
+        // Setting rendering callback
+        $amount_callback = array(__CLASS__, 'render_history_limit');
+        // Adding setting to page
+        add_settings_field($amount_id, $amount_title, $amount_callback, $settings_page, $general_id);
+        // Registering setting in Wordpress
+        register_setting(self::SLUG, $amount_id);
+    }
+
+    // Description of chat history features
+    public static function render_history_description() {
+        ?>
+        <p>This section allows you to configure chat history collection feature.</p>
+        <p>You can store chat messages from both Watson Assistant and your site's users for further review.<br>
+        Also this feature provides data for e-mail notificator (please refer to Notification tab)</p>
+
+        <?php
+    }
+
+    // Radiobuttons for enabling/disabling chat history collection
+    public static function render_history_enabled() {
+        Main::render_radio_buttons(
+            'watsonconv_history_enabled',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                'label' => esc_html__('No', self::SLUG),
+                'value' => 'no'
+                )
+            )
+        );
+    }
+
+    // Radiobuttons for enabling/disabling debug information collection
+    public static function render_history_debug_enabled() {
+        Main::render_radio_buttons(
+            'watsonconv_history_debug_enabled',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                'label' => esc_html__('No', self::SLUG),
+                'value' => 'no'
+                )
+            )
+        );
+        ?>
+        <p>Extended information includes additional diagnostic information for fine-tuning your bot such as additional recognized intents, Watson Assistant log messages and visited nodes.</p>
+        <?php
+    }
+
+    // Radiobuttons for enabling/disabling session storage limit
+    public static function render_history_limit_enabled() {
+        Main::render_radio_buttons(
+            'watsonconv_history_limit_enabled',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
+    }
+
+    // History storage limit
+    public static function render_history_limit() {
+        $history_limit = get_option('watsonconv_history_limit');
+        
+        ?>
+        <input name="watsonconv_history_limit" id="watsonconv_history_limit" type="number"
+            value="<?php echo empty($history_limit) ? 100 : $history_limit ?>"
+            style="width: 8em" />
+        <?php
+
+
+    }
+
+    // ---------- Notification Settings ----------
+
+    // Initializing notification settings
+    public static function init_notification_settings(){
+        // Wordpress settings page name
+        $settings_page = self::SLUG . '_notification';
+
+        // GENERAL DESCRIPTION
+        // Section id
+        $section_id = 'watsonconv_notification_settings';
+        // Section title
+        $section_title = '<span class="notification_settings">Notification</span>';
+        // Callback for description rendering
+        $section_callback = array(__CLASS__, 'render_notification_description');
+        // Adding section to page
+        add_settings_section($section_id, $section_title, $section_callback, $settings_page);
+
+        // ENABLING/DISABLING NOTIFICATION
+        // Setting id
+        $notification_id = 'watsonconv_notification_enabled';
+        // Setting title
+        $notification_title = 'Enable notification feature';
+        // Setting rendering callback
+        $notification_callback = array(__CLASS__, 'render_notification_enabled');
+        // Adding setting to page
+        add_settings_field($notification_id, $notification_title, $notification_callback, $settings_page, $section_id);
+        // Registering setting in Wordpress
+        register_setting(self::SLUG, $notification_id);
+
+        // Recipient email address
+        // ENABLING/DISABLING NOTIFICATION
+        // Setting id
+        $notification_email_to_id = 'watsonconv_notification_email_to';
+        // Setting title
+        $notification_email_to_title = 'Recipient e-mail address';
+        // Setting rendering callback
+        $notification_email_to_callback = array(__CLASS__, 'render_notification_email_to');
+        // Adding setting to page
+        add_settings_field($notification_email_to_id, $notification_email_to_title, $notification_email_to_callback, $settings_page, $section_id);
+        // Registering setting in Wordpress
+        register_setting(self::SLUG, $notification_email_to_id, array(__CLASS__, 'validate_notification_email_to'));
+
+        // ENABLING/DISABLING USAGE SUMMARY NOTIFICATION INTERVAL
+        // Setting id
+        $notification_summary_interval_id = 'watsonconv_notification_summary_interval';
+        // Setting title
+        $notification_summary_interval_title = 'Send chatbot invocation summary';
+        // Setting rendering callback
+        $notification_summary_interval_callback = array(__CLASS__, 'render_notification_summary_interval');
+        // Adding setting to page
+        add_settings_field($notification_summary_interval_id, $notification_summary_interval_title, $notification_summary_interval_callback, $settings_page, $section_id);
+        // Registering setting in Wordpress
+        register_setting(self::SLUG, $notification_summary_interval_id);
+
+        // Send test notification
+        $notification_send_test_id = 'watsonconv_notification_send_test';
+        add_settings_field($notification_send_test_id, '', array(__CLASS__, 'render_send_test_notification_enabled'),
+            $settings_page, $section_id);
+        register_setting(self::SLUG, $notification_send_test_id);
+
+
+        register_setting(self::SLUG, $section_id, array(__CLASS__, 'validate_notification_settings'));
+    }
+
+    // Description of chat history features
+    public static function render_notification_description() {
+        ?>
+        <p>This section allows you to configure E-mail notification feature.</p>
+        <? if (get_option('watsonconv_history_enabled', '') !== 'yes') { ?>
+            <p class="update-message notice inline notice-warning notice-alt" style="padding-top: 0.5em; padding-bottom: 0.5em">
+                <b>Note:</b> In order to get correct notifications please <strong>Enable</strong> Chat History collection.<br>
+                Chat history collection settings are available at <strong>Chat History</strong> tab.
+            </p>
+        <? } ?>
+        <?php
+    }
+
+    // Radio buttons for enabling/disabling notification
+    public static function render_notification_enabled() {
+        Main::render_radio_buttons(
+            'watsonconv_notification_enabled',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ), array(
+                'label' => esc_html__('No', self::SLUG),
+                'value' => 'no'
+            )
+            )
+        );
+    }
+
+    public static function render_notification_email_to(){
+        ?>
+        <input name="watsonconv_notification_email_to" id="watsonconv_notification_email_to"
+               type="text" style="width: 16em"
+               placeholder="e.g. john@example.com"
+               value="<?php echo get_option('watsonconv_notification_email_to', '') ?>"
+        />
+        <?php
+    }
+
+
+    // Radio buttons for enabling/disabling notification
+    public static function render_notification_summary_interval() {
+        Main::render_radio_buttons(
+            'watsonconv_notification_summary_interval',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Never', self::SLUG),
+                    'value' => '0'
+                )/*, array(
+                    'label' => esc_html__('Minutely', self::SLUG),
+                    'value' => '60'
+                )*/, array(
+                    'label' => esc_html__('Hourly', self::SLUG),
+                    'value' => '3600'
+                ), array(
+                    'label' => esc_html__('Daily', self::SLUG),
+                    'value' => '86400'
+                ), array(
+                    'label' => esc_html__('Weekly', self::SLUG),
+                    'value' => '604800'
+                )
+            )
+        );
+    }
+
+    public static function render_send_test_notification_enabled() {
+        $credentials = get_option('watsonconv_notification_send_test');
+        ?>
+        <fieldset>
+            <input
+                    type="checkbox" id="watsonconv_notification_send_test"
+                    name="watsonconv_notification_send_test"
+                    value="true"
+            />
+            <label for="watsonconv_notification_send_test">
+                Send a test notification e-mail (immediately after saving)
+            </label>
+        </fieldset>
+        <?php
+    }
+
+    public static function validate_notification_email_to($email) {
+        if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            add_settings_error(
+                'watsonconv_notification_email_to',
+                'invalid-email',
+                'Please use valid format for email (e.g. email@example.com).'
+            );
+            return get_option('watsonconv_notification_email_to');
+        } else {
+            return $email;
+        }
+    }
+
+    public static function validate_notification_settings($settings) {
+        $is_valid = true;
+        $enabled = get_option('watsonconv_notification_enabled', '') === 'yes';
+        if ($enabled) {
+            $email = get_option('watsonconv_notification_email_to', '');
+            if (empty($email)) {
+                add_settings_error(
+                    'watsonconv_notification_email_to',
+                    'invalid-email',
+                    'Please specify recipient e-mail address'
+                );
+                $is_valid = false;
+            }
+
+            if ($is_valid && get_option('watsonconv_notification_send_test', '') === 'true') {
+                if (\WatsonConv\Email_Notificator::send_summary_notification(true)) {
+                    add_settings_error(
+                        'watsonconv_notification_settings',
+                        'valid-credentials',
+                        'Test E-mail successfully sent',
+                        'updated'
+                    );
+
+                } else {
+                    add_settings_error('watsonconv_notification_settings', 'error-sending-email',
+                        'Unable to send test email. Please consider Configuring Advanced Email Settings at Mail Settings tab');
+                }
+            }
+            \WatsonConv\Email_Notificator::reset_summary_prev_ts();
+        }
+        return $settings;
     }
 }

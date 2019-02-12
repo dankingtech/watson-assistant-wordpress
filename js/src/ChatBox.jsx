@@ -188,6 +188,8 @@ export default class ChatBox extends Component {
         });
 
         this.sendMessage();
+
+        this.loadedMessages = this.state.messages.length;
     }
 
     saveState() {

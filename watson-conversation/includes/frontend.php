@@ -7,7 +7,12 @@ add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'chatbox_shortcode'));
 
 class Frontend {
-    const VERSION = '0.8.3';
+    /**
+     * @return string
+     */
+    public static function get_version() {
+        return get_file_data(WATSON_CONV_FILE, array("Version" => "Version"))['Version'];
+    }
 
     public static function enqueue_styles($force_full_screen = null) {
         wp_enqueue_style('watsonconv-chatbox');
@@ -217,7 +222,7 @@ class Frontend {
         }
 
         $plugin_label = get_option('watsonconv_plugin_version_var');
-        $plugin_version = self::VERSION;
+        $plugin_version = self::get_version();
 
         if ($plugin_label && !empty($plugin_version)) {
             $context->$plugin_label = $plugin_version;
@@ -366,7 +371,9 @@ class Frontend {
     }
 
     public static function register_scripts() {
-        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array('jquery'), self::VERSION, true);
-        wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::VERSION);
+        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array('jquery'), self::get_version(), true);
+        wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::get_version());
+        wp_enqueue_script('wp-api');
+        wp_localize_script( 'wp-api', 'wpApiSettings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
     }
 }
