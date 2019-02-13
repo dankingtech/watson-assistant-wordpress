@@ -85,14 +85,17 @@ export default class ChatBox extends Component {
                     }.bind(this);
 
                     setTimeout(function() {
-                        reject("Done waiting");
+                        reject();
                     }.bind(this), 250);
 
                     localStorage.setItem('watson_bot_request_state', Date.now());
+                    localStorage.removeItem('watson_bot_request_state');
                 }
             )
                 .then((state) => {
                     this.setState(state);
+
+                    this.loadedMessages = this.state.messages.length;
                 })
                 .catch(() => {
                     this.sendMessage();
@@ -128,10 +131,6 @@ export default class ChatBox extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (!this.state.convStarted && !this.props.isMinimized) {
-            this.sendMessage();
-        }
-
         if (prevState.messages.length !== this.state.messages.length) {
             // Ensure that chat box stays scrolled to bottom
             if (typeof(this.messageList) !== 'undefined') {
