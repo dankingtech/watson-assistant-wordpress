@@ -2,6 +2,7 @@
   "name": "watson-conversation",
   "private": true,
   "dependencies": {
+    "broadcast-channel": "^2.1.9",
     "core-js": "^2.5.3",
     "deepmerge": "^2.2.1",
     "jstz": "^2.0.0",

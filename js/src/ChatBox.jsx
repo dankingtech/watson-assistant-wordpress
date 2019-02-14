@@ -12,6 +12,9 @@ import CallInterface from './CallInterface.jsx';
 
 import 'whatwg-fetch';
 
+// Shim for BroadcastChannel until it is implemented in all browsers
+import BroadcastChannel from 'broadcast-channel';
+
 export default class ChatBox extends Component {
     constructor(props) {
         super(props);
@@ -80,8 +83,8 @@ export default class ChatBox extends Component {
         if (!this.state.convStarted && !this.props.isMinimized) {
             new Promise(
                 (resolve, reject) => {
-                    this.bc.onmessage = function (ev) {
-                        resolve(ev.data);
+                    this.bc.onmessage = function (state) {
+                        resolve(state);
                     }.bind(this);
 
                     setTimeout(function() {
@@ -101,8 +104,8 @@ export default class ChatBox extends Component {
                     this.sendMessage();
                 })
                 .finally(() => {
-                    this.bc.onmessage = function (ev) {
-                        this.setState(ev.data);
+                    this.bc.onmessage = function (state) {
+                        this.setState(state);
                     }.bind(this);
                 });
 
