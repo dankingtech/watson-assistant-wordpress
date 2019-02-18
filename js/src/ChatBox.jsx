@@ -12,9 +12,20 @@ import CallInterface from './CallInterface.jsx';
 
 import 'whatwg-fetch';
 
+// Shim for BroadcastChannel until it is implemented in all browsers
+import BroadcastChannel from 'broadcast-channel';
+
 export default class ChatBox extends Component {
     constructor(props) {
         super(props);
+
+        this.bc = new BroadcastChannel('watson_bot_channel');
+
+        window.addEventListener('storage', function (ev) {
+            if (ev.key == 'watson_bot_request_state') {
+                this.saveState();
+            }
+        }.bind(this));
 
         if (typeof(sessionStorage) !== 'undefined' && sessionStorage.getItem('watson_bot_state')) {
             this.state = JSON.parse(sessionStorage.getItem('watson_bot_state'));
@@ -30,12 +41,17 @@ export default class ChatBox extends Component {
                 convStarted: false
             };
         }
+
         this.state.context = merge(
             this.state.context,
             this.getInitialContext()
         );
 
         this.loadedMessages = this.state.messages.length;
+    }
+
+    componentWillUnmount() {
+        this.bc.close();
     }
 
     getInitialContext() {
@@ -65,7 +81,34 @@ export default class ChatBox extends Component {
         }
 
         if (!this.state.convStarted && !this.props.isMinimized) {
-            this.sendMessage();
+            new Promise(
+                (resolve, reject) => {
+                    this.bc.onmessage = function (state) {
+                        resolve(state);
+                    }.bind(this);
+
+                    setTimeout(function() {
+                        reject();
+                    }.bind(this), 250);
+
+                    localStorage.setItem('watson_bot_request_state', Date.now());
+                    localStorage.removeItem('watson_bot_request_state');
+                }
+            )
+                .then((state) => {
+                    this.setState(state);
+
+                    this.loadedMessages = this.state.messages.length;
+                })
+                .catch(() => {
+                    this.sendMessage();
+                })
+                .finally(() => {
+                    this.bc.onmessage = function (state) {
+                        this.setState(state);
+                    }.bind(this);
+                });
+
         }
 
         if (webrtc.support && 'https:' !== document.location.protocol) {
@@ -91,10 +134,6 @@ export default class ChatBox extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (!this.state.convStarted && !this.props.isMinimized) {
-            this.sendMessage();
-        }
-
         if (prevState.messages.length !== this.state.messages.length) {
             // Ensure that chat box stays scrolled to bottom
             if (typeof(this.messageList) !== 'undefined') {
@@ -193,6 +232,7 @@ export default class ChatBox extends Component {
     }
 
     saveState() {
+        this.bc.postMessage(this.state);
         if (typeof(sessionStorage) !== 'undefined') {
             sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
         }
