@@ -51,27 +51,24 @@ export default class ChatBox extends Component {
     }
 
     componentWillUnmount() {
+        wp.hooks.doAction('watsonconv_pre_unmount', this.state);
         this.bc.close();
     }
 
     getInitialContext() {
-        return merge(
+        let context = merge(
             watsonconvSettings.context,
             {
                 global: {
                     system: {
                         timezone: jstz.determine().name()
                     }
-                }/*,
-            skills: {
-              'main skill': {
-                  user_defined: {
-                      username: 'Hola!'
-                  }
-              }
-            }*/
+                }
             }
         );
+
+        context = wp.hooks.applyFilters('watsonconv_initial_context', context);
+        return context;
     }
 
     componentDidMount() {
@@ -101,9 +98,11 @@ export default class ChatBox extends Component {
                     this.loadedMessages = this.state.messages.length;
                 })
                 .catch(() => {
+                    wp.hooks.doAction('watsonconv_new_conversation', this.state);
                     this.sendMessage();
                 })
                 .finally(() => {
+                    wp.hooks.doAction('watsonconv_new_tab', this.state);
                     this.bc.onmessage = function (state) {
                         this.setState(state);
                     }.bind(this);
@@ -184,6 +183,7 @@ export default class ChatBox extends Component {
             });
         }
         sendBody.session_id = this.state.session_id;
+        sendBody = wp.hooks.applyFilters('watsonconv_user_message', sendBody);
 
         fetch(watsonconvSettings.apiUrl, {
             headers: {
@@ -199,6 +199,8 @@ export default class ChatBox extends Component {
             }
             return response.json();
         }).then(body => {
+            body = wp.hooks.applyFilters('watsonconv_bot_message', body);
+
             let {generic} = body.output;
 
             this.setState({
