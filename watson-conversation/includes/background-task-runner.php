@@ -31,7 +31,7 @@ class Background_Task_Runner {
         // Getting Wordpress version
         global $wp_version;
         // Checking if WP-Cron disabled
-        if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) {
+        if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON) {
             return new \WP_Error( 'cron_disabled', "The DISABLE_WP_CRON constant is set to true. WP-Cron is disabled and will not run on its own.");
         }
         // Checking if alternate calling method for cron is enabled
@@ -69,14 +69,21 @@ class Background_Task_Runner {
         // Timestamp of last cron reliability check
         $last_check = (integer)get_option("watsonconv_last_cron_check", 0);
         // Was WP-Cron reliable last time?
-        $was_reliable_last_time = get_option("watsonconv_cron_was_reliable", "no") == "yes";
+        $was_reliable_last_time = get_option("watsonconv_cron_was_reliable", "yes") == "yes";
         // Current timestamp
         $timestamp = time();
         // Is it reliable now?
         $reliable = $was_reliable_last_time;
+        // Is it a cron job running right now?
+        $doing_cron = false;
+        if(defined( 'DOING_CRON' )) {
+            if(DOING_CRON) {
+                $doing_cron = true;
+            }
+        }
 
         // If last check was more than 10 minutes ago, performing new one
-        if( ($timestamp - $last_check) > (10 * 60) ) {
+        if( ($timestamp - $last_check) > (10 * 60) && !$doing_cron ) {
             // Performing check
             $reliability_check_result = self::perform_cron_reliability_check();
             // If WP_Error is returned, we cannot rely on WP-Cron
@@ -86,6 +93,10 @@ class Background_Task_Runner {
             // Writing if WP-Cron was reliable this time
             $cron_works = $reliable ? "yes" : "no";
             update_option("watsonconv_cron_was_reliable", $cron_works, "yes");
+        }
+
+        if($was_reliable_last_time && (!$reliable)) {
+            \WatsonConv\Logger::log_message("WP-Cron failure", $reliability_check_result->get_error_message());
         }
         
         // Returning WP-Cron status
@@ -115,21 +126,31 @@ class Background_Task_Runner {
 
     // Task data collector
     public function data_collector() {
-        // Checking if we can rely on WP-Cron
-        $cron_reliable = self::is_cron_reliable();
-        // If WP-Cron is unreliable, using fallback mechanism
-        if($cron_reliable == false) {
+        // Current timestamp
+        $timestamp = time();
+        $default_runner_busy = get_option("watsonconv_runner_state") == "busy";
+
+        // Checking if runner is free. If busy, exiting
+        if($default_runner_busy) {
+            $runner_launch_time = (integer)get_option("watsonconv_runner_launched", time());
+            // If runner is busy for more than 10 minutes, running fallback runner
+            if(($timestamp - $runner_launch_time) > 600) {
+                $this->fallback_handler();
+            }
+            return false;
+        }
+        // If runner is free, checking if we can rely on WP-Cron
+        if(!$default_runner_busy) {
+            // Checking if we can rely on WP-Cron
+            $cron_reliable = self::is_cron_reliable();
+            // If WP-Cron is unreliable and we can't use, using fallback mechanism
             $this->fallback_handler();
             return false;
         }
 
-        // Setting upper batch limit according to Cron reliability
+        // If code execution reached that point, it means that everything is OK
+        // Setting upper batch limit
         $batch_limit = 100;
-        // Checking if runner is free. If busy, exiting
-        if(get_option("watsonconv_runner_state") == "busy") {
-            return false;
-        }
-
         // Variable for new tasks
         $new_tasks = NULL;
         // Checking if there are new tasks
@@ -197,6 +218,8 @@ class Background_Task_Runner {
 
     // Processing batch of tasks from database
     public function handle_batch($new_tasks) {
+        // Current timestamp
+        $timestamp = time();
         // Id of last processed task
         $last_id = 0;
         // Processing array of tasks and adding them to queue
@@ -218,9 +241,10 @@ class Background_Task_Runner {
         $query = "UPDATE {$full_table_name} SET p_status = 'processing' WHERE id <= {$last_id}";
         // Wordpress database object
         global $wpdb;
-        $rows_affected = $wpdb->query($query);
+        $rows_affected = \WatsonConv\Storage::perform_query($query);
         // Reporting that runner is busy
         update_option("watsonconv_runner_state", "busy", "yes");
+        update_option("watsonconv_runner_launched", $timestamp, "yes");
         // Executing queue
         $this->process->save()->dispatch();
 
@@ -240,12 +264,17 @@ class Background_Task_Runner {
     }
 
     // Function to determine if task already exists
-    public static function task_already_exists($callback, $data) {
+    public static function task_already_exists($callback, $data = NULL) {
         // Preparing task data for WHERE clause
         $where_array = array(
             Storage::where("task_runner_queue", "p_callback", "=", $callback),
-            Storage::where("task_runner_queue", "p_data", "=", $data)
         );
+
+        // WHERE condition for $data
+        if(isset($data)) {
+            array_push($where_array, Storage::where("task_runner_queue", "p_data", "=", $data));
+        }
+
         // We need only id of task in queue
         $fields_to_get = array("id");
 
@@ -302,6 +331,8 @@ class Background_Task_Runner {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             // Writing changes to db
             dbDelta($full_expression);
+            // Update Storage's tables list
+            Storage::init();
 
             // Adding options
             // Enabled/disabled

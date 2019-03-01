@@ -69,6 +69,13 @@ class API {
                     'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_email')
                 )
             );
+
+            register_rest_route('watsonconv/v1', '/test-notification',
+                array(
+                    'methods' => 'post',
+                    'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_notification')
+                )
+            );
         }
 
     }
@@ -363,7 +370,7 @@ class API {
         }
 
         if ($response_code !== 200) {
-            return self::reply_with_response_error($response);
+            return self::reply_with_response_error($response, $session_id);
         } else {
             $response_body['session_id'] = $session_id;  # inject session_id
             do_action('watsonconv_message_parsed', $response_body);
@@ -419,18 +426,41 @@ class API {
      * Save error message into DB and reply with WP_Error object
      *
      * @param $response
-     * @return \WP_Error
+     * @param $session_id
+     * @return array
      */
-    private static function reply_with_response_error($response) {
+    private static function reply_with_response_error($response, $session_id = NULL) {
+        // Logging response to debug log
+        Logger::log_message("Watson Assistant response error", self::get_debug_info($response));
+        // Retrieving response code
+        $response_code = wp_remote_retrieve_response_code($response);
+        // Returning WP_Error object
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
-        $error_log = get_option('watsonconv_error_log', array());
-        $error_log[] = self::get_debug_info($response);
-        update_option('watsonconv_error_log', array_slice($error_log, -3, 3));
-        return new \WP_Error(
+        // Error object, not sure if we need it
+        $error_object = new \WP_Error(
             'watson_error',
             $response_body,
             empty($response_code) ? array() : array('status' => $response_code)
         );
+        // Constructing response to deliver to user
+        $fallback_response = array(
+            "output" => array(
+                "generic" => array(
+                    array(
+                        "response_type" => "text",
+                        "text" => "Something went wrong."
+                    ),
+                    array(
+                        "response_type" => "text",
+                        "text" => "Cannot process your message. Try again later."
+                    )
+                )
+            ),
+            "session_id" => $session_id
+        );
+
+        return $fallback_response;
+
     }
 
     public static function reset_total_usage() {
@@ -516,6 +546,7 @@ class API {
         return $ip_addr;
     }
 
+    // Getting debug info from server response
     public static function get_debug_info($response) {
         $response_body = wp_remote_retrieve_body($response);
 
@@ -596,8 +627,6 @@ class API {
     //works if errors occur while sending messages
     public static function on_mail_error( $wp_error )
     {
-        $error_log = get_option('watsonconv_error_log', array());
-        $error_log[] = $wp_error;
-        update_option('watsonconv_error_log', array_slice($error_log, -3, 3));
+        Logger::log_wp_error($wp_error);
     }
 }

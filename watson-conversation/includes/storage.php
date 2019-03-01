@@ -395,6 +395,7 @@ class Storage{
     public static function perform_insert($table, $fields_data) {
         // Checking if table exists
         if(!Storage::table_exists($table)) {
+            Logger::error_with_args("INSERT into nonexistent table", $table);
             return NULL;
         }
 
@@ -430,6 +431,12 @@ class Storage{
         $prepared_sql = $wpdb->prepare($intermediate_sql, $values);
         // Executing request
         $query_result = $wpdb->query($prepared_sql);
+
+        // Possible error handling
+        if($query_result === false) {
+            Logger::handle_wpdb_error("INSERT operation failure");
+        }
+
         // Getting last inserted id
         $record_id = $wpdb->insert_id;
         return $record_id;
@@ -440,6 +447,32 @@ class Storage{
         // Wordpress database object
         global $wpdb;
         return $wpdb->prefix . Storage::$storage_prefix . $short_table_name;
+    }
+
+    // Prepare variable before serialization to JSON in DB
+    public static function prepare_var_for_json_extract($data) {
+        // Getting variable type
+        $type = gettype($data);
+
+        // If type is object, serializing it to json, then deserializing to 
+        // array
+        if($type == "object") {
+            $data = json_decode(json_encode($data), true);
+            $type = "array";
+        }
+
+        // If type is array, then sorting it by keys in ascending order
+        // Then processing its values
+        if($type == "array") {
+            ksort($data);
+            $class_name = __NAMESPACE__ . "\\Storage";
+            $function_name = "prepare_var_for_json_extract";
+            $callable = array($class_name, $function_name);
+            $mapped_data = array_map($callable, $data);
+            $data = $mapped_data;
+        }
+
+        return $data;
     }
 
     // Returning "format" and converted value for database request
@@ -454,7 +487,7 @@ class Storage{
             "float" => "%f",
             "string" => "%s",
             "boolean" => "%d",
-            "json" => "CAST(%s AS JSON)",
+            "json" => "JSON_EXTRACT(%s, '$')",
             "uuid" => "UNHEX(REPLACE(%s,'-',''))",
             "timestamp" => "FROM_UNIXTIME()"
         );
@@ -475,7 +508,7 @@ class Storage{
             $target_value = (integer)$src_value;
         }
         else if($type == "json") {
-            $target_value = json_encode($src_value);
+            $target_value = json_encode(self::prepare_var_for_json_extract($src_value));
         }
         else if($type == "uuid") {
             $target_value = (string)$src_value;
@@ -553,6 +586,7 @@ class Storage{
     public static function perform_select($table, $where, $fields, $limit) {
         // Checking if table exists
         if(!Storage::table_exists($table)) {
+            Logger::error_with_args("SELECT from nonexistent table", $table);
             return NULL;
         }
 
@@ -595,6 +629,12 @@ class Storage{
 
         // Performing request and getting result
         $raw_result = $wpdb->get_results($full_expression, ARRAY_A);
+
+        // Possible error handling
+        if($raw_result === false) {
+            Logger::handle_wpdb_error("SELECT operation failure");
+        }
+
         // Processing result
         $result = Storage::process_select_result($table, $raw_result);
 
@@ -772,19 +812,24 @@ class Storage{
     }
 
     // Generic DELETE
-    public static function delete($table_name, $where_array = NULL) {
+    public static function delete($table_name, $where_array = NULL, $limit = NULL) {
         // Getting data for constructing WHERE clause
         $prepared_where = Storage::prepare_where_clause($where_array);
 
+        if(isset($limit)) {
+            $limit = (integer)$limit;
+        }
+
         // Performing DELETE query based on prepared values
-        $result = Storage::perform_delete($table_name, $prepared_where);
+        $result = Storage::perform_delete($table_name, $prepared_where, $limit);
         return $result;
     }
 
     // Performing DELETE
-    public static function perform_delete($table, $where) {
+    public static function perform_delete($table, $where, $limit = NULL) {
         // Checking if table exists
         if(!Storage::table_exists($table)) {
+            Logger::error_with_args("DELETE from nonexistent table", $table);
             return NULL;
         }
 
@@ -801,20 +846,35 @@ class Storage{
             $where_expression = $where["expression"];
             $where_values = $where["values"];
         }
-        else if(empty($where)) {
+
+        // If there's nor limit, neither WHERE clause, returning 0
+        if(empty($where) && !isset($limit) && $limit <= 0) {
             return 0;
         }
 
+        // LIMIT expression
+        $limit_expression = "";
+        if(isset($limit) && $limit > 0) {
+            $limit_expression = "\nLIMIT {$limit}";
+        }
+
         // Full DELETE query
-        $full_expression = "{$delete_from_expression}{$where_expression}";
+        $full_expression = "{$delete_from_expression}{$where_expression}{$limit_expression}";
 
         // Wordpress wpdb object
         global $wpdb;
-        // Running $wpdb->prepare on query
-        $full_expression = $wpdb->prepare($full_expression, $where_values);
-
+        // Running $wpdb->prepare on query unless WHERE clause is empty
+        if(!empty($where_expression)) {
+            $full_expression = $wpdb->prepare($full_expression, $where_values);
+        }
         // Performing request and getting number of affected rows
         $result = $wpdb->query($full_expression);
+
+        // Possible error handling
+        if($result === false) {
+            Logger::handle_wpdb_error("DELETE operation failure");
+        }
+
         return $result;
     }
 
@@ -942,7 +1002,7 @@ class Storage{
     public static function count_rows($table_name) {
         // Checking if table exists
         if(!Storage::table_exists($table_name)) {
-            return NULL;
+            Logger::error_with_args("Counting rows in nonexistent table", $table);
         }
 
         // Wordpress database object
@@ -1029,15 +1089,33 @@ class Storage{
         // If new offset value is smaller than excess value, scheduling one more
         // cleanup as a first task
         if($offset < $excess_number) {
-            Background_Task_Runner::new_task("session_storage_check");
+            if(!Background_Task_Runner::task_already_exists("session_storage_check")) {
+                Background_Task_Runner::new_task("session_storage_check");
+            }
         }
         // Updating offset option
         update_option("watsonconv_cleanup_offset", $offset, "yes");
 
         // Iterating through result and scheduling their deletion
         foreach($result as $record) {
-            Background_Task_Runner::new_task("delete_session", $record["id"]);
+            if(!Background_Task_Runner::task_already_exists("delete_session", $record["id"])) {
+                Background_Task_Runner::new_task("delete_session", $record["id"]);
+            }
         }
+    }
+
+    // Generic wpdb query wrapper with error handling
+    public static function perform_query($query) {
+        // Global database object
+        global $wpdb;
+        // Performing query
+        $result = $wpdb->query($query);
+        // Poswsible error logging
+        if($result === false) {
+            Logger::handle_wpdb_error("Generic query failure");
+        }
+        // Returning result
+        return $result;
     }
 }
 

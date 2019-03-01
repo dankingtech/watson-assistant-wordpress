@@ -2,8 +2,8 @@
 Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
-Tested up to: 5.0
-Stable tag: 0.8.4
+Tested up to: 5.1
+Stable tag: 0.8.5
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -87,6 +87,13 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog ==
+
+= 0.8.5 =
+* Ensure conversation is shared between tabs
+* Improved error handling
+* Improved plug-in stability
+* Fixed MariaDB compatibility
+* Refactored "Having Issues?" tab, added "Download full log file" link, added "Copy messages to clipboard" button
 
 = 0.8.4 =
 * Added Chat History Collection feature

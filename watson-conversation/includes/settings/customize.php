@@ -554,6 +554,31 @@ class Customize {
     public static function clear_css_cache($upgrader_object, $options) {
         try {
             $current_plugin_path_name = plugin_basename( __FILE__ );
+            
+            // Array to store results of checks
+            $correct = array();
+            // Checking if $options is passed to this function
+            $correct["options"] = isset($options);
+            // Checking if action is set
+            $correct["action"] = isset($options["action"]);
+            // Checking if option type is set
+            $correct["type"] = isset($options["type"]);
+            // Checking if we have plugins list
+            $correct["plugins_exist"] = isset($options["plugins"]);
+            // Checking if plugins list is array
+            if($correct["plugins_exist"]) {
+                $correct["plugins_array"] = is_array($options["plugins"]);
+            }
+            else {
+                $correct["plugins_array"] = false;
+            }
+            // Checking if everything is alright
+            foreach ($correct as $check_name => $check_result) {
+                // If one of the checks failed, exiting
+                if(!$check_result) {
+                    return;
+                }
+            }
 
             if ($options['action'] == 'update' && $options['type'] == 'plugin' ) {
                 foreach($options['plugins'] as $each_plugin){

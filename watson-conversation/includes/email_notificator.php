@@ -30,19 +30,37 @@ class Email_Notificator {
      * @param bool $force_send
      * @return bool
      */
-    public static function send_summary_notification($force_send=false) {
+    public static function send_summary_notification($force_send=false, $emails=NULL) {
         $res = false;
-        $email = get_option('watsonconv_notification_email_to', '');
-        if (!empty($email)) {
+
+        if(empty($emails)) {
+            $emails = get_option('watsonconv_notification_email_to', '');
+        }
+
+        $emails_array = explode(",", $emails);
+        $errors_array = array();
+        foreach($emails_array as $email) {
+            $email = trim($email);
+
             $prev_ts = intval(get_option('watsonconv_notification_summary_prev_ts', 0));
             $topic = 'Watson Assistant plug-in for WordPress: ChatBot Usage Summary';
             $count = self::get_session_count_since_last_time($prev_ts);
             if ($count > 0 || $force_send) {
                 $message = 'ChatBot served ' . $count . ' session(s) since ' . date('r', $prev_ts);
                 $res = wp_mail($email, $topic, $message);
+
+                if(!$res) {
+                    array_push($errors_array, $GLOBALS['phpmailer']->ErrorInfo);
+                }
             }
         }
-        return $res;
+
+        if(count($errors_array) > 0) {
+            return $errors_array;
+        }
+        else {
+            return true;
+        }
     }
 
     /**

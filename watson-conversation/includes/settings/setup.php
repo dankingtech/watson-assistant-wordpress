@@ -225,12 +225,93 @@ class Setup {
             Please don't post your credentials (password/API key) on the public forum. Instead, if required, use the following
             e-mail box for private communication: <a href="mailto:help@intela.io">help@intela.io</a>
         </p>
-        <div class="watson-settings-box">
-            <pre><?php
-                echo json_encode(get_option('watsonconv_error_log'), defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 128);
-                ?></pre>
-        </div>
+        
+        <?php self::render_error_log(); ?>
+        
         <?php
+    }
+
+    public static function render_error_log($offset = 0) {
+        // Getting error log from database
+        $log = \WatsonConv\Storage::select("debug_log");
+        $log_entries_number = count($log);
+        $log_limit = ($log_entries_number > 50) ? 50 : $log_entries_number;
+        // Making last messages appear first
+        $log = array_reverse($log);
+        // Cutting array to 50 elements
+        $log = array_slice($log, $offset, $log_limit);
+
+
+
+        // $load_more_button = '<button type="button" id="watsonconv_load_more_log_messages" class="button-primary">
+        //     Load 50 more
+        // </button>';
+        $copy_logs_button = "<button type=\"button\" id=\"watsonconv_copy_log_messages\" class=\"button-primary\">
+            Copy {$log_limit} messages to clipboard
+        </button>";
+
+        // Link to download full JSON log
+        // Unique id for log fetching event
+        $get_log_event_id = uniqid();
+        // Nonce for that action
+        $fetch_nonce = wp_create_nonce( "log_fetch_{$get_log_event_id}" );
+        // Link creation timestamp
+        update_option("watsonconv_log_fetch_ts", time(), "no");
+        // Writing new action id and erasing old one
+        update_option("watsonconv_log_fetch_event", $get_log_event_id, "no");
+
+        $rest_nonce = wp_create_nonce( "wp_rest" );
+        $rest_url = get_rest_url();
+        $first_param_separator = "?";
+        if( !(strpos($rest_url, $first_param_separator) === false) ) {
+            $first_param_separator = "&";
+        }
+        $full_rest_endpoint = "{$rest_url}watsonconv/v1/logs/{$first_param_separator}fetch_nonce={$fetch_nonce}&_wpnonce={$rest_nonce}";
+        $full_log_link = "<a href=\"{$full_rest_endpoint}\" download>Download full log file</a>";
+
+        $download_failed_text = "<strong>This link is single use and has has short lifespan to avoid exposing your sensitive data. If download failed, refresh the page and try to download log again.</strong>";
+        
+        echo "<p>{$full_log_link} {$download_failed_text}</p>";
+
+        // Log container start
+        echo '<div class="watson-settings-box" id="watsonconv_log_container">';
+        
+        // Total messages number and number of shown ones
+        $total_messages_text = "<strong>{$log_entries_number} log messages total.</strong>";
+        $showing_messages_text = "<span id=\"watsonconv_log_messages_shown\">Showing last {$log_limit}.</span>";
+        echo "<div>{$total_messages_text} {$showing_messages_text}</div> {$copy_logs_button}";
+
+        // Current event code
+        $current_event = 0;
+        // Iterating through log messages and outputting them
+        foreach($log as $log_message) {
+            // Event id
+            $event = $log_message["p_event"];
+            if($event != $current_event) {
+                $current_event = $event;
+                $timestamp = $log_message["s_created"];
+                $human_date = date("Y-m-d H:i:s", $timestamp);
+                echo "<hr>";
+                echo "<p class=\"watsonconv_log_event\" id=\"watsonconv_log_event_{$event}\"><i>Event {$event}, {$human_date}</i></p>";
+            }
+            // Message string
+            $message_id = $log_message["id"];
+            $message_text = $log_message["p_message"];
+            $message_html_class = "watsonconv_log_message watsonconv_event_message_{$event}";
+            $message_html_id = "watsonconv_log_message_{$message_id}";
+            $message_content = "<strong>#{$message_id}:</strong> {$message_text}";
+            echo "<p class=\"{$message_html_class}\" id=\"{$message_html_id}\">{$message_content}</p>";
+            // Message details
+            $details_html_class = "watson-settings-box watsonconv_log_details watsonconv_event_details_{$event}";
+            $details_html_id = "watsonconv_log_details_{$message_id}";
+            $message_details = "";
+            if(isset($log_message["p_details"])) {
+                $message_details = $log_message["p_details"];
+            }
+            echo "<pre class=\"{$details_html_class}\" id=\"{$details_html_id}\">{$message_details}</pre>";
+        }
+
+        echo '</div>';
     }
 
     // ------------ Workspace Credentials ---------------

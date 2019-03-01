@@ -1293,7 +1293,7 @@ class Advanced {
         // Setting id
         $notification_id = 'watsonconv_notification_enabled';
         // Setting title
-        $notification_title = 'Enable notification feature';
+        $notification_title = 'Enable notification';
         // Setting rendering callback
         $notification_callback = array(__CLASS__, 'render_notification_enabled');
         // Adding setting to page
@@ -1306,7 +1306,7 @@ class Advanced {
         // Setting id
         $notification_email_to_id = 'watsonconv_notification_email_to';
         // Setting title
-        $notification_email_to_title = 'Recipient e-mail address';
+        $notification_email_to_title = 'E-mail addresses to be notified';
         // Setting rendering callback
         $notification_email_to_callback = array(__CLASS__, 'render_notification_email_to');
         // Adding setting to page
@@ -1318,7 +1318,7 @@ class Advanced {
         // Setting id
         $notification_summary_interval_id = 'watsonconv_notification_summary_interval';
         // Setting title
-        $notification_summary_interval_title = 'Send chatbot invocation summary';
+        $notification_summary_interval_title = 'How often do you want to be notified';
         // Setting rendering callback
         $notification_summary_interval_callback = array(__CLASS__, 'render_notification_summary_interval');
         // Adding setting to page
@@ -1328,7 +1328,7 @@ class Advanced {
 
         // Send test notification
         $notification_send_test_id = 'watsonconv_notification_send_test';
-        add_settings_field($notification_send_test_id, '', array(__CLASS__, 'render_send_test_notification_enabled'),
+        add_settings_field($notification_send_test_id, '', array(__CLASS__, 'render_send_test_notification_email'),
             $settings_page, $section_id);
         register_setting(self::SLUG, $notification_send_test_id);
 
@@ -1339,7 +1339,7 @@ class Advanced {
     // Description of chat history features
     public static function render_notification_description() {
         ?>
-        <p>This section allows you to configure E-mail notification feature.</p>
+        <p>Would you like to be notified when customers have conversations with your chatbot? You can configure this plugin to send you and your colleagues an email when these conversations take place. You can choose to be notofied every hour, every day or week.</p>
         <? if (get_option('watsonconv_history_enabled', '') !== 'yes') { ?>
             <p class="update-message notice inline notice-warning notice-alt" style="padding-top: 0.5em; padding-bottom: 0.5em">
                 <b>Note:</b> In order to get correct notifications please <strong>Enable</strong> Chat History collection.<br>
@@ -1383,13 +1383,14 @@ class Advanced {
             'watsonconv_notification_summary_interval',
             'no',
             array(
+                /*
                 array(
                     'label' => esc_html__('Never', self::SLUG),
                     'value' => '0'
-                )/*, array(
+                ), array(
                     'label' => esc_html__('Minutely', self::SLUG),
                     'value' => '60'
-                )*/, array(
+                ),*/ array(
                     'label' => esc_html__('Hourly', self::SLUG),
                     'value' => '3600'
                 ), array(
@@ -1403,33 +1404,69 @@ class Advanced {
         );
     }
 
-    public static function render_send_test_notification_enabled() {
+    public static function render_send_test_notification_email() {
         $credentials = get_option('watsonconv_notification_send_test');
         ?>
-        <fieldset>
-            <input
-                    type="checkbox" id="watsonconv_notification_send_test"
-                    name="watsonconv_notification_send_test"
-                    value="true"
-            />
-            <label for="watsonconv_notification_send_test">
-                Send a test notification e-mail (immediately after saving)
-            </label>
-        </fieldset>
+        <button type="button" id="watsonconv_notification_send_test" class="button-primary">
+            Send test notification e-mail
+        </button>
         <?php
     }
 
-    public static function validate_notification_email_to($email) {
-        if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    public static function validate_notification_email_to($emails_string) {
+        $validation_result = self::validate_emails_string($emails_string);
+        $emails = $validation_result["all"];
+        $malformed_emails = $validation_result["malformed"];
+
+        // Processing malformed addresses
+        $malformed_emails_count = count($malformed_emails);
+        if(count($malformed_emails) > 0) {
+            $address_wording = ($malformed_emails_count == 1) ? "This address is" : "These addresses are";
+            $incorrect_addresses = implode(", ", $malformed_emails);
+            $error_message = "{$address_wording} not correct: {$incorrect_addresses}. Please use valid format for email (e.g. email@example.com).";
             add_settings_error(
                 'watsonconv_notification_email_to',
                 'invalid-email',
-                'Please use valid format for email (e.g. email@example.com).'
+                $error_message
             );
             return get_option('watsonconv_notification_email_to');
         } else {
-            return $email;
+            return implode(", ", $emails);
         }
+    }
+
+    public static function validate_emails_string($emails_string) {
+        // Empty array to store emails
+        $emails = array();
+        // Filling array
+        $emails = explode(",", $emails_string);
+        // Amount of emails
+        $emails_count = count($emails);
+        // Array for malformed emails
+        $malformed_emails = array();
+        // Trimming spaces and validating addresses
+        for($i = 0; $i < $emails_count; $i++) {
+            // Trimming spaces
+            $emails[$i] = trim($emails[$i]);
+            // Adding malformed emails to the array 
+            if( !filter_var($emails[$i], FILTER_VALIDATE_EMAIL) ) {
+                // Pushing address to array, adding quotes
+                array_push($malformed_emails, "\"{$emails[$i]}\"");
+            }
+        }
+        // Is string valid?
+        $valid_string = false;
+        if( (count($malformed_emails) == 0) && (count($emails) > 0) ) {
+            $valid_string = true;
+        }
+        // Result of validation
+        $result = array(
+            "string" => $emails_string,
+            "all" => $emails,
+            "malformed" => $malformed_emails,
+            "valid" => $valid_string
+        );
+        return $result;
     }
 
     public static function validate_notification_settings($settings) {
@@ -1446,22 +1483,62 @@ class Advanced {
                 $is_valid = false;
             }
 
-            if ($is_valid && get_option('watsonconv_notification_send_test', '') === 'true') {
-                if (\WatsonConv\Email_Notificator::send_summary_notification(true)) {
-                    add_settings_error(
-                        'watsonconv_notification_settings',
-                        'valid-credentials',
-                        'Test E-mail successfully sent',
-                        'updated'
-                    );
-
-                } else {
-                    add_settings_error('watsonconv_notification_settings', 'error-sending-email',
-                        'Unable to send test email. Please consider Configuring Advanced Email Settings at Mail Settings tab');
-                }
-            }
+            
             \WatsonConv\Email_Notificator::reset_summary_prev_ts();
         }
         return $settings;
+    }
+
+    public static function send_test_notification() {
+        // Check if current user is permitted to control plugins
+        if(!current_user_can('edit_plugins')) {
+            return new \WP_REST_Response('Not Authorized', 403);
+        }
+
+        $emails_list = $_POST['emails'];
+        $emails_validation = self::validate_emails_string($emails_list);
+        $status_message = "";
+        $error = false;
+
+        $emails_plural_affix = (count($emails_validation["all"]) > 1) ? "s" : "";
+
+
+        if($emails_validation["valid"]) {
+            $sending_status = \WatsonConv\Email_Notificator::send_summary_notification(true, $emails_list);
+
+            if($sending_status === true) {
+                $status_message = "Email{$emails_plural_affix} successfully sent";
+            }
+            else if(is_array($sending_status)) {
+                $error = true;
+                $status_message = "Errors while sending email{$emails_plural_affix}: " . implode(", ", $sending_status) . ". Please check your settings on \"Email Settings\" tab.";
+            }
+        }
+        else if(!$emails_validation["valid"]) {
+            $error = true;
+            if( count($emails_validation["all"]) == 0 ) {
+                $status_message = "No email addresses";
+            }
+            else {
+                $malformed_emails = $emails_validation["malformed"];
+                $address_wording = (count($malformed_emails) == 1) ? "This address is" : "These addresses are";
+                $incorrect_addresses = implode(", ", $malformed_emails);
+                $status_message = "{$address_wording} not correct: {$incorrect_addresses}. Please use valid format for email (e.g. email@example.com).";
+            }
+        }
+
+        return self::render_test_notification_status($status_message, $error);
+    }
+
+    public static function render_test_notification_status($message, $is_error){
+        $error_class = $is_error ? "error" : "updated";
+        $message_tag_id = "setting-error-settings_error";
+        $message_tag_class = "{$error_class} settings-error notice is-dismissible";
+        $message_tag_start = "<div id=\"{$message_tag_id}\" class=\"{$message_tag_class}\">";
+        $message_paragraph = "<p>{$message}</p>";
+        $dismiss_button = '<button type="button" class="notice-dismiss"><span class="screen-reader-text">Hide this notice.</span></button>';
+        $message_tag_end = "</div>";
+        $full_html = "{$message_tag_start}{$message_paragraph}{$dismiss_button}{$message_tag_end}";
+        return $full_html;
     }
 }

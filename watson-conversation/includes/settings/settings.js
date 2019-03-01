@@ -84,6 +84,74 @@ jQuery(document).ready(function($) {
     })
     .trigger('change');
 
+  // ---- Having Issues? Section ----
+
+  // Button "Copy X messages to clipboard"
+  var copyLogsButton = document.getElementById("watsonconv_copy_log_messages");
+  // Function to copy log messages after click
+  copyLogsButton.onclick = function() {
+    // Block with all the messages
+    var logContainer = document.getElementById("watsonconv_log_container");
+    // Variable to store result text
+    var logText = "";
+
+    // Elements with events and total number of them
+    var eventElements = document.getElementsByClassName("watsonconv_log_event");
+    var eventsNumber = eventElements.length;
+
+    // Iterating through events
+    for(var i = 0; i < eventsNumber; i++) {
+      // Event text with separator
+      var eventFullText = "--------------------\r\n";
+
+      // Getting event element and its element id
+      var eventElement = eventElements[i];
+      var eventId = eventElement.id.split("_")[3];
+
+      // Getting event text and adding to event text
+      var eventText = eventElement.textContent;
+      eventFullText += eventText + "\r\n\r\n";
+
+      // Getting messages for that event and message details
+      var eventMessages = document.getElementsByClassName("watsonconv_event_message_" + eventId);
+      var eventMessagesNumber = eventMessages.length;
+      var eventDetails = document.getElementsByClassName("watsonconv_event_details_" + eventId);
+      var eventDetailsNumber = eventDetails.length;
+
+      // Adding message texts and message details to event text
+      for(var j = 0; j < eventMessagesNumber; j++) {
+        messageText = eventMessages[j].textContent;
+        eventFullText += messageText + "\r\n";
+        detailsText = eventDetails[j].textContent;
+        eventFullText += detailsText + "\r\n\r\n";
+      }
+
+      // Adding message
+      logText += eventFullText;
+    }
+
+    // Creating textarea element for text copying
+    var proxyTextarea = document.createElement("textarea");
+    // Setting the style to hide it
+    proxyTextarea.style.height = "10px";
+    proxyTextarea.style.width = "10px";
+    proxyTextarea.style.position = "fixed";
+    proxyTextarea.style.top = "-10px";
+    proxyTextarea.visibility = "hidden";
+    // Inserting log text in textarea
+    proxyTextarea.value = logText;
+    // Appending textarea to the end of the body
+    document.body.appendChild(proxyTextarea);
+    // Selecting and copying text
+    proxyTextarea.select();
+    document.execCommand('copy');
+    // Removing textarea
+    proxyTextarea.remove();
+
+    // Notifying user about copying
+    alert("Log copied to clipboard");
+  }
+
   // ---- Voice Calling Section ----
 
   $('input[name="watsonconv_use_twilio"]')
@@ -137,6 +205,30 @@ jQuery(document).ready(function($) {
         .filter('input:checked')
         .trigger('change');
 
+    $('#watsonconv_notification_send_test')
+        .on('click', function () {
+            var emails = $('#watsonconv_notification_email_to').val();
+            var siteUrl = window.location.origin;
+            var restRoute = "/index.php?rest_route=/watsonconv/v1/test-notification";
+            var fullUrl = siteUrl + restRoute;
+            $.ajax({
+                type: "POST",
+                url: fullUrl,
+                data: {emails: emails},
+                beforeSend: function ( xhr ) {
+                    xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce);
+                },
+                success: function( response ) {
+                    $(".notice-info").after(response);
+                },
+                error: function(message) {
+                    $(".notice-info").after(
+                        '<div class="error settings-error notice is-dismissible"><p>Error occurred:<br>' + message.responseText + '</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Hide this notice</span></button></div>');
+                }
+            })
+        });
+
+  // ---- Senfing test notification ---
     $('#watsonconv_button_check_email_sending')
         .on('click', function () {
             var email = $('#watsonconv_mail_vars_email_address_to').val();
@@ -228,7 +320,8 @@ jQuery(document).ready(function($) {
             const ctrls = $(
                 'input[name="watsonconv_notification_email_to"] ,' +
                 'input[name="watsonconv_notification_summary_interval"] ,' +
-                'input[name="watsonconv_notification_send_test"]'
+                'input[name="watsonconv_notification_send_test"] , ' + 
+                '#watsonconv_notification_send_test'
             );
             // ctrls.prop('disabled', !valueEnabled);
             if (valueEnabled) {
