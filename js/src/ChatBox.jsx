@@ -134,6 +134,11 @@ export default class ChatBox extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        // Fix for missing initial greeting
+        if (!this.state.convStarted && !this.props.isMinimized) {
+            this.reset();
+        }
+        
         if (prevState.messages.length !== this.state.messages.length) {
             // Ensure that chat box stays scrolled to bottom
             if (typeof(this.messageList) !== 'undefined') {

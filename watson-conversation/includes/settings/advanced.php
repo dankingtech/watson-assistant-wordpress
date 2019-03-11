@@ -1414,24 +1414,26 @@ class Advanced {
     }
 
     public static function validate_notification_email_to($emails_string) {
-        $validation_result = self::validate_emails_string($emails_string);
-        $emails = $validation_result["all"];
-        $malformed_emails = $validation_result["malformed"];
+        if($emails_string){
+            $validation_result = self::validate_emails_string($emails_string);
+            $emails = $validation_result["all"];
+            $malformed_emails = $validation_result["malformed"];
 
-        // Processing malformed addresses
-        $malformed_emails_count = count($malformed_emails);
-        if(count($malformed_emails) > 0) {
-            $address_wording = ($malformed_emails_count == 1) ? "This address is" : "These addresses are";
-            $incorrect_addresses = implode(", ", $malformed_emails);
-            $error_message = "{$address_wording} not correct: {$incorrect_addresses}. Please use valid format for email (e.g. email@example.com).";
-            add_settings_error(
-                'watsonconv_notification_email_to',
-                'invalid-email',
-                $error_message
-            );
-            return get_option('watsonconv_notification_email_to');
-        } else {
-            return implode(", ", $emails);
+            // Processing malformed addresses
+            $malformed_emails_count = count($malformed_emails);
+            if(count($malformed_emails) > 0) {
+                $address_wording = ($malformed_emails_count == 1) ? "This address is" : "These addresses are";
+                $incorrect_addresses = implode(", ", $malformed_emails);
+                $error_message = "{$address_wording} not correct: {$incorrect_addresses}. Please use valid format for email (e.g. email@example.com).";
+                add_settings_error(
+                    'watsonconv_notification_email_to',
+                    'invalid-email',
+                    $error_message
+                );
+                return get_option('watsonconv_notification_email_to');
+            } else {
+                return implode(", ", $emails);
+            }
         }
     }
 
@@ -1483,7 +1485,7 @@ class Advanced {
                 $is_valid = false;
             }
 
-            
+
             \WatsonConv\Email_Notificator::reset_summary_prev_ts();
         }
         return $settings;

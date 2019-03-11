@@ -218,12 +218,7 @@ class Setup {
             If you have successfully connected your chatbot to the website on the previous page,
             but your chatbot doesn't seem to be working on your website, then you can create a support
             post <a href="https://wordpress.org/support/plugin/conversation-watson" target="_blank">
-                in this forum</a>. If the following box is populated with text, then please copy that and
-            include it in your support post.
-        </p>
-        <p>
-            Please don't post your credentials (password/API key) on the public forum. Instead, if required, use the following
-            e-mail box for private communication: <a href="mailto:help@intela.io">help@intela.io</a>
+                in this forum</a>.
         </p>
         
         <?php self::render_error_log(); ?>
@@ -246,8 +241,9 @@ class Setup {
         // $load_more_button = '<button type="button" id="watsonconv_load_more_log_messages" class="button-primary">
         //     Load 50 more
         // </button>';
+        $formatted = $log_limit > 1 ? $log_limit . ' messages' : 'a message';
         $copy_logs_button = "<button type=\"button\" id=\"watsonconv_copy_log_messages\" class=\"button-primary\">
-            Copy {$log_limit} messages to clipboard
+            Copy {$formatted} to clipboard
         </button>";
 
         // Link to download full JSON log
@@ -267,11 +263,28 @@ class Setup {
             $first_param_separator = "&";
         }
         $full_rest_endpoint = "{$rest_url}watsonconv/v1/logs/{$first_param_separator}fetch_nonce={$fetch_nonce}&_wpnonce={$rest_nonce}";
-        $full_log_link = "<a href=\"{$full_rest_endpoint}\" download>Download full log file</a>";
+        $full_log_link = "You can <a href=\"{$full_rest_endpoint}\" target='_blank' download>download full log file with complete information</a>.<br>";
 
-        $download_failed_text = "<strong>This link is single use and has has short lifespan to avoid exposing your sensitive data. If download failed, refresh the page and try to download log again.</strong>";
+        $download_failed_text = "<strong>This link is a single use and has a short lifespan to avoid exposure of your site's sensitive data.<br>If download failed, please refresh the page and try to download log again.</strong>";
         
         echo "<p>{$full_log_link} {$download_failed_text}</p>";
+
+        ?>
+        <p>Information included in file:</p>
+        <ul>
+            <li>Watson Assistant plugin log messages</li>
+            <li>Watson Assistant plugin settings</li>
+            <li>Versions of PHP, MySQL, and Wordpress</li>
+            <li>List of installed WordPress plugins</li>
+            <li>Site address</li>
+            <li>List of database tables with information about database engine <strong>(without any data from tables)</strong>.</li>
+        </ul>
+        <p>
+            <strong>Please don't post this file and your credentials (password/API keys) on the public forum. Instead, if required, use the following
+            e-mail box for private communication: <a href="mailto:help@intela.io">help@intela.io</a></strong>
+        </p>
+
+        <?php
 
         // Log container start
         echo '<div class="watson-settings-box" id="watsonconv_log_container">';

@@ -179,12 +179,51 @@ class Logger {
             return new \WP_REST_Response('Not authorized for log fetching', 403);
         }
 
+
+        // Creating log "object" array
+        $log_object = array();
+
+        // Adding log fetching event to the log
+        // Unique event for log fetch
+        $log_fetch_event_id = uniqid();
+        // Log fetching timestamp
+        $log_object["timestamp"] = time();
+        // Getting site url
+        $log_object["site_url"] = get_site_url();
+        // Getting WP version
+        global $wp_version;
+        $log_object["wp_version"] = $wp_version;
+        // Getting PHP version
+        $log_object["php_version"] = phpversion();
+        // Getting MySQL version
+        global $wpdb;
+        $db_prefix = $wpdb->prefix;
+        $log_object["mysql_version"] = $wpdb->get_var("SELECT VERSION()", 0, 0);
+        // Getting watsonconv plugin options
+        $plugin_options_raw = $wpdb->get_results("SELECT option_name, option_value FROM wp_options WHERE option_name LIKE '%watsonconv%'", ARRAY_A);
+        $plugin_options_processed = array();
+        foreach ($plugin_options_raw as $plugin_option) {
+        	$plugin_options_processed[$plugin_option["option_name"]] = $plugin_option["option_value"];
+        }
+        $log_object["plugin_options"] = $plugin_options_processed;
+        // Getting MySQL tables information
+        $log_object["database_tables"] = $wpdb->get_results("SHOW TABLE STATUS", ARRAY_A);
+
+        // Getting plugins list
+        if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		// Getting lists of plugins and must-use plugins
+		$log_object["plugins"] = get_plugins();
+		$log_object["mu-plugins"] = get_mu_plugins();
+
+        // Retrieving log from database
 		$log = \WatsonConv\Storage::select("debug_log");
         $log_entries_number = count($log);
         // Making last messages appear first
-        $log = array_reverse($log);
+        $log_object["journal"] = array_reverse($log);
 
-        $result = new \WP_REST_Response($log);
+        $result = new \WP_REST_Response($log_object);
         $result->header("Content-Disposition", "attachment; filename=\"log.json\"");
         return $result;
 	}
