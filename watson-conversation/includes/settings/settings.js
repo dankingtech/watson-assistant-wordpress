@@ -13,13 +13,13 @@ if (typeof localStorage !== 'undefined') {
 }
 
 function luminance(hex) {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
   if (!Array.isArray(result) || result.length !== 4) {
     return 0;
   }
 
-  var rgb = result.slice(1, 4).map(function(val) {
+  let rgb = result.slice(1, 4).map(function(val) {
     val = parseInt(val, 16) / 255;
 
     if (val <= 0.03928 ) {
@@ -87,70 +87,65 @@ jQuery(document).ready(function($) {
   // ---- Having Issues? Section ----
 
   // Button "Copy X messages to clipboard"
-  var copyLogsButton = document.getElementById("watsonconv_copy_log_messages");
-  // Function to copy log messages after click
-  copyLogsButton.onclick = function() {
+  $('#watsonconv_copy_log_messages').click( function () {
     // Block with all the messages
-    var logContainer = document.getElementById("watsonconv_log_container");
+    let logContainer = $('#watsonconv_log_container');
     // Variable to store result text
-    var logText = "";
+    let logText = "";
 
     // Elements with events and total number of them
-    var eventElements = document.getElementsByClassName("watsonconv_log_event");
-    var eventsNumber = eventElements.length;
+    let eventElements = $('.watsonconv_log_event');
+    let eventsNumber = eventElements.length;
 
     // Iterating through events
-    for(var i = 0; i < eventsNumber; i++) {
+    for (let i = 0; i < eventsNumber; i++) {
       // Event text with separator
-      var eventFullText = "--------------------\r\n";
+      let eventFullText = "--------------------\r\n";
 
       // Getting event element and its element id
-      var eventElement = eventElements[i];
-      var eventId = eventElement.id.split("_")[3];
+      let eventElement = eventElements[i];
+      let eventId = eventElement.id.split("_")[3];
 
       // Getting event text and adding to event text
-      var eventText = eventElement.textContent;
+      let eventText = eventElement.textContent;
       eventFullText += eventText + "\r\n\r\n";
 
       // Getting messages for that event and message details
-      var eventMessages = document.getElementsByClassName("watsonconv_event_message_" + eventId);
-      var eventMessagesNumber = eventMessages.length;
-      var eventDetails = document.getElementsByClassName("watsonconv_event_details_" + eventId);
-      var eventDetailsNumber = eventDetails.length;
+      let eventMessages = $('.watsonconv_event_message_' + eventId);
+      let eventMessagesNumber = eventMessages.length;
+      let eventDetails = $('.watsonconv_event_details_' + eventId);
+      let eventDetailsNumber = eventDetails.length;
 
       // Adding message texts and message details to event text
-      for(var j = 0; j < eventMessagesNumber; j++) {
-        messageText = eventMessages[j].textContent;
-        eventFullText += messageText + "\r\n";
-        detailsText = eventDetails[j].textContent;
-        eventFullText += detailsText + "\r\n\r\n";
+      for (let j = 0; j < eventMessagesNumber; j++) {
+          messageText = eventMessages[j].textContent;
+          eventFullText += messageText + "\r\n";
+          detailsText = eventDetails[j].textContent;
+          eventFullText += detailsText + "\r\n\r\n";
       }
 
       // Adding message
       logText += eventFullText;
-    }
-
-    // Creating textarea element for text copying
-    var proxyTextarea = document.createElement("textarea");
-    // Setting the style to hide it
-    proxyTextarea.style.height = "10px";
-    proxyTextarea.style.width = "10px";
-    proxyTextarea.style.position = "fixed";
-    proxyTextarea.style.top = "-10px";
-    proxyTextarea.visibility = "hidden";
-    // Inserting log text in textarea
-    proxyTextarea.value = logText;
-    // Appending textarea to the end of the body
-    document.body.appendChild(proxyTextarea);
-    // Selecting and copying text
-    proxyTextarea.select();
-    document.execCommand('copy');
-    // Removing textarea
-    proxyTextarea.remove();
-
-    // Notifying user about copying
-    alert("Log copied to clipboard");
   }
+
+  // Creating textarea element for text copying
+  $('body').append('<textarea id="proxyTextarea"></textarea>');
+  // Setting the style to hide it, filling it with text and selecting text in it
+  $('#proxyTextarea')
+    .css("height", "10px")
+    .css("width", "10px")
+    .css("position", "fixed")
+    .css("top", "-100px")
+    .text(logText)
+    .select();
+  // Copying text
+  document.execCommand('copy');
+  // Removing textarea
+  $('#proxyTextarea').remove();
+
+  // Notifying user about copying
+  alert("Log copied to clipboard");
+});
 
   // ---- Voice Calling Section ----
 
@@ -207,10 +202,10 @@ jQuery(document).ready(function($) {
 
     $('#watsonconv_notification_send_test')
         .on('click', function () {
-            var emails = $('#watsonconv_notification_email_to').val();
-            var siteUrl = window.location.origin;
-            var restRoute = "/index.php?rest_route=/watsonconv/v1/test-notification";
-            var fullUrl = siteUrl + restRoute;
+            let emails = $('#watsonconv_notification_email_to').val();
+            let siteUrl = window.location.origin;
+            let restRoute = "/index.php?rest_route=/watsonconv/v1/test-notification";
+            let fullUrl = siteUrl + restRoute;
             $.ajax({
                 type: "POST",
                 url: fullUrl,
@@ -231,10 +226,10 @@ jQuery(document).ready(function($) {
   // ---- Senfing test notification ---
     $('#watsonconv_button_check_email_sending')
         .on('click', function () {
-            var email = $('#watsonconv_mail_vars_email_address_to').val();
-            var siteUrl = window.location.origin;
-            var restRoute = "/index.php?rest_route=/watsonconv/v1/test-email";
-            var fullUrl = siteUrl + restRoute;
+            let email = $('#watsonconv_mail_vars_email_address_to').val();
+            let siteUrl = window.location.origin;
+            let restRoute = "/index.php?rest_route=/watsonconv/v1/test-email";
+            let fullUrl = siteUrl + restRoute;
             $.ajax({
                 type: "POST",
                 url: fullUrl,
@@ -400,7 +395,7 @@ jQuery(document).ready(function($) {
 
   $('#watsonconv_font_size')
     .on('change', function() {
-      var size = $('input[name="watsonconv_size"]:checked').val();
+      let size = $('input[name="watsonconv_size"]:checked').val();
 
       $('#watson-box .watson-font').css('font-size', this.value + 'pt');
       $('#watson-box').css('width', (0.825 * size + 4.2 * this.value) + 'pt');
@@ -408,7 +403,7 @@ jQuery(document).ready(function($) {
 
   $('input[name="watsonconv_size"]')
     .on('change', function() {
-      var fontSize = $('#watsonconv_font_size').val();
+      let fontSize = $('#watsonconv_font_size').val();
 
       $('#watson-box').css('width', (0.825 * this.value + 4.2 * fontSize) + 'pt');
       $('#message-container').css('height', this.value + 'pt');

@@ -5,3 +5,4 @@ watson-conversation/vendor/
 Dockerfile
 .dockerignore
 test/
+artifacts/

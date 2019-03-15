@@ -2,15 +2,15 @@
 .DS_Store
 .eslintrc.json
 
-/.htaccess
-/license.txt
-/readme.html
-/sitemap.xml
-/sitemap.xml.gz
+.htaccess
+license.txt
+readme.html
+sitemap.xml
+sitemap.xml.gz
 
-js/node_modules/
+js/node_modules
 watson-conversation/app.js
-watson-conversation/vendor/
+watson-conversation/vendor
 
-.idea/
+.idea
 test/plugin
