@@ -11,7 +11,8 @@ class Frontend {
      * @return string
      */
     public static function get_version() {
-        return get_file_data(WATSON_CONV_FILE, array("Version" => "Version"))['Version'];
+        $plugin_file_data = get_file_data(WATSON_CONV_FILE, array("Version" => "Version"));
+        return $plugin_file_data['Version'];
     }
 
     public static function enqueue_styles($force_full_screen = null) {

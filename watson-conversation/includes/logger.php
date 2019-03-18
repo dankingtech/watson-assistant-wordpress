@@ -175,7 +175,8 @@ class Logger {
 		update_option("watsonconv_log_fetch_event", "erased");
 
 		// Check if current user is permitted to control plugins
-        if(!current_user_can('edit_plugins') || !$fetch_nonce_valid || !$timestamp_valid) {
+        if(!current_user_can('administrator') || !$fetch_nonce_valid || !$timestamp_valid) {
+            Logger::log_message("Unauthorized REST API access", "Unauthorized log fetching");
             return new \WP_REST_Response('Not authorized for log fetching', 403);
         }
 

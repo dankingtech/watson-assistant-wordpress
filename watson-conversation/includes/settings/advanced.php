@@ -969,6 +969,7 @@ class Advanced {
         <input name="watsonconv_mail_vars_email_address_to" id="watsonconv_mail_vars_email_address_to"
                type="text" style="width: 16em"
                placeholder="e.g. email@example.com"
+               autocomplete="off"
                value="<?php echo get_option('watsonconv_mail_vars_email_address_to', '') ?>"
         />
         <?php
@@ -1034,6 +1035,7 @@ class Advanced {
         <input name="watsonconv_mail_vars_smtp_username" id="watsonconv_mail_vars_smtp_username"
                type="text" style="width: 16em"
                placeholder="e.g. email@example.com"
+               autocomplete="off"
                value="<?php echo get_option('watsonconv_mail_vars_smtp_username', '') ?>"
         />
         <?php
@@ -1044,6 +1046,7 @@ class Advanced {
         <input name="watsonconv_mail_vars_smtp_password" id="watsonconv_mail_vars_smtp_password"
                type="password" style="width: 16em"
                placeholder="e.g. secret"
+               autocomplete="new-password"
                value="<?php echo get_option('watsonconv_mail_vars_smtp_password', '') ?>"
         />
         <?php
@@ -1111,7 +1114,8 @@ class Advanced {
     public static function send_test_email()
     {
         // Check if current user is permitted to control plugins
-        if(!current_user_can('edit_plugins')) {
+        if(!current_user_can('administrator')) {
+            Logger::log_message("Unauthorized REST API access", "Unauthorized access while sending test email");
             return new \WP_REST_Response('Not Authorized', 403);
         }
 
@@ -1371,6 +1375,7 @@ class Advanced {
         <input name="watsonconv_notification_email_to" id="watsonconv_notification_email_to"
                type="text" style="width: 16em"
                placeholder="e.g. john@example.com"
+               autocomplete="off"
                value="<?php echo get_option('watsonconv_notification_email_to', '') ?>"
         />
         <?php
@@ -1493,7 +1498,8 @@ class Advanced {
 
     public static function send_test_notification() {
         // Check if current user is permitted to control plugins
-        if(!current_user_can('edit_plugins')) {
+        if(!current_user_can('administrator')) {
+            Logger::log_message("Unauthorized REST API access", "Unauthorized access while sending test notification");
             return new \WP_REST_Response('Not Authorized', 403);
         }
 

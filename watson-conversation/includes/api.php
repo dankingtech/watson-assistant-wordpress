@@ -60,23 +60,19 @@ class API {
             );
         }
 
-//        if(isset($_POST['testEmail']) && $_POST['testEmail'] == 'send email'){
-//        }
-        if ($is_enabled) {
-            register_rest_route('watsonconv/v1', '/test-email',
-                array(
-                    'methods' => 'post',
-                    'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_email')
-                )
-            );
+        register_rest_route('watsonconv/v1', '/test-email',
+            array(
+                'methods' => 'post',
+                'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_email')
+            )
+        );
 
-            register_rest_route('watsonconv/v1', '/test-notification',
-                array(
-                    'methods' => 'post',
-                    'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_notification')
-                )
-            );
-        }
+        register_rest_route('watsonconv/v1', '/test-notification',
+            array(
+                'methods' => 'post',
+                'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_notification')
+            )
+        );
 
     }
 
