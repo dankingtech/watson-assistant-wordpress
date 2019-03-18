@@ -2,6 +2,7 @@
   "name": "watson-conversation",
   "private": true,
   "dependencies": {
+    "@wordpress/hooks": "^2.1.0",
     "broadcast-channel": "^2.1.9",
     "core-js": "^2.5.3",
     "deepmerge": "^2.2.1",
