@@ -15,6 +15,11 @@ import 'whatwg-fetch';
 // Shim for BroadcastChannel until it is implemented in all browsers
 import BroadcastChannel from 'broadcast-channel';
 
+if (wp.hooks === undefined) {
+    var hooks = require('@wordpress/hooks');
+    wp.hooks = hooks.createHooks();
+}
+
 export default class ChatBox extends Component {
     constructor(props) {
         super(props);

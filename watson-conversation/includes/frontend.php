@@ -372,7 +372,11 @@ class Frontend {
     }
 
     public static function register_scripts() {
-        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array('jquery', 'wp-hooks'), self::get_version(), true);
+        $required_scripts = array('jquery');
+        if (version_compare(get_bloginfo('version'), '5.0', '>=')) {
+            array_push($required_scripts, 'wp-hooks');
+        }
+        wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', $required_scripts, self::get_version(), true);
         wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::get_version());
         wp_enqueue_script('wp-api');
         wp_localize_script( 'wp-api', 'wpApiSettings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
