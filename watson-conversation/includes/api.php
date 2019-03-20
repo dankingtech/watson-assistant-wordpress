@@ -584,7 +584,7 @@ class API {
     {
         if (isset($request) && !empty($request)){
 
-            $data = [];
+            $data = array();
 
             foreach ($request['parameters'] as $key => $val){
                 $parameters = $key . ': ' . $val;

@@ -185,7 +185,7 @@ class Background_Task_Runner {
 
         // Getting new tasks from database
         $new_tasks = NULL;
-        $new_tasks = Storage::select("task_runner_queue", NULL, NULL, $batch_limit);
+        $new_tasks = Storage::select("task_runner_queue", array("limit" => $batch_limit));
         // If there's no new tasks, returning false
         if(empty($new_tasks)) {
             return false;
@@ -269,16 +269,20 @@ class Background_Task_Runner {
         $where_array = array(
             Storage::where("task_runner_queue", "p_callback", "=", $callback),
         );
-
         // WHERE condition for $data
         if(isset($data)) {
             array_push($where_array, Storage::where("task_runner_queue", "p_data", "=", $data));
         }
-
         // We need only id of task in queue
         $fields_to_get = array("id");
 
-        $query_result = Storage::select("task_runner_queue", $where_array, $fields_to_get);
+        // Preparing data for passing to SELECT function
+        $select_data = array(
+            "fields" => $fields_to_get,
+            "where" => $where_array
+        );
+
+        $query_result = Storage::select("task_runner_queue", $select_data);
         // Checking if returned value is "empty"
         if(empty($query_result)) {
             return false;
@@ -296,15 +300,19 @@ class Background_Task_Runner {
         $enabled_option_name = "watsonconv_runner";
         // Name of option with state of task runner (free/busy)
         $state_option_name = "watsonconv_runner_state";
+        // Name of option with default background task runner launch time
+        $launch_option_name = "watsonconv_runner_launched";
         // Name of option with fallback state of task runner
         $fallback_option_name = "watsonconv_fallback_state";
         // Name of option with fallback task launch time
         $fallback_time_name = "watsonconv_fallback_time";
 
+        // Checking if table for task queue exists
+        $queue_table_exists = Storage::table_exists("task_runner_queue");
         // Getting option
         $runner_status = get_option($enabled_option_name, "not present");
-        // If there's no such option, then creating it and creating table
-        if($runner_status == "not present") {
+        // If there's no such option, or table doesn't exist initializing runner
+        if($runner_status == "not present" || !$queue_table_exists) {
             // Wordpress global database object
             global $wpdb;
             // Wordpress collation
@@ -335,14 +343,22 @@ class Background_Task_Runner {
             Storage::init();
 
             // Adding options
-            // Enabled/disabled
-            add_option($enabled_option_name, "enabled");
-            // Free/busy normal processing
-            add_option($state_option_name, "free");
-            // Free/busy fallback processing
-            add_option($fallback_option_name, "free");
-            // Fallback queue launch time
-            add_option($fallback_time_name, 0);
+            if(Storage::table_exists("task_runner_queue")) { 
+                // Enabled/disabled
+                update_option($enabled_option_name, "enabled", "yes");
+                // Free/busy normal processing
+                update_option($state_option_name, "free", "yes");
+                // Normal processing launch time
+                update_option($launch_option_name, 0, "yes");
+                // Free/busy fallback processing
+                update_option($fallback_option_name, "free", "yes");
+                // Fallback queue launch time
+                update_option($fallback_time_name, 0, "yes");
+            }
+            else {
+                update_option($enabled_option_name, "not present", "yes");
+                Logger::log_message("Task runner initialization failed", "Failed to create a table for task queue");
+            }
         }
     }
 }

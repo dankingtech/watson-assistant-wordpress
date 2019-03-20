@@ -228,11 +228,15 @@ class Setup {
 
     public static function render_error_log($offset = 0) {
         // Getting error log from database
-        $log = \WatsonConv\Storage::select("debug_log");
-        $log_entries_number = count($log);
+        $log_entries_number = \WatsonConv\Storage::count_rows("debug_log");
         $log_limit = ($log_entries_number > 50) ? 50 : $log_entries_number;
-        // Making last messages appear first
-        $log = array_reverse($log);
+        $log_select_options = array(
+            "order" => array(
+                \WatsonConv\Storage::order("debug_log", "id", "DESC")
+            ),
+            "limit" => $log_limit
+        );
+        $log = \WatsonConv\Storage::select("debug_log", $log_select_options);
         // Cutting array to 50 elements
         $log = array_slice($log, $offset, $log_limit);
 
