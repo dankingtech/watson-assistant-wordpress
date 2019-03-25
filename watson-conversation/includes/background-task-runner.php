@@ -154,7 +154,16 @@ class Background_Task_Runner {
         // Variable for new tasks
         $new_tasks = NULL;
         // Checking if there are new tasks
-        $new_tasks = Storage::select_by_field("task_runner_queue", "p_status", "new", NULL, $batch_limit);
+        $select_data = array(
+            "limit" => $batch_limit,
+            "order" => array(
+                Storage::order("task_runner_queue", "id", "ASC")
+            ),
+            "where" => array(
+                Storage::where("task_runner_queue", "p_status", "=", "new")
+            )
+        );
+        $new_tasks = Storage::select("task_runner_queue", $select_data);
         // If there are no new tasks, exiting
         if(empty($new_tasks)) {
             return false;
@@ -185,7 +194,13 @@ class Background_Task_Runner {
 
         // Getting new tasks from database
         $new_tasks = NULL;
-        $new_tasks = Storage::select("task_runner_queue", array("limit" => $batch_limit));
+        $select_data = array(
+            "limit" => $batch_limit,
+            "order" => array(
+                Storage::order("task_runner_queue", "id", "ASC")
+            )
+        );
+        $new_tasks = Storage::select("task_runner_queue", $select_data);
         // If there's no new tasks, returning false
         if(empty($new_tasks)) {
             return false;
@@ -195,6 +210,14 @@ class Background_Task_Runner {
         update_option("watsonconv_fallback_state", "busy", "yes");
         update_option("watsonconv_fallback_time", $timestamp, "yes");
 
+        // Microtime of batch launch
+        $start_mtime = microtime(true);
+        // Variable for storing run time of current batch
+        $batch_mtime = 0;
+        // Variable for storing run time of longest task
+        $biggest_task = 0;
+        // Variable for time limit of current batch
+        $time_limit = 15;
         // Iterating through array of tasks and working on them
         foreach($new_tasks as $raw_task) {
             // Task id
@@ -210,6 +233,16 @@ class Background_Task_Runner {
             \Watsonconv_Process::$callback($data);
             // Deleting task from queue
             Storage::delete_by_id("task_runner_queue", $id);
+
+            $current_mtime = microtime(true);
+            $task_mtime = $current_mtime - ($start_mtime + $batch_mtime);
+            $batch_mtime = $batch_mtime + $task_mtime;
+            $biggest_task = ($task_mtime > $biggest_task) ? $task_mtime : $biggest_task;
+
+            // If there is no time left for another task that big, interrupting execution
+            if(($batch_mtime + $biggest_task) > $time_limit) {
+                break;
+            }
         }
 
         // Reporting that runner is free
@@ -247,7 +280,6 @@ class Background_Task_Runner {
         update_option("watsonconv_runner_launched", $timestamp, "yes");
         // Executing queue
         $this->process->save()->dispatch();
-
     }
 
     // Function for adding new task to queue
@@ -326,7 +358,7 @@ class Background_Task_Runner {
             $table_fields = array(
                 'id integer(64) UNSIGNED NOT NULL AUTO_INCREMENT',
                 'p_callback varchar(256) NOT NULL',
-                'p_data json',
+                'p_data text',
                 'p_status enum("new", "processing") DEFAULT "new"',
                 's_created timestamp DEFAULT CURRENT_TIMESTAMP',
                 'PRIMARY KEY  (id)'
@@ -334,7 +366,7 @@ class Background_Task_Runner {
             // Constructing CREATE TABLE expression
             $fields_expression = "\n\t" . implode(",\n\t", $table_fields) . "\n";
             $full_expression = "CREATE TABLE {$full_table_name}({$fields_expression}){$collate};";
-
+            
             // Wordpress file with dbDelta
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             // Writing changes to db

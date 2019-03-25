@@ -14,6 +14,19 @@ class Install {
 		),
 		'0.8.4' => array(
 			'watsonconv_084_create_database'
+		),
+		'0.8.10' => array(
+			'watsonconv_0810_dejsonify_task_runner_queue_p_data',
+			'watsonconv_0810_dejsonify_requests_p_debug_output',
+			'watsonconv_0810_dejsonify_requests_p_user_defined',
+			'watsonconv_0810_dejsonify_watson_outputs_p_options',
+			'watsonconv_0810_dejsonify_watson_outputs_p_suggestions',
+			'watsonconv_0810_dejsonify_contexts_p_global',
+			'watsonconv_0810_dejsonify_contexts_p_skills',
+			'watsonconv_0810_dejsonify_entities_p_location',
+			'watsonconv_0810_dejsonify_entities_p_metadata',
+			'watsonconv_0810_dejsonify_entities_p_groups',
+			'watsonconv_0810_dejsonify_actions_p_parameters'
 		)
 	);
 
@@ -86,9 +99,28 @@ class Install {
 		// Including file with update functions
 		require_once(WATSON_CONV_PATH.'includes/update_functions.php');
 		// Calling update function
-		UpdateFunctions::$update_callback();
-		// Updating "last applied update" value in database
-		update_option("watsonconv_last_applied_update", $update_callback);
+		$update_status = UpdateFunctions::$update_callback();
+		// Checking if update was successfully applied
+		if($update_status) {
+			// Updating "last applied update" value in database
+			update_option("watsonconv_last_applied_update", $update_callback);
+		}
+		else {
+			// Logging update failure
+			Logger::log_message("Failed to apply update", $update_callback);
+			Install::reapply_all_updates();
+		}
+	}
+
+	// Reapplying all updates
+	public static function reapply_all_updates() {
+		// Removing last applied update to reset updates queue
+		update_option("watsonconv_last_applied_update", "none");
+		// Removing all existing updates updates from task runner queue
+		$delete_options = array(
+			Storage::where("task_runner_queue", "p_callback", "=", "apply_update")
+		);
+		Storage::delete("task_runner_queue", $delete_options);
 	}
 }
 

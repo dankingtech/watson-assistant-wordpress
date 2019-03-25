@@ -131,12 +131,36 @@ class Storage{
         )
     );
 
+    // Property for storing MySQL version
+    private static $mysql_version = "";
+
     // Initialize Storage functionality
     public static function init() {
         // Global Wordpress database object
         global $wpdb;
         // Getting list of all existing tables
         Storage::$tables_list = $wpdb->get_col("SHOW TABLES", 0);
+    }
+
+    // Getting MySQL version
+    public static function get_mysql_version() {
+        // Getting version from class static property in case it was previously
+        // retrieved. Doing this to avoid excess requests for getting constant
+        // value.
+        $result = self::$mysql_version;
+        // If $result is an empty string
+        if(empty($result)) {
+            global $wpdb;
+            $result = $wpdb->get_var("SELECT VERSION()", 0, 0);
+        }
+        // If error happened while retrieving MySQL version from database,
+        // logging it and saving database version as an empty string
+        if($result === NULL) {
+            Logger::log_message("Error retrieving MySQL version");
+            $result = "";
+        }
+        self::$mysql_version = $result;
+        return $result;
     }
 
     // Checking if table exists
@@ -396,6 +420,7 @@ class Storage{
         // Checking if table exists
         if(!Storage::table_exists($table)) {
             Logger::error_with_args("INSERT into nonexistent table", $table);
+            Install::reapply_all_updates();
             return NULL;
         }
 
@@ -487,9 +512,9 @@ class Storage{
             "float" => "%f",
             "string" => "%s",
             "boolean" => "%d",
-            "json" => "JSON_EXTRACT(%s, '$')",
+            "json" => "%s",
             "uuid" => "UNHEX(REPLACE(%s,'-',''))",
-            "timestamp" => "FROM_UNIXTIME()"
+            "timestamp" => "FROM_UNIXTIME(%d)"
         );
         $format = $format_dictionary[$type];
         $target_value = NULL;
@@ -606,6 +631,7 @@ class Storage{
         // Checking if table exists
         if(!Storage::table_exists($table)) {
             Logger::error_with_args("SELECT from nonexistent table", $table);
+            Install::reapply_all_updates();
             return NULL;
         }
 
@@ -907,6 +933,7 @@ class Storage{
         // Checking if table exists
         if(!Storage::table_exists($table)) {
             Logger::error_with_args("DELETE from nonexistent table", $table);
+            Install::reapply_all_updates();
             return NULL;
         }
 
@@ -1086,6 +1113,7 @@ class Storage{
         // Checking if table exists
         if(!Storage::table_exists($table_name)) {
             Logger::error_with_args("Counting rows in nonexistent table", $table);
+            Install::reapply_all_updates();
         }
 
         // Wordpress database object
