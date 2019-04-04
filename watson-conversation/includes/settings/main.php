@@ -63,7 +63,7 @@ class Main {
     ?>
         <div class="wrap" style="max-width: 95em">
             <h2><?php esc_html_e('Watson Assistant', self::SLUG); ?></h2>
-            <?php self::render_isv_banner() ?>
+            <?php self::render_isv_banner(); ?>
         </div>
     <?php
     }
@@ -79,7 +79,28 @@ class Main {
                     <span style='color:orange; margin-right:0.3em'
                           class='dashicons dashicons-admin-settings'></span>
                     <a href="admin.php?page=<?php echo Setup::SLUG ?>">
-                        <?php esc_html_e('Please fill in your Watson Assistant Workspace Credentials.', self::SLUG) ?>
+                        <?php esc_html_e('Please fill in your Watson Assistant credentials.', self::SLUG) ?>
+                    </a>
+                </div>
+            </td></tr>
+            
+        <?php
+        }
+        $workspace_url = "";
+        if(isset($credentials["workspace_url"])) {
+            $workspace_url = $credentials["workspace_url"];
+        }
+        $api_version = \WatsonConv\API::detect_api_version($workspace_url);
+
+        if (!empty($credentials) && ($api_version === 'v1')) {
+        ?>
+            <tr class="active icon-settings"><td colspan=3>
+                <div class="update-message notice inline notice-error notice-alt"
+                     style="padding:0.5em; padding-left:1em; margin:0">
+                    <span style='color:orange; margin-right:0.3em'
+                          class='dashicons dashicons-admin-network'></span>
+                    <a href="admin.php?page=<?php echo Setup::SLUG ?>">
+                        <?php esc_html_e('Please update your Watson Assistant Credentials to make plugin compatible with new functions.', self::SLUG) ?>
                     </a>
                 </div>
             </td></tr>
@@ -99,6 +120,32 @@ class Main {
         return array($learn_link, $settings_link) + $links;
     }
 
+    public static function render_v1_update_warning() {
+        Logger::log_message("yes, it reached this method");
+        $credentials = get_option('watsonconv_credentials');
+        $workspace_url = "";
+        if(isset($credentials["workspace_url"])) {
+            $workspace_url = $credentials["workspace_url"];
+        }
+        $api_version = \WatsonConv\API::detect_api_version($workspace_url);
+        Logger::log_message("workspace url", $workspace_url);
+        if (!empty($credentials) && ($api_version === 'v1')) {
+            ?> 
+                <div id="v1_warning" class="notice notice-info is-dismissible">
+                    <p>Please update your Watson Assistant API credentials</p>
+                    <a
+                        class='button button-primary' 
+                        style='margin-bottom: 0.5em' 
+                        href='https://cocl.us/CB0103EN_WATR_WPP'
+                        target="_blank"
+                    >
+                        Become a Partner
+                    </a>
+                </div>
+            <?php
+        }
+    }
+
     public static function render_isv_banner() {
     ?> 
         <div class="notice notice-info is-dismissible">
@@ -116,6 +163,27 @@ class Main {
             </a>
         </div>
     <?php
+
+        $credentials = get_option('watsonconv_credentials');
+        $workspace_url = "";
+        if(isset($credentials["workspace_url"])) {
+            $workspace_url = $credentials["workspace_url"];
+        }
+        $api_version = \WatsonConv\API::detect_api_version($workspace_url);
+        if (!empty($credentials) && ($api_version === 'v1')) {
+            ?> 
+                <div class="error notice-error is-dismissible">
+                    <p>Please update your Watson Assistant API credentials to be able to use new functionality.</p>
+                    <a
+                        class='button button-primary' 
+                        style='margin-bottom: 0.5em' 
+                        href='admin.php?page=<?php echo Setup::SLUG ?>'
+                    >
+                        Update credentials
+                    </a>
+                </div>
+            <?php
+        }
     }
 
     public static function render_radio_buttons($option_name, $default_value, $options, $div_style = '') {

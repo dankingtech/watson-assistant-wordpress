@@ -1373,11 +1373,13 @@ class Advanced {
     public static function render_notification_email_to(){
         ?>
         <input name="watsonconv_notification_email_to" id="watsonconv_notification_email_to"
-               type="text" style="width: 16em"
-               placeholder="e.g. john@example.com"
+               type="text" style="width: 32em"
+               placeholder="e.g. alice@example.com, bob@example.com, charlie@example.com"
                autocomplete="off"
                value="<?php echo get_option('watsonconv_notification_email_to', '') ?>"
         />
+        <p><i>You can specify multiple e-mails separated by commas.</i></p>
+<!--        <p><strong>Example:</strong> <tt style="border: 1px solid darkgrey; padding: 3px">alice@example.com, bob@example.com, charlie@example.com</tt></p>-->
         <?php
     }
 
