@@ -9,8 +9,8 @@ import Fab from './Fab.jsx';
 export default class App extends Component {
   constructor(props) {
     super(props);
-    if (typeof(sessionStorage) !== 'undefined' && sessionStorage.getItem('watson_bot_window_state')) {
-      this.state = JSON.parse(sessionStorage.getItem('watson_bot_window_state'));
+    if (typeof(localStorage) !== 'undefined' && localStorage.getItem('watson_bot_window_state')) {
+      this.state = JSON.parse(localStorage.getItem('watson_bot_window_state'));
     } else {
       let isFullScreen = window.matchMedia(watsonconvSettings.fullScreenQuery).matches;
 
@@ -54,8 +54,8 @@ export default class App extends Component {
   }
 
   saveState() {
-    if (typeof(sessionStorage) !== 'undefined') {
-      sessionStorage.setItem('watson_bot_window_state', JSON.stringify(this.state))
+    if (typeof(localStorage) !== 'undefined') {
+      localStorage.setItem('watson_bot_window_state', JSON.stringify(this.state))
     }
   }
 

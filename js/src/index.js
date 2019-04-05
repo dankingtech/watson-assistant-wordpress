@@ -36,8 +36,8 @@ jQuery(document).ready(function() {
       <ChatBox isMinimized={false} />,
       shortcodeDiv
     );
-  } else if (typeof(sessionStorage) !== 'undefined' &&
-      sessionStorage.getItem('chat_bot_state') !== null)
+  } else if (typeof(localStorage) !== 'undefined' &&
+      localStorage.getItem('chat_bot_state') !== null)
   {
     renderFloatingBox();
   } else {
