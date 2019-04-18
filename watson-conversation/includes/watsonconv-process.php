@@ -62,4 +62,9 @@ class Watsonconv_Process extends WP_Background_Process {
 	public static function apply_update($data) {
 		\WatsonConv\Install::apply_update($data);
 	}
+
+	// Function for sending email notifications
+	public static function send_email_notification($data) {
+		\WatsonConv\Email_Notificator::send_summary_notification();
+	}
 }

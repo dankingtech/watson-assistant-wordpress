@@ -481,4 +481,22 @@ jQuery(document).ready(function($) {
         .on('click', '.notice-dismiss', function () {
             $(this).parent().remove();
         });
+
+  // Watson Assistant Credentials section
+  // Function to check V1 credentials in Assistant URL field
+  let checkCredentialsV1 = function() {
+    if($('#watsonconv_workspace_url').length) {
+      let apiV1Regex = /\/api\/v1\/workspaces\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\/message/;
+      let apiPath = $('#watsonconv_workspace_url').val();
+      
+      if(apiPath.match(apiV1Regex) !== null) {
+        $("#v1_url_notice").css("display", "block");
+      }
+      else {
+        $("#v1_url_notice").css("display", "none");
+      }
+    }
+  }
+  checkCredentialsV1();
+  $('#watsonconv_workspace_url').on('input', checkCredentialsV1);
 });

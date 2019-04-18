@@ -131,12 +131,36 @@ class Storage{
         )
     );
 
+    // Property for storing MySQL version
+    private static $mysql_version = "";
+
     // Initialize Storage functionality
     public static function init() {
         // Global Wordpress database object
         global $wpdb;
         // Getting list of all existing tables
         Storage::$tables_list = $wpdb->get_col("SHOW TABLES", 0);
+    }
+
+    // Getting MySQL version
+    public static function get_mysql_version() {
+        // Getting version from class static property in case it was previously
+        // retrieved. Doing this to avoid excess requests for getting constant
+        // value.
+        $result = self::$mysql_version;
+        // If $result is an empty string
+        if(empty($result)) {
+            global $wpdb;
+            $result = $wpdb->get_var("SELECT VERSION()", 0, 0);
+        }
+        // If error happened while retrieving MySQL version from database,
+        // logging it and saving database version as an empty string
+        if($result === NULL) {
+            Logger::log_message("Error retrieving MySQL version");
+            $result = "";
+        }
+        self::$mysql_version = $result;
+        return $result;
     }
 
     // Checking if table exists
@@ -396,6 +420,7 @@ class Storage{
         // Checking if table exists
         if(!Storage::table_exists($table)) {
             Logger::error_with_args("INSERT into nonexistent table", $table);
+            Install::reapply_all_updates();
             return NULL;
         }
 
@@ -487,9 +512,9 @@ class Storage{
             "float" => "%f",
             "string" => "%s",
             "boolean" => "%d",
-            "json" => "JSON_EXTRACT(%s, '$')",
+            "json" => "%s",
             "uuid" => "UNHEX(REPLACE(%s,'-',''))",
-            "timestamp" => "FROM_UNIXTIME()"
+            "timestamp" => "FROM_UNIXTIME(%d)"
         );
         $format = $format_dictionary[$type];
         $target_value = NULL;
@@ -555,38 +580,58 @@ class Storage{
         $where_array = array(
             Storage::where($table_name, $field_name, "=", $field_value)
         );
+        // Data for SELECT
+        $select_data = array(
+            "where" => $where_array,
+            "fields" => $fields_to_get,
+            "limit" => $limit
+        );
         // Passing arguments to more generic SELECT function
-        $result = Storage::select($table_name, $where_array, $fields_to_get, $limit);
+        $result = Storage::select($table_name, $select_data);
         return $result;
     }
 
     // Generic SELECT
-    public static function select($table_name, $where_array = NULL, $fields_to_get = NULL, $limit = NULL) {
+    public static function select($table_name, $data = array()) {
         // Fields list
         // If $fields_to_get isn't set getting all of them
-        if(!isset($fields_to_get)) {
-            $fields_to_get = array_keys(Storage::$schema_description[$table_name]);
+        if(!isset($data["fields"])) {
+            $data["fields"] = array_keys(Storage::$schema_description[$table_name]);
         }
         // Getting prepared fields array
-        $prepared_fields = Storage::prepare_select_fields($table_name, $fields_to_get);
+        $prepared_fields = Storage::prepare_select_fields($table_name, $data["fields"]);
         // Getting data for constructing WHERE clause
-        $prepared_where = Storage::prepare_where_clause($where_array);
+        if(!isset($data["where"])) {
+            $data["where"] = NULL;
+        }
+        $prepared_where = Storage::prepare_where_clause($data["where"]);
+        // Getting ordering
+        if(!isset($data["order"])) {
+            $data["order"] = NULL;
+        }
+        $prepared_order = Storage::prepare_order_clause($data["order"]);
         // Getting limit
         $prepared_limit = NULL;
-        if(isset($limit)) {
-            $prepared_limit = (integer)$limit;
+        if(isset($data["limit"])) {
+            $prepared_limit = (integer)$data["limit"];
+        }
+        // Getting offset
+        $prepared_offset = NULL;
+        if(isset($data["offset"])) {
+            $prepared_offset = (integer)$data["offset"];
         }
 
         // Performing SELECT query based on prepared values
-        $result = Storage::perform_select($table_name, $prepared_where, $prepared_fields, $prepared_limit);
+        $result = Storage::perform_select($table_name, $prepared_where, $prepared_fields, $prepared_order, $prepared_limit, $prepared_offset);
         return $result;
     }
 
     // Performing SELECT
-    public static function perform_select($table, $where, $fields, $limit) {
+    public static function perform_select($table, $where, $fields, $order, $limit, $offset) {
         // Checking if table exists
         if(!Storage::table_exists($table)) {
             Logger::error_with_args("SELECT from nonexistent table", $table);
+            Install::reapply_all_updates();
             return NULL;
         }
 
@@ -609,16 +654,30 @@ class Storage{
             $needs_wpdb_prepare = true;
         }
 
+        // Empty ORDER expression
+        $order_expression = "";
+        if(isset($order)) {
+            $order_expression = $order;
+        }
+
         // Empty LIMIT expression
         $limit_expression = "";
         // If $limit isn't empty, building expression
         if(!empty($limit)) {
             $limit = (integer)$limit;
-            $limit_expression = "LIMIT {$limit}";
+            $limit_expression = "\nLIMIT {$limit}";
+        }
+
+
+        // Empty OFFSET expression
+        $offset_expression = "";
+        if(!empty($offset)) {
+            $offset = (integer)$offset;
+            $offset_expression = "\nOFFSET {$offset}";
         }
 
         // Full SELECT query
-        $full_expression = "{$fields_expression}{$from_expression}{$where_expression}{$limit_expression}";
+        $full_expression = "{$fields_expression}{$from_expression}{$where_expression}{$order_expression}{$limit_expression}{$offset_expression}";
 
         // Wordpress wpdb object
         global $wpdb;
@@ -626,6 +685,7 @@ class Storage{
         if($needs_wpdb_prepare) {
             $full_expression = $wpdb->prepare($full_expression, $where_values);
         }
+
 
         // Performing request and getting result
         $raw_result = $wpdb->get_results($full_expression, ARRAY_A);
@@ -639,6 +699,38 @@ class Storage{
         $result = Storage::process_select_result($table, $raw_result);
 
         return $result;
+    }
+
+    // Preparing single ORDER BY condition
+    public static function order($table_name, $field_name, $order) {
+        // TODO: matching table's fields description
+        $result = array(
+            "field" => $field_name,
+            "order" => $order
+        );
+
+        return $result;
+    }
+
+    // Preparing full ORDER BY condition
+    public static function prepare_order_clause($order_array) {
+        // If there's no elements in $order_array, returning NULL
+        if(empty($order_array)) {
+            return NULL;
+        }
+        // Array for single conditions, parts of complete one
+        $expression_parts = array();
+        // Iterating through the array of unprepared conditions
+        foreach($order_array as $condition) {
+            $field = $condition["field"];
+            $order = $condition["order"];
+            $prepared_condition = "{$field} {$order}";
+            array_push($expression_parts, $prepared_condition);
+        }
+
+        // Constructing full ORDER BY expression
+        $order_expression = "ORDER BY\n\t" . implode(",\n\t", $expression_parts) . "\n";
+        return $order_expression;
     }
 
     // Prepares WHERE condition for single field
@@ -807,29 +899,41 @@ class Storage{
             Storage::where($table_name, $field_name, "=", $field_value)
         );
         // Passing arguments to more generic DELETE function
-        $result = Storage::delete($table_name, $where_array);
+        $result = Storage::delete($table_name, array("where" => $where_array));
         return $result;
     }
 
     // Generic DELETE
-    public static function delete($table_name, $where_array = NULL, $limit = NULL) {
+    public static function delete($table_name, $data = array()) {
         // Getting data for constructing WHERE clause
-        $prepared_where = Storage::prepare_where_clause($where_array);
+        if(!isset($data["where"])) {
+            $data["where"] = NULL;
+        }
+        $prepared_where = Storage::prepare_where_clause($data["where"]);
 
-        if(isset($limit)) {
-            $limit = (integer)$limit;
+        // Getting ordering
+        if(!isset($data["order"])) {
+            $data["order"] = NULL;
+        }
+        $prepared_order = Storage::prepare_order_clause($data["order"]);
+
+        // Getting limit
+        $prepared_limit = NULL;
+        if(isset($data["limit"])) {
+            $prepared_limit = (integer)$data["limit"];
         }
 
         // Performing DELETE query based on prepared values
-        $result = Storage::perform_delete($table_name, $prepared_where, $limit);
+        $result = Storage::perform_delete($table_name, $prepared_where, $prepared_order, $prepared_limit);
         return $result;
     }
 
     // Performing DELETE
-    public static function perform_delete($table, $where, $limit = NULL) {
+    public static function perform_delete($table, $where, $order, $limit = NULL) {
         // Checking if table exists
         if(!Storage::table_exists($table)) {
             Logger::error_with_args("DELETE from nonexistent table", $table);
+            Install::reapply_all_updates();
             return NULL;
         }
 
@@ -837,7 +941,6 @@ class Storage{
         // Getting full table name based on short table name
         $full_table_name = Storage::get_full_table_name($table);
         $delete_from_expression = "DELETE FROM {$full_table_name}\n";
-        // Empty WHERE expression
         // Empty WHERE expression and WHERE values array
         $where_expression = "";
         $where_values = array();
@@ -852,6 +955,12 @@ class Storage{
             return 0;
         }
 
+        // Empty ORDER expression
+        $order_expression = "";
+        if(isset($order)) {
+            $order_expression = $order;
+        }
+
         // LIMIT expression
         $limit_expression = "";
         if(isset($limit) && $limit > 0) {
@@ -859,7 +968,7 @@ class Storage{
         }
 
         // Full DELETE query
-        $full_expression = "{$delete_from_expression}{$where_expression}{$limit_expression}";
+        $full_expression = "{$delete_from_expression}{$where_expression}{$order_expression}{$limit_expression}";
 
         // Wordpress wpdb object
         global $wpdb;
@@ -867,6 +976,7 @@ class Storage{
         if(!empty($where_expression)) {
             $full_expression = $wpdb->prepare($full_expression, $where_values);
         }
+
         // Performing request and getting number of affected rows
         $result = $wpdb->query($full_expression);
 
@@ -1003,6 +1113,7 @@ class Storage{
         // Checking if table exists
         if(!Storage::table_exists($table_name)) {
             Logger::error_with_args("Counting rows in nonexistent table", $table);
+            Install::reapply_all_updates();
         }
 
         // Wordpress database object
@@ -1048,9 +1159,6 @@ class Storage{
 
     // Removing obsolete sessions
     public static function session_storage_cleanup($current_number, $limit_number) {
-        // Wordpress database object
-        global $wpdb;
-
         // Amount of session already added to queue
         $offset = (integer)get_option("watsonconv_cleanup_offset", 0);
         // Excess amount of stored sessions
@@ -1065,17 +1173,17 @@ class Storage{
         if(($offset + $batch_limit) >= $excess_number) {
             $offset = 0;
         }
-
-        // Full table name
-        $full_table_name = Storage::get_full_table_name("sessions");
-        // Constructing query for getting X oldest sessions,
-        // where X is $batch_limit
-        $query = "SELECT HEX(id) as id FROM {$full_table_name} ORDER BY s_created ASC LIMIT {$batch_limit} OFFSET {$offset}";
-
-        // Performing request and getting result
-        $raw_result = $wpdb->get_results($query, ARRAY_A);
-        // Processing result
-        $result = Storage::process_select_result("sessions", $raw_result);
+        // Data for SELECT query
+        $select_data = array(
+            "fields" => array("id"),
+            "order" => array(
+                Storage::order("sessions", "s_created", "ASC")
+            ),
+            "limit" => $batch_limit,
+            "offset" => $offset
+        );
+        // Performing SELECT
+        $result = Storage::select("sessions", $select_data);
 
         // Updating offset in database
         // Adding size of current batch to offset

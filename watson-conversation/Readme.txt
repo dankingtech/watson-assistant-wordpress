@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
 Tested up to: 5.1
-Stable tag: 0.8.8
+Stable tag: 0.8.12
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -87,6 +87,22 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog ==
+
+= 0.8.12 =
+* Refactored cross-tab session synchronization
+
+= 0.8.11 =
+* Fixed usage notification duplicate e-mails
+* Refactored plug-in usage summary notification mail template
+* Added warning to Watson Assistant API v1 usage
+
+= 0.8.10 =
+* Fixed compatibility issue with MySQL versions lower than 5.6
+
+= 0.8.9 =
+* Fixed compatibility issue with PHP versions lower than 5.4
+* Enhanced logging
+* Improved plug-in stability
 
 = 0.8.8 =
 * Fixed compatibility issue with PHP versions lower than 5.4

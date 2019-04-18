@@ -204,6 +204,15 @@ class Setup {
                 </label>
             </td>
         </tr></table>-->
+        <strong>How to get API v2 credentials?</strong>
+        <ul>
+            <li><a href="https://console.bluemix.net/dashboard/apps">Go to your IBM Cloud Dashboard</a>. If nothing shows up, be patient. Sometimes it takes a while to load.</li>
+            <li>Click on your Watson Assistant service name in Services list.</li>
+            <li>Click "Launch tool".</li>
+            <li>On the tool's page go to <strong>"Assistants"</strong> tab.</li>
+            <li>On the Assistants tab, call the menu of your Assistant by clicking on the "threee dots" button on the right and select "View API details" in the menu. </li>
+            <li>Copy "Assistant URL", "Username" and "Password" values.</li>
+        </ul>
         <p>
             Enter these values in their corresponding fields below. Once you click
             "Save Changes", the plugin will verify if the credentials are valid and notify
@@ -228,11 +237,15 @@ class Setup {
 
     public static function render_error_log($offset = 0) {
         // Getting error log from database
-        $log = \WatsonConv\Storage::select("debug_log");
-        $log_entries_number = count($log);
+        $log_entries_number = \WatsonConv\Storage::count_rows("debug_log");
         $log_limit = ($log_entries_number > 50) ? 50 : $log_entries_number;
-        // Making last messages appear first
-        $log = array_reverse($log);
+        $log_select_options = array(
+            "order" => array(
+                \WatsonConv\Storage::order("debug_log", "id", "DESC")
+            ),
+            "limit" => $log_limit
+        );
+        $log = \WatsonConv\Storage::select("debug_log", $log_select_options);
         // Cutting array to 50 elements
         $log = array_slice($log, $offset, $log_limit);
 
@@ -622,10 +635,12 @@ class Setup {
             <?php esc_html_e('Specify the Assistant URL, username and password for your Watson
                 Assistant below.', self::SLUG) ?> <br />
         </p>
+        <!--
         <p id="<?php echo esc_attr( $args['id'] ); ?>" class="iam_cred">
             <?php esc_html_e('Specify the Assistant URL and API key for your Watson
                 Assistant below.', self::SLUG) ?> <br />
         </p>
+        -->
         <a href="" id="<?php echo esc_attr( $args['id'] ); ?>_link">
             <?php esc_html_e("I don't see a username and password in my credentials") ?>
         </a>
@@ -691,6 +706,11 @@ class Setup {
                value="<?php echo empty($credentials['workspace_url']) ? '' : $credentials['workspace_url']; ?>"
                placeholder='e.g. https://gateway.watsonplatform.net/assistant/api/v2/assistants/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/sessions'
                style="max-width: 60em; width: 100%;" />
+        <p  class="update-message notice inline notice-warning notice-alt"
+            id="v1_url_notice"
+            style="padding-top: 0.5em; padding-bottom: 0.5em; display: none;">
+            <b>Warning:</b> You entered the credentials for old version of Watson Assistant (v1) that uses Skills (previously Workspaces). Please retrieve new credentials (v2) that uses Assistants as written above.
+        <p>
         <?php
     }
 

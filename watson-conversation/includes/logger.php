@@ -20,12 +20,10 @@ class Logger {
 		Storage::$schema_description["debug_log"] = self::$schema_description["debug_log"];
 		// Getting debug option
 		$logger_initialized = get_option("watsonconv_logger_initialized", "no");
-		// If option is nonexistent, creating table
-		if($logger_initialized == "no") {
+		// If either option or logger table are nonexistent, creating table
+		if($logger_initialized == "no" || !Storage::table_exists("debug_log")) {
 			// Creating table
 			self::create_log_table();
-			// Adding option to Wordpress options list
-			update_option("watsonconv_logger_initialized", "yes", "yes");
 		}
 		// Hook to register REST routes
 		add_action('rest_api_init', array('WatsonConv\Logger', 'register_rest_routes'));
@@ -81,8 +79,18 @@ class Logger {
 		// File with dbDelta function
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		dbDelta($full_expression);
-		// Updating list of tables in Storage
+		// Updating list of tables in Storage class
 		Storage::init();
+
+        // Checking if table exists
+        if(Storage::table_exists("debug_log")) {
+            // Adding option to Wordpress options list
+            update_option("watsonconv_logger_initialized", "yes", "yes");
+        }
+        else {
+            // Writing to wp_options about uninitialized logger
+            update_option("watsonconv_logger_initialized", "no", "yes");   
+        }
 	}
 
 	// Handling WPDB errors
@@ -149,7 +157,13 @@ class Logger {
 		}
 
 		// Deleting excess messages
-		$result = Storage::delete("debug_log", NULL, $excess_amount);
+        $delete_options = array(
+            "limit" => $excess_amount,
+            "order" => array(
+                Storage::order("debug_log", "id", "ASC")
+            )
+        );
+		$result = Storage::delete("debug_log", $delete_options);
 		return $result;
 	}
 
@@ -201,7 +215,7 @@ class Logger {
         $db_prefix = $wpdb->prefix;
         $log_object["mysql_version"] = $wpdb->get_var("SELECT VERSION()", 0, 0);
         // Getting watsonconv plugin options
-        $plugin_options_raw = $wpdb->get_results("SELECT option_name, option_value FROM wp_options WHERE option_name LIKE '%watsonconv%'", ARRAY_A);
+        $plugin_options_raw = $wpdb->get_results("SELECT option_name, option_value FROM {$db_prefix}options WHERE option_name LIKE '%watsonconv%'", ARRAY_A);
         $plugin_options_processed = array();
         foreach ($plugin_options_raw as $plugin_option) {
         	$plugin_options_processed[$plugin_option["option_name"]] = $plugin_option["option_value"];

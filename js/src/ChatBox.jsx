@@ -24,19 +24,8 @@ export default class ChatBox extends Component {
     constructor(props) {
         super(props);
 
-        this.bc = new BroadcastChannel('watson_bot_channel');
-
-        window.addEventListener('storage', function (ev) {
-            if (ev.key == 'watson_bot_request_state') {
-                this.saveState();
-            }
-        }.bind(this));
-
-        if (typeof(sessionStorage) !== 'undefined' && sessionStorage.getItem('watson_bot_state')) {
-            this.state = JSON.parse(sessionStorage.getItem('watson_bot_state'));
-            if (!this.state.context) {
-                this.state.context = {};
-            }
+        if (typeof(localStorage) !== 'undefined' && localStorage.getItem('watson_bot_state')) {
+            this.loadStateFromStorage();
         } else {
             this.state = {
                 messages: [],
@@ -46,7 +35,6 @@ export default class ChatBox extends Component {
                 convStarted: false
             };
         }
-
         this.state.context = merge(
             this.state.context,
             this.getInitialContext()
@@ -76,10 +64,18 @@ export default class ChatBox extends Component {
         return context;
     }
 
+    loadStateFromStorage() {
+        this.state = JSON.parse(localStorage.getItem('watson_bot_state'));
+        if (!this.state.context) {
+            this.state.context = {};
+        }
+    }
+
     componentDidMount() {
         // If conversation already exists, scroll to bottom, otherwise start conversation.
         if (typeof(this.messageList) !== 'undefined') {
-            this.messageList.scrollTop = this.messageList.scrollHeight;
+            this.scrollToBottom();
+            // this.messageList.scrollTop = this.messageList.scrollHeight;
         }
 
         if (!this.state.convStarted && !this.props.isMinimized) {
@@ -135,14 +131,21 @@ export default class ChatBox extends Component {
                     }
                 });
         }
+
+        window.addEventListener('storage', function(e) {
+            if(e.key === 'watson_bot_state') {
+                this.loadStateFromStorage();
+                this.setState(this.state);
+                this.scrollToBottom();
+            };
+        }.bind(this));
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // Fix for missing initial greeting
         if (!this.state.convStarted && !this.props.isMinimized) {
-            this.reset();
+            this.sendMessage();
         }
-        
+
         if (prevState.messages.length !== this.state.messages.length) {
             // Ensure that chat box stays scrolled to bottom
             if (typeof(this.messageList) !== 'undefined') {
@@ -244,9 +247,8 @@ export default class ChatBox extends Component {
     }
 
     saveState() {
-        this.bc.postMessage(this.state);
-        if (typeof(sessionStorage) !== 'undefined') {
-            sessionStorage.setItem('watson_bot_state', JSON.stringify(this.state))
+        if (typeof(localStorage) !== 'undefined') {
+            localStorage.setItem('watson_bot_state', JSON.stringify(this.state))
         }
     }
 
